@@ -2,7 +2,7 @@ import ThemeText from "@/components/base/themeText";
 import useColors from "@/hooks/useColors";
 import rpx from "@/utils/rpx";
 import React from "react";
-import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon, { IIconName } from "@/components/base/icon.tsx";
 
@@ -13,7 +13,7 @@ interface IActionButtonProps {
     subtitle?: string;
     action?: () => void;
     style?: StyleProp<ViewStyle>;
-    gradientColors?: string[];
+    gradientColors?: readonly string[];
 }
 
 export default function ActionButton(props: IActionButtonProps) {
@@ -44,7 +44,7 @@ export default function ActionButton(props: IActionButtonProps) {
                 </ThemeText>
                 {subtitle ? (
                     <ThemeText
-                        fontSize="small"
+                        fontSize="description"
                         fontColor="textSecondary"
                         style={styles.subtitle}
                     >
@@ -53,7 +53,7 @@ export default function ActionButton(props: IActionButtonProps) {
                 ) : null}
             </View>
             <Icon
-                name="chevron-forward"
+                name="arrow-right-end-on-rectangle"
                 size={rpx(32)}
                 color={colors.textSecondary}
             />

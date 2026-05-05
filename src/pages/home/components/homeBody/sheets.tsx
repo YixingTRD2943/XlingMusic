@@ -43,7 +43,7 @@ export default function Sheets() {
         <>
             <View style={styles.container}>
                 <View style={styles.headerRow}>
-                    <ThemeText fontSize="large" fontWeight="bold" style={styles.title}>
+                    <ThemeText fontSize="title" fontWeight="bold" style={styles.title}>
                         我的歌单
                     </ThemeText>
                     <View style={styles.more}>
@@ -79,14 +79,14 @@ export default function Sheets() {
                         >
                             <ThemeText
                                 fontSize="subTitle"
-                                fontWeight={index === i ? "bold" : "normal"}
+                                fontWeight={index === i ? "bold" : "regular"}
                                 color={index === i ? "#ffffff" : colors.text}
                             >
                                 {tab.label}
                             </ThemeText>
                             {i === 0 ? (
                                 <ThemeText
-                                    fontSize="small"
+                                    fontSize="description"
                                     color={
                                         index === i ? "#ffffff" : colors.textSecondary
                                     }
@@ -96,7 +96,7 @@ export default function Sheets() {
                                 </ThemeText>
                             ) : (
                                 <ThemeText
-                                    fontSize="small"
+                                    fontSize="description"
                                     color={
                                         index === i ? "#ffffff" : colors.textSecondary
                                     }

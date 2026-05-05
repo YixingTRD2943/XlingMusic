@@ -21,12 +21,12 @@ export default function NavBar() {
             <View style={styles.headerRow}>
                 <View style={styles.logoSection}>
                     <Icon 
-                        name="music" 
+                        name="musical-note" 
                         size={rpx(56)} 
                         color={colors.primary} 
                     />
                     <ThemeText 
-                        fontSize="large" 
+                        fontSize="title" 
                         fontWeight="bold"
                         style={styles.appName}
                     >
@@ -34,7 +34,7 @@ export default function NavBar() {
                     </ThemeText>
                 </View>
                 <IconButton
-                    name="bell-outline"
+                    name="information-circle"
                     sizeType="normal"
                     color={colors.text}
                     onPress={() => {}}
