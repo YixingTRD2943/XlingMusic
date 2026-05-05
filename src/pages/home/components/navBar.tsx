@@ -1,7 +1,7 @@
 import { ROUTE_PATH } from "@/core/router";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import rpx from "@/utils/rpx";
 import useColors from "@/hooks/useColors";
 import ThemeText from "@/components/base/themeText";
@@ -9,106 +9,94 @@ import Color from "color";
 import IconButton from "@/components/base/iconButton";
 import Icon from "@/components/base/icon.tsx";
 import { useI18N } from "@/core/i18n";
-import Animated, {
-    useSharedValue,
-    withSpring,
-    useAnimatedStyle,
-} from "react-native-reanimated";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 export default function NavBar() {
     const navigation = useNavigation<any>();
     const colors = useColors();
     const { t } = useI18N();
-    const [isPressed, setIsPressed] = useState(false);
-    const scale = useSharedValue(1);
-
-    const handlePressIn = () => {
-        setIsPressed(true);
-        scale.value = withSpring(0.98, { damping: 25, stiffness: 350 });
-    };
-
-    const handlePressOut = () => {
-        setIsPressed(false);
-        scale.value = withSpring(1, { damping: 25, stiffness: 350 });
-    };
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
 
     return (
-        <View style={styles.appbar}>
-            <IconButton
-                accessibilityLabel={t("home.openSidebar.a11y")}
-                name="bars-3"
-                style={styles.menu}
-                color={colors.text}
-                onPress={() => {
-                    navigation?.openDrawer();
-                }}
-            />
-
-            <Animated.View style={[animatedStyle]}>
-                <Pressable
-                    style={[
-                        styles.searchBar,
-                        {
-                            backgroundColor: colors.placeholder,
-                            shadowColor: colors.primary,
-                        },
-                    ]}
-                    accessible
-                    accessibilityLabel={t("home.clickToSearch")}
-                    onPress={() => {
-                        navigation.navigate(ROUTE_PATH.SEARCH_PAGE);
-                    }}
-                    onPressIn={handlePressIn}
-                    onPressOut={handlePressOut}>
-                    <Icon
-                        accessible={false}
-                        name="magnifying-glass"
-                        size={rpx(36)}
-                        color={Color(colors.text).alpha(0.5).toString()}
+        <View style={styles.container}>
+            <View style={styles.headerRow}>
+                <View style={styles.logoSection}>
+                    <Icon 
+                        name="music" 
+                        size={rpx(56)} 
+                        color={colors.primary} 
                     />
-                    <ThemeText
-                        accessible={false}
-                        fontSize="subTitle"
-                        style={[styles.text]}>
-                        {t("home.clickToSearch")}
+                    <ThemeText 
+                        fontSize="large" 
+                        fontWeight="bold"
+                        style={styles.appName}
+                    >
+                        星玲音乐
                     </ThemeText>
-                </Pressable>
-            </Animated.View>
+                </View>
+                <IconButton
+                    name="bell-outline"
+                    sizeType="normal"
+                    color={colors.text}
+                    onPress={() => {}}
+                />
+            </View>
+
+            <TouchableOpacity
+                style={[styles.searchBox, { backgroundColor: colors.card }]}
+                onPress={() => {
+                    navigation.navigate(ROUTE_PATH.SEARCH_PAGE);
+                }}
+            >
+                <Icon
+                    name="magnifying-glass"
+                    size={rpx(36)}
+                    color={Color(colors.text).alpha(0.6).toString()}
+                />
+                <ThemeText
+                    fontSize="subTitle"
+                    fontColor="textSecondary"
+                    style={styles.searchText}
+                >
+                    {t("home.clickToSearch")}
+                </ThemeText>
+            </TouchableOpacity>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    appbar: {
-        backgroundColor: "transparent",
-        shadowColor: "transparent",
-        flexDirection: "row",
-        alignItems: "center",
+    container: {
         width: "100%",
-        height: rpx(96),
+        paddingHorizontal: rpx(28),
+        paddingTop: rpx(16),
+        paddingBottom: rpx(24),
     },
-    searchBar: {
-        marginHorizontal: rpx(28),
+    headerRow: {
         flexDirection: "row",
         alignItems: "center",
-        flex: 1,
-        height: rpx(72),
-        borderRadius: rpx(36),
+        justifyContent: "space-between",
+        marginBottom: rpx(24),
+    },
+    logoSection: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+    appName: {
+        marginLeft: rpx(16),
+    },
+    searchBox: {
+        flexDirection: "row",
+        alignItems: "center",
         paddingHorizontal: rpx(28),
+        paddingVertical: rpx(20),
+        borderRadius: rpx(32),
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
         elevation: 3,
     },
-    text: {
+    searchText: {
         marginLeft: rpx(16),
-        opacity: 0.6,
-    },
-    menu: {
-        marginLeft: rpx(28),
+        flex: 1,
     },
 });

@@ -4,15 +4,19 @@ import rpx from "@/utils/rpx";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import ActionButton from "../ActionButton";
+import useColors from "@/hooks/useColors";
 
 export default function Operations() {
     const navigate = useNavigate();
     const { t } = useI18N();
+    const colors = useColors();
 
     const actionButtons = [
         {
             iconName: "fire",
             title: t("home.recommendSheet"),
+            subtitle: "发现新歌",
+            gradientColors: ["#FF6B6B", "#FF8E53"],
             action() {
                 navigate(ROUTE_PATH.RECOMMEND_SHEETS);
             },
@@ -20,6 +24,8 @@ export default function Operations() {
         {
             iconName: "trophy",
             title: t("home.topList"),
+            subtitle: "热门排行",
+            gradientColors: ["#FFE66D", "#FFD166"],
             action() {
                 navigate(ROUTE_PATH.TOP_LIST);
             },
@@ -27,6 +33,8 @@ export default function Operations() {
         {
             iconName: "clock-outline",
             title: t("home.playHistory"),
+            subtitle: "最近播放",
+            gradientColors: ["#4ECDC4", "#44A08D"],
             action() {
                 navigate(ROUTE_PATH.HISTORY);
             },
@@ -34,6 +42,8 @@ export default function Operations() {
         {
             iconName: "folder-music-outline",
             title: t("home.localMusic"),
+            subtitle: "本地文件",
+            gradientColors: ["#A8E6CF", "#88D8B0"],
             action() {
                 navigate(ROUTE_PATH.LOCAL);
             },
@@ -46,7 +56,7 @@ export default function Operations() {
                 <ActionButton
                     style={[
                         styles.actionButtonStyle,
-                        index % 4 ? styles.actionMarginLeft : null,
+                        index > 0 ? styles.actionMarginTop : null,
                     ]}
                     key={action.title}
                     {...action}
@@ -58,18 +68,14 @@ export default function Operations() {
 
 const styles = StyleSheet.create({
     container: {
-        width: rpx(750),
+        width: "100%",
         paddingHorizontal: rpx(28),
-        marginVertical: rpx(36),
-        flexDirection: "row",
-        flexWrap: "nowrap",
+        marginBottom: rpx(36),
     },
     actionButtonStyle: {
-        width: rpx(150),
-        height: rpx(168),
-        borderRadius: rpx(28),
+        width: "100%",
     },
-    actionMarginLeft: {
-        marginLeft: rpx(28),
+    actionMarginTop: {
+        marginTop: rpx(20),
     },
 });

@@ -1,93 +1,95 @@
 import ThemeText from "@/components/base/themeText";
 import useColors from "@/hooks/useColors";
 import rpx from "@/utils/rpx";
-import React, { useState } from "react";
+import React from "react";
 import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Icon, { IIconName } from "@/components/base/icon.tsx";
-import Animated, {
-    useSharedValue,
-    withSpring,
-    useAnimatedStyle,
-} from "react-native-reanimated";
 
 interface IActionButtonProps {
     iconName: IIconName;
     iconColor?: string;
     title: string;
+    subtitle?: string;
     action?: () => void;
     style?: StyleProp<ViewStyle>;
+    gradientColors?: string[];
 }
 
 export default function ActionButton(props: IActionButtonProps) {
-    const { iconName, iconColor, title, action, style } = props;
+    const { iconName, iconColor, title, subtitle, action, style, gradientColors } = props;
     const colors = useColors();
-    const [isPressed, setIsPressed] = useState(false);
-    const scale = useSharedValue(1);
 
-    const handlePressIn = () => {
-        setIsPressed(true);
-        scale.value = withSpring(0.95, { damping: 25, stiffness: 350 });
-    };
-
-    const handlePressOut = () => {
-        setIsPressed(false);
-        scale.value = withSpring(1, { damping: 25, stiffness: 350 });
-    };
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [{ scale: scale.value }],
-    }));
+    const buttonColors = gradientColors || [colors.primary, colors.primary];
 
     return (
-        <Animated.View style={[animatedStyle]}>
-            <TouchableOpacity
-                onPress={action}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}
-                activeOpacity={0.85}
-                style={[
-                    styles.wrapper,
-                    {
-                        backgroundColor: colors.card,
-                        shadowColor: colors.primary,
-                    },
-                    style,
-                ]}>
+        <TouchableOpacity
+            onPress={action}
+            style={[styles.wrapper, { backgroundColor: colors.card }, style]}
+        >
+            <View style={[styles.iconContainer, { backgroundColor: `${buttonColors[0]}20` }]}>
                 <Icon
-                    accessible={false}
                     name={iconName}
-                    color={iconColor ?? colors.primary}
-                    size={rpx(64)}
+                    color={iconColor || buttonColors[0]}
+                    size={rpx(56)}
                 />
+            </View>
+            <View style={styles.textContainer}>
                 <ThemeText
-                    accessible={false}
                     fontSize="subTitle"
-                    fontWeight="semibold"
-                    style={styles.text}>
+                    fontWeight="bold"
+                    style={styles.title}
+                >
                     {title}
                 </ThemeText>
-            </TouchableOpacity>
-        </Animated.View>
+                {subtitle ? (
+                    <ThemeText
+                        fontSize="small"
+                        fontColor="textSecondary"
+                        style={styles.subtitle}
+                    >
+                        {subtitle}
+                    </ThemeText>
+                ) : null}
+            </View>
+            <Icon
+                name="chevron-forward"
+                size={rpx(32)}
+                color={colors.textSecondary}
+            />
+        </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
     wrapper: {
-        width: rpx(150),
-        height: rpx(168),
-        borderRadius: rpx(28),
-        flexGrow: 1,
-        flexShrink: 0,
-        flexDirection: "column",
+        width: "100%",
+        flexDirection: "row",
         alignItems: "center",
-        justifyContent: "center",
+        paddingHorizontal: rpx(24),
+        paddingVertical: rpx(28),
+        borderRadius: rpx(28),
         shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.15,
-        shadowRadius: 12,
-        elevation: 6,
+        shadowOpacity: 0.1,
+        shadowRadius: 16,
+        elevation: 4,
     },
-    text: {
-        marginTop: rpx(16),
+    iconContainer: {
+        width: rpx(96),
+        height: rpx(96),
+        borderRadius: rpx(48),
+        justifyContent: "center",
+        alignItems: "center",
+        flexShrink: 0,
+    },
+    textContainer: {
+        flex: 1,
+        marginLeft: rpx(20),
+    },
+    title: {
+        marginBottom: rpx(6),
+    },
+    subtitle: {
+        opacity: 0.7,
     },
 });
