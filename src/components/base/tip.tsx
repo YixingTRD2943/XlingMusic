@@ -49,35 +49,37 @@ const calculateTipPosition = (
     let tipTop = 0;
     let triangleLeft = 0;
     let triangleTop = 0;
-    let triangleRotation = 0; switch (position) {
-    case "top":
-        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-        tipTop = childRect.y - tipHeight - margin - triangleSize;
-        triangleLeft = tipWidth / 2 - triangleSize / 2;
-        triangleTop = tipHeight;
-        triangleRotation = 180; // 指向下方
-        break;
-    case "bottom":
-        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-        tipTop = childRect.y + childRect.height + margin + triangleSize;
-        triangleLeft = tipWidth / 2 - triangleSize / 2;
-        triangleTop = -triangleSize;
-        triangleRotation = 0; // 指向上方
-        break;
-    case "left":
-        tipLeft = childRect.x - tipWidth - margin - triangleSize;
-        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-        triangleLeft = tipWidth;
-        triangleTop = tipHeight / 2 - triangleSize / 2;
-        triangleRotation = 90; // 指向右方
-        break;
-    case "right":
-        tipLeft = childRect.x + childRect.width + margin + triangleSize;
-        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-        triangleLeft = -triangleSize;
-        triangleTop = tipHeight / 2 - triangleSize / 2;
-        triangleRotation = -90; // 指向左方
-        break;
+    let triangleRotation = 0;
+
+    switch (position) {
+        case "top":
+            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+            tipTop = childRect.y - tipHeight - margin - triangleSize;
+            triangleLeft = tipWidth / 2 - triangleSize / 2;
+            triangleTop = tipHeight;
+            triangleRotation = 180; // 指向下方
+            break;
+        case "bottom":
+            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+            tipTop = childRect.y + childRect.height + margin + triangleSize;
+            triangleLeft = tipWidth / 2 - triangleSize / 2;
+            triangleTop = -triangleSize;
+            triangleRotation = 0; // 指向上方
+            break;
+        case "left":
+            tipLeft = childRect.x - tipWidth - margin - triangleSize;
+            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+            triangleLeft = tipWidth;
+            triangleTop = tipHeight / 2 - triangleSize / 2;
+            triangleRotation = 90; // 指向右方
+            break;
+        case "right":
+            tipLeft = childRect.x + childRect.width + margin + triangleSize;
+            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+            triangleLeft = -triangleSize;
+            triangleTop = tipHeight / 2 - triangleSize / 2;
+            triangleRotation = -90; // 指向左方
+            break;
     }
 
     return {
@@ -89,26 +91,26 @@ const calculateTipPosition = (
     };
 };
 
-// 三角形组件
-const Triangle = ({ size, color, style }: { size: number; color: string; style?: any }) => (
-    <View
-        style={[
-            {
+// 绘制三角形
+const Triangle = ({ size, color }: { size: number; color: string }) => {
+    return (
+        <View
+            style={{
                 width: 0,
                 height: 0,
+                backgroundColor: "transparent",
+                borderStyle: "solid",
                 borderLeftWidth: size / 2,
                 borderRightWidth: size / 2,
                 borderBottomWidth: size,
                 borderLeftColor: "transparent",
                 borderRightColor: "transparent",
                 borderBottomColor: color,
-            },
-            style,
-        ]}
-    />
-);
+            }}
+        />
+    );
+};
 
-// Tip内容Portal组件
 const TipPortal = ({
     content,
     position,
@@ -172,7 +174,9 @@ const TipPortal = ({
     // 如果不需要渲染，直接返回null
     if (!shouldRender) {
         return null;
-    } if (tipDimensions.width === 0 || tipDimensions.height === 0) {
+    }
+
+    if (tipDimensions.width === 0 || tipDimensions.height === 0) {
         // 测量阶段，先渲染不可见的tip来获取尺寸
         return (
             <View
@@ -235,7 +239,7 @@ export default function Tip({
     const [childRect, setChildRect] = useState<LayoutRectangle | null>(null);
     const childRef = useRef<View>(null);
 
-    const finalBackgroundColor = backgroundColor || colors.notification;
+    const finalBackgroundColor = backgroundColor || (colors.notification || "rgba(0,0,0,0.8)");
     const finalTextColor = textColor || colors.text;
 
     const handlePress = useCallback(() => {
@@ -297,12 +301,13 @@ const styles = StyleSheet.create({
     measurementContainer: {
         opacity: 0,
         position: "absolute",
-        top: -1000,
+        top: -9999,
+        left: -9999,
     },
     tipText: {
-        fontSize: rpx(24),
-        lineHeight: rpx(32),
-        textAlign: "center",
+        color: "#FFFFFF",
+        fontSize: rpx(12),
+        lineHeight: rpx(18),
     },
     triangle: {
         position: "absolute",

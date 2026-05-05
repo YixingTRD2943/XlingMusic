@@ -21,7 +21,7 @@ export const lightTheme = {
         musicBar: "#f2f2f2",
         musicBarText: "#333333",
         divider: "rgba(0,0,0,0.1)",
-        listActive: "rgba(0,0,0,0.1)", // 在手机上表现是ripple
+        listActive: "rgba(0,0,0,0.1)",
         mask: "rgba(51,51,51,0.2)",
         backdrop: "#f0f0f0",
         tabBar: "#f0f0f0",
@@ -31,6 +31,7 @@ export const lightTheme = {
         info: "#0A95C8",
         card: "#e2e2e288",
         notification: "#f0f0f0",
+        border: "#e0e0e0",
     },
 };
 
@@ -50,7 +51,7 @@ export const darkTheme = {
         musicBar: "#262626",
         musicBarText: "#fcfcfc",
         divider: "rgba(255,255,255,0.1)",
-        listActive: "rgba(255,255,255,0.1)", // 在手机上表现是ripple
+        listActive: "rgba(255,255,255,0.1)",
         mask: "rgba(33,33,33,0.8)",
         backdrop: "#303030",
         tabBar: "#303030",
@@ -60,6 +61,7 @@ export const darkTheme = {
         info: "#0A95C8",
         card: "#33333388",
         notification: "#303030",
+        border: "#424242",
     },
 };
 
@@ -89,6 +91,7 @@ export const sakuraTheme = {
         info: "#74b9ff",
         card: "rgba(255,133,171,0.25)",
         notification: "rgba(255,133,171,0.2)",
+        border: "rgba(255,133,171,0.3)",
     },
 };
 
@@ -118,6 +121,7 @@ export const gradientTheme = {
         info: "#60a5fa",
         card: "rgba(168,85,247,0.25)",
         notification: "rgba(168,85,247,0.2)",
+        border: "rgba(168,85,247,0.3)",
     },
 };
 
@@ -147,6 +151,7 @@ export const autumnTheme = {
         info: "#3b82f6",
         card: "rgba(249,115,22,0.25)",
         notification: "rgba(249,115,22,0.2)",
+        border: "rgba(249,115,22,0.3)",
     },
 };
 
@@ -176,6 +181,7 @@ export const techTheme = {
         info: "#4488ff",
         card: "rgba(0,212,255,0.2)",
         notification: "rgba(0,212,255,0.15)",
+        border: "rgba(0,212,255,0.3)",
     },
 };
 
@@ -205,6 +211,7 @@ export const matchaTheme = {
         info: "#90caf9",
         card: "rgba(165,214,167,0.2)",
         notification: "rgba(165,214,167,0.15)",
+        border: "rgba(165,214,167,0.3)",
     },
 };
 
@@ -234,6 +241,7 @@ export const creamTheme = {
         info: "#81d4fa",
         card: "rgba(255,224,130,0.2)",
         notification: "rgba(255,224,130,0.15)",
+        border: "rgba(255,224,130,0.3)",
     },
 };
 
@@ -277,7 +285,7 @@ function setup() {
         themeStore.setValue({
             id: currentTheme,
             dark: true,
-            colors: (Config.getConfig("theme.colors") as CustomizedColors) ?? techTheme.colors,
+            colors: ((Config.getConfig("theme.colors") as any) ?? techTheme.colors) as any,
         });
     }
 
@@ -319,7 +327,7 @@ function setTheme(
             colors: {
                 ...techTheme.colors,
                 ...(extra?.colors ?? {}),
-            },
+            } as any,
         });
     }
 
@@ -360,7 +368,7 @@ function setColors(colors: Partial<CustomizedColors>) {
             colors: {
                 ...currentTheme.colors,
                 ...colors,
-            },
+            } as any,
         };
         Config.setConfig("theme.customColors", newTheme.colors);
         Config.setConfig("theme.colors", newTheme.colors);

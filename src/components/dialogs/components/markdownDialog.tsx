@@ -20,7 +20,7 @@ interface IMarkdownDialogProps {
 }
 export default function MarkdownDialog(props: IMarkdownDialogProps) {
     const { title, markdownContent, okText } = props;
-    const markedRef = useRef<Marked>(new Marked());
+    const markedRef = useRef<any>(new Marked());
     const [loading, setLoading] = useState(true);
     const [htmlContent, setHtmlContent] = useState<string>("");
     const { onMounted } = useOnMounted();
@@ -34,7 +34,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
 
         md.parse(markdownContent, {
             async: true,
-        }).then(html => {
+        }).then((html: any) => {
             if (onMounted()) {
                 setHtmlContent(`
 <!DOCTYPE html>
@@ -274,7 +274,7 @@ export default function MarkdownDialog(props: IMarkdownDialogProps) {
                 {loading ? <Loading /> : <WebView style={styles.webView} originWhitelist={["*"]} source={{
                     html: htmlContent,
                 }}
-                onShouldStartLoadWithRequest={(event) => {
+                onShouldStartLoadWithRequest={(event: any) => {
                     if (event.url.startsWith("http") || event.url.startsWith("https")) {
                         Toast.warn(i18n.t("dialog.markdownDialog.openExternalLink"), {
                             type: "warn",
