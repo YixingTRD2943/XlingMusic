@@ -7,10 +7,13 @@ import ThemeSwitch from "@/components/base/switch";
 import Config, { useAppConfig } from "@/core/appConfig";
 import Theme from "@/core/theme";
 import { useI18N } from "@/core/i18n";
+import ThemeCard from "./themeCard";
 
 export default function Mode() {
     const { t } = useI18N();
     const mode = useAppConfig("theme.followSystem") ?? false;
+    const selectedTheme = useAppConfig("theme.selectedTheme") ?? "p-dark";
+
     return (
         <View>
             <ThemeText
@@ -43,6 +46,24 @@ export default function Mode() {
                     </ListItem.Content>
                 </ListItem>
             </View>
+
+            <ThemeText
+                fontSize="subTitle"
+                fontWeight="bold"
+                style={styles.header}>
+                主题选择
+            </ThemeText>
+            <View style={styles.themeList}>
+                {Theme.allThemes.map((themeInfo: any) => (
+                    <ThemeCard
+                        key={themeInfo.id}
+                        theme={themeInfo.theme}
+                        name={themeInfo.name}
+                        isSelected={selectedTheme === themeInfo.id}
+                        onPress={() => Theme.setTheme(themeInfo.id)}
+                    />
+                ))}
+            </View>
         </View>
     );
 }
@@ -59,5 +80,12 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+    },
+    themeList: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        paddingHorizontal: rpx(24),
+        marginTop: rpx(24),
+        gap: rpx(24),
     },
 });

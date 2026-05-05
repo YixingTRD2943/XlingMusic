@@ -11,13 +11,20 @@ interface IThemeCardProps {
     preview?: string;
     onPress?: () => void;
     title?: string;
+    theme?: any;
+    name?: string;
+    isSelected?: boolean;
 }
 export default function ThemeCard(props: IThemeCardProps) {
-    const { selected, preview, onPress, title } = props;
+    const { selected, preview, onPress, title, theme, name, isSelected } = props;
+    const actualSelected = isSelected || selected;
+    const actualTitle = name || title;
 
     const isPreviewColor = preview?.startsWith("#") ? true : false;
 
     const colors = useColors();
+
+    const previewColor = theme?.colors?.primary || preview || colors.primary;
 
     return (
         <View>
@@ -25,7 +32,7 @@ export default function ThemeCard(props: IThemeCardProps) {
                 onPress={onPress}
                 style={[
                     styles.borderContainer,
-                    selected
+                    actualSelected
                         ? {
                             borderWidth: 2,
                             borderStyle: "solid",
@@ -36,27 +43,25 @@ export default function ThemeCard(props: IThemeCardProps) {
                 <View
                     style={[
                         styles.container,
-                        isPreviewColor
-                            ? {
-                                backgroundColor: preview,
-                            }
-                            : null,
+                        {
+                            backgroundColor: previewColor,
+                        },
                     ]}>
-                    {isPreviewColor ? null : (
+                    {isPreviewColor ? null : preview ? (
                         <Image
                             style={styles.image}
                             uri={preview}
                             emptySrc={ImgAsset.add}
                         />
-                    )}
+                    ) : null}
                 </View>
             </Pressable>
             <ThemeText
                 numberOfLines={1}
                 fontSize="subTitle"
                 style={styles.title}
-                fontColor={selected ? "primary" : "text"}>
-                {title}
+                fontColor={actualSelected ? "primary" : "text"}>
+                {actualTitle}
             </ThemeText>
         </View>
     );
@@ -67,7 +72,6 @@ const styles = StyleSheet.create({
         width: rpx(160),
         height: rpx(160),
         borderRadius: rpx(22),
-        marginRight: rpx(24),
         justifyContent: "center",
         alignItems: "center",
     },
