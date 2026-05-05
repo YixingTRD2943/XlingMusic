@@ -245,6 +245,36 @@ export const creamTheme = {
     },
 };
 
+export const imageTheme = {
+    id: "image",
+    ..._DarkTheme,
+    colors: {
+        ..._DarkTheme.colors,
+        background: "transparent",
+        text: "#ffffff",
+        textSecondary: Color("#ffffff").alpha(0.7).toString(),
+        primary: "#bb86fc",
+        pageBackground: "rgba(187,134,252,0.15)",
+        shadow: "#bb86fc",
+        appBar: "rgba(187,134,252,0.35)",
+        appBarText: "#ffffff",
+        musicBar: "rgba(30,30,30,0.75)",
+        musicBarText: "#ffffff",
+        divider: "rgba(255,255,255,0.15)",
+        listActive: "rgba(187,134,252,0.25)",
+        mask: "rgba(0,0,0,0.6)",
+        backdrop: "rgba(187,134,252,0.2)",
+        tabBar: "rgba(30,30,30,0.8)",
+        placeholder: "rgba(187,134,252,0.3)",
+        success: "#03dac6",
+        danger: "#cf6679",
+        info: "#64b5f6",
+        card: "rgba(30,30,30,0.65)",
+        notification: "rgba(187,134,252,0.3)",
+        border: "rgba(255,255,255,0.2)",
+    },
+};
+
 export const allThemes = [
     { id: "p-dark", name: "深色模式", theme: darkTheme },
     { id: "p-light", name: "浅色模式", theme: lightTheme },
@@ -254,6 +284,7 @@ export const allThemes = [
     { id: "cream", name: "奶油黄", theme: creamTheme },
     { id: "gradient", name: "渐变紫", theme: gradientTheme },
     { id: "autumn", name: "秋意", theme: autumnTheme },
+    { id: "image", name: "图片主题", theme: imageTheme },
 ];
 
 interface IBackgroundInfo {
@@ -277,6 +308,7 @@ function setup() {
         "tech": techTheme,
         "matcha": matchaTheme,
         "cream": creamTheme,
+        "image": imageTheme,
     };
 
     if (themeMap[currentTheme]) {
@@ -316,6 +348,7 @@ function setTheme(
         "tech": techTheme,
         "matcha": matchaTheme,
         "cream": creamTheme,
+        "image": imageTheme,
     };
 
     if (themeMap[themeName]) {
