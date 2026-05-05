@@ -179,13 +179,73 @@ export const techTheme = {
     },
 };
 
+export const matchaTheme = {
+    id: "matcha",
+    ..._DarkTheme,
+    colors: {
+        ..._DarkTheme.colors,
+        background: "transparent",
+        text: "#e8f5e9",
+        textSecondary: Color("#e8f5e9").alpha(0.7).toString(),
+        primary: "#a5d6a7",
+        pageBackground: "rgba(165,214,167,0.12)",
+        shadow: "#a5d6a7",
+        appBar: "rgba(165,214,167,0.25)",
+        appBarText: "#e8f5e9",
+        musicBar: "rgba(165,214,167,0.25)",
+        musicBarText: "#e8f5e9",
+        divider: "rgba(232,245,233,0.15)",
+        listActive: "rgba(165,214,167,0.2)",
+        mask: "rgba(0,0,0,0.5)",
+        backdrop: "rgba(165,214,167,0.15)",
+        tabBar: "rgba(165,214,167,0.2)",
+        placeholder: "rgba(165,214,167,0.25)",
+        success: "#81c784",
+        danger: "#ef9a9a",
+        info: "#90caf9",
+        card: "rgba(165,214,167,0.2)",
+        notification: "rgba(165,214,167,0.15)",
+    },
+};
+
+export const creamTheme = {
+    id: "cream",
+    ..._DarkTheme,
+    colors: {
+        ..._DarkTheme.colors,
+        background: "transparent",
+        text: "#fff8e1",
+        textSecondary: Color("#fff8e1").alpha(0.7).toString(),
+        primary: "#ffe082",
+        pageBackground: "rgba(255,224,130,0.1)",
+        shadow: "#ffe082",
+        appBar: "rgba(255,224,130,0.25)",
+        appBarText: "#fff8e1",
+        musicBar: "rgba(255,224,130,0.25)",
+        musicBarText: "#fff8e1",
+        divider: "rgba(255,248,225,0.15)",
+        listActive: "rgba(255,224,130,0.2)",
+        mask: "rgba(0,0,0,0.5)",
+        backdrop: "rgba(255,224,130,0.15)",
+        tabBar: "rgba(255,224,130,0.2)",
+        placeholder: "rgba(255,224,130,0.25)",
+        success: "#aed581",
+        danger: "#ffab91",
+        info: "#81d4fa",
+        card: "rgba(255,224,130,0.2)",
+        notification: "rgba(255,224,130,0.15)",
+    },
+};
+
 export const allThemes = [
     { id: "p-dark", name: "深色模式", theme: darkTheme },
     { id: "p-light", name: "浅色模式", theme: lightTheme },
+    { id: "tech", name: "科技蓝", theme: techTheme },
     { id: "sakura", name: "樱花粉", theme: sakuraTheme },
+    { id: "matcha", name: "抹茶绿", theme: matchaTheme },
+    { id: "cream", name: "奶油黄", theme: creamTheme },
     { id: "gradient", name: "渐变紫", theme: gradientTheme },
     { id: "autumn", name: "秋意", theme: autumnTheme },
-    { id: "tech", name: "科技蓝", theme: techTheme },
 ];
 
 interface IBackgroundInfo {
@@ -207,6 +267,8 @@ function setup() {
         "gradient": gradientTheme,
         "autumn": autumnTheme,
         "tech": techTheme,
+        "matcha": matchaTheme,
+        "cream": creamTheme,
     };
 
     if (themeMap[currentTheme]) {
@@ -244,6 +306,8 @@ function setTheme(
         "gradient": gradientTheme,
         "autumn": autumnTheme,
         "tech": techTheme,
+        "matcha": matchaTheme,
+        "cream": creamTheme,
     };
 
     if (themeMap[themeName]) {
@@ -253,7 +317,7 @@ function setTheme(
             id: themeName,
             dark: true,
             colors: {
-                ...darkTheme.colors,
+                ...techTheme.colors,
                 ...(extra?.colors ?? {}),
             },
         });
