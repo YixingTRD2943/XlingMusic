@@ -43,23 +43,18 @@ export default function AboutSetting() {
                         resizeMode="contain"
                     />
                 </TouchableOpacity>
-                <ThemeText style={style.margin}>软件作者: 猫头猫</ThemeText>
+                <ThemeText style={style.margin}>软件作者: 星璃玲</ThemeText>
                 <ThemeText style={style.margin}>
-                    公众号: 【一只猫头猫】
+                    公众号: 【星玲工具屋】
                 </ThemeText>
                 <View style={style.contactContainer}>
                     <ThemeText style={style.margin}>
                         B站:{" "}
-                        <LinkText linkTo="https://space.bilibili.com/12866223">
-                            不想睡觉猫头猫
+                        <LinkText linkTo="https://b23.tv/k8HIvwn">
+                            星璃玲的个人空间
                         </LinkText>
                     </ThemeText>
-                    <ThemeText style={style.margin}>
-                        小红书:{" "}
-                        <LinkText linkTo="https://www.xiaohongshu.com/user/profile/5ce6085200000000050213a6?xsec_token=YBqVNCKP4kpvphpU5sZI8WC93c5JINc3NhGtRBymgKvuo%3D&xsec_source=app_share&xhsshare=CopyLink&appuid=5ce6085200000000050213a6&apptime=1747275535&share_id=faef5820564a43be80e5b77da887e4b9&share_channel=copy_link">
-                            一只猫头猫
-                        </LinkText>
-                    </ThemeText>
+                    
                 </View>
             </View>
             <ScrollView
@@ -67,12 +62,12 @@ export default function AboutSetting() {
                 style={style.scrollView}>
                 <ThemeText fontSize="title">开发者的话: </ThemeText>
                 <ThemeText style={style.content}>
-                    软件作者是<ThemeText fontWeight="bold">猫头猫</ThemeText>
-                    🐱，不是猫头鹰🦉，也不是什么其他的奇奇怪怪。软件没有其他版本，如果你下载到了付费版/广告版/挂羊头卖狗肉版，那说明你被坏蛋骗了😒。
+                    软件作者是<ThemeText fontWeight="bold">星璃玲</ThemeText>
+                    🐱软件没有其他版本，如果你下载到了付费版/广告版/挂羊头卖狗肉版，那说明你被坏蛋骗了😒。
                 </ThemeText>
                 <ThemeText style={style.content}>
                     软件相关信息会发布在公众号【
-                    <ThemeText fontWeight="bold">一只猫头猫</ThemeText>
+                    <ThemeText fontWeight="bold">星玲工具屋</ThemeText>
                     】中👇，也简单做了个
                     <LinkText linkTo="https://musicfree.catcat.work">
                         官方网站
@@ -131,7 +126,7 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     如果有问题或者建议，可以直接去 Github issue
-                    区留言，也可以去公众号【一只猫头猫】留言，也可以去{" "}
+                    区留言，也可以去公众号【星玲工具屋】留言，也可以去{" "}
                     <LinkText linkTo="https://qun.qq.com/qqweb/qunpro/share?_wv=3&_wwv=128&appChannel=share&inviteCode=1XgzeY8LfIa&businessType=9&from=246610&biz=ka&mainSourceId=share&subSourceId=others&jumpsource=shorturl">
                         QQ 频道
                     </LinkText>{" "}
@@ -143,7 +138,7 @@ export default function AboutSetting() {
                     MusicFree 存在的意义。
                 </ThemeText>
 
-                <ThemeText style={style.content}>by: 猫头猫</ThemeText>
+                <ThemeText style={style.content}>by: 星璃玲</ThemeText>
             </ScrollView>
         </View>
     );
