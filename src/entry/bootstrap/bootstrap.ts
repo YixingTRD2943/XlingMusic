@@ -11,7 +11,6 @@ import lyricManager from "@/core/lyricManager";
 import musicHistory from "@/core/musicHistory";
 import MusicSheet from "@/core/musicSheet";
 import PluginManager from "@/core/pluginManager";
-import { installBuiltInPlugins } from "@/core/pluginManager/builtInPlugins";
 import Theme from "@/core/theme";
 import TrackPlayer from "@/core/trackPlayer";
 import NativeUtils from "@/native/utils";
@@ -99,7 +98,6 @@ async function bootstrapImpl() {
 
     // 加载插件
     await PluginManager.setup();
-    await installBuiltInPlugins();
     logger.mark("插件初始化完成");
     trace("插件初始化完成");
 

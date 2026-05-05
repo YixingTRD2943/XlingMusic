@@ -170,6 +170,16 @@ class AppConfig implements IAppConfig {
 
     async setup(): Promise<void> {
         await this.migrateConfig();
+        
+        // 设置默认插件订阅地址
+        if (!configStore.contains("plugin.subscribeUrl")) {
+            configStore.set("plugin.subscribeUrl", JSON.stringify([
+                {
+                    name: "官方插件库",
+                    url: "https://raw.gitcode.com/maotoumao/MusicFreePlugins/raw/master/plugins.json",
+                },
+            ]));
+        }
     }
 
     setConfig<K extends keyof IAppConfigProperties>(
