@@ -23,10 +23,10 @@ interface IRoundedCardProps {
 }
 
 export default function RoundedCard(props: IRoundedCardProps) {
-    const { children, style, onPress, padding = true, hoverable = false, variant = "elevated" } = props;
+    const { children, style, onPress, padding = true, variant = "elevated" } = props;
     const colors = useColors();
     const scale = useSharedValue(1);
-    const [isPressed, setIsPressed] = useState(false);
+    const [_isPressed, setIsPressed] = useState(false);
 
     const handlePressIn = () => {
         setIsPressed(true);
@@ -46,34 +46,34 @@ export default function RoundedCard(props: IRoundedCardProps) {
 
     const getCardStyle = (): ViewStyle => {
         switch (variant) {
-            case "outlined":
-                return {
-                    backgroundColor: "transparent",
-                    borderWidth: rpx(1),
-                    borderColor: colors.border,
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0,
-                    shadowRadius: 0,
-                    elevation: 0,
-                };
-            case "surface":
-                return {
-                    backgroundColor: colors.background,
-                    borderWidth: 0,
-                    shadowOffset: { width: 0, height: 2 },
-                    shadowOpacity: 0.05,
-                    shadowRadius: 4,
-                    elevation: 2,
-                };
-            default:
-                return {
-                    backgroundColor: colors.card,
-                    borderWidth: 0,
-                    shadowOffset: { width: 0, height: 8 },
-                    shadowOpacity: 0.12,
-                    shadowRadius: 16,
-                    elevation: 6,
-                };
+        case "outlined":
+            return {
+                backgroundColor: "transparent",
+                borderWidth: rpx(1),
+                borderColor: colors.border,
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0,
+                shadowRadius: 0,
+                elevation: 0,
+            };
+        case "surface":
+            return {
+                backgroundColor: colors.background,
+                borderWidth: 0,
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.05,
+                shadowRadius: 4,
+                elevation: 2,
+            };
+        default:
+            return {
+                backgroundColor: colors.card,
+                borderWidth: 0,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: 0.12,
+                shadowRadius: 16,
+                elevation: 6,
+            };
         }
     };
 

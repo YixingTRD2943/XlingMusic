@@ -24,47 +24,47 @@ export function Button(props: {
 
     const getButtonStyle = () => {
         switch (type) {
-            case "primary":
-                return {
-                    gradientColors: [colors.primary as string, colors.primary as string],
-                    textColor: "#ffffff",
-                    shadowColor: colors.primary,
-                    backgroundColor: "transparent",
-                    borderWidth: 0,
-                };
-            case "secondary":
-                return {
-                    gradientColors: ["#f5f5f5", "#e8e8e8"],
-                    textColor: colors.text,
-                    shadowColor: "#ccc",
-                    backgroundColor: "transparent",
-                    borderWidth: 0,
-                };
-            case "outline":
-                return {
-                    gradientColors: ["transparent", "transparent"],
-                    textColor: colors.primary,
-                    shadowColor: "transparent",
-                    backgroundColor: "transparent",
-                    borderWidth: rpx(2),
-                    borderColor: colors.primary,
-                };
-            case "ghost":
-                return {
-                    gradientColors: ["transparent", "transparent"],
-                    textColor: colors.text,
-                    shadowColor: "transparent",
-                    backgroundColor: colors.background,
-                    borderWidth: 0,
-                };
-            default:
-                return {
-                    gradientColors: [colors.placeholder as string, colors.placeholder as string],
-                    textColor: colors.text,
-                    shadowColor: colors.shadow,
-                    backgroundColor: "transparent",
-                    borderWidth: 0,
-                };
+        case "primary":
+            return {
+                gradientColors: [colors.primary as string, colors.primary as string],
+                textColor: "#ffffff",
+                shadowColor: colors.primary,
+                backgroundColor: "transparent",
+                borderWidth: 0,
+            };
+        case "secondary":
+            return {
+                gradientColors: ["#f5f5f5", "#e8e8e8"],
+                textColor: colors.text,
+                shadowColor: "#ccc",
+                backgroundColor: "transparent",
+                borderWidth: 0,
+            };
+        case "outline":
+            return {
+                gradientColors: ["transparent", "transparent"],
+                textColor: colors.primary,
+                shadowColor: "transparent",
+                backgroundColor: "transparent",
+                borderWidth: rpx(2),
+                borderColor: colors.primary,
+            };
+        case "ghost":
+            return {
+                gradientColors: ["transparent", "transparent"],
+                textColor: colors.text,
+                shadowColor: "transparent",
+                backgroundColor: colors.background,
+                borderWidth: 0,
+            };
+        default:
+            return {
+                gradientColors: [colors.placeholder as string, colors.placeholder as string],
+                textColor: colors.text,
+                shadowColor: colors.shadow,
+                backgroundColor: "transparent",
+                borderWidth: 0,
+            };
         }
     };
 

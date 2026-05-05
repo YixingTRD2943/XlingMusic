@@ -16,7 +16,7 @@ import { FlashList } from "@shopify/flash-list";
 import React, { useMemo, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import Icon from "@/components/base/icon.tsx";
+
 
 export default function Sheets() {
     const [index, setIndex] = useState(0);
@@ -114,7 +114,7 @@ export default function Sheets() {
                     extraData={{ t }}
                     data={(index === 0 ? allSheets : staredSheets) ?? []}
                     estimatedItemSize={ListItem.Size.big}
-                    renderItem={({ item: sheet, index: itemIndex }) => {
+                    renderItem={({ item: sheet }) => {
                         const isLocalSheet = !(
                             sheet.platform && sheet.platform !== localPluginPlatform
                         );

@@ -4,12 +4,9 @@ import rpx from "@/utils/rpx";
 import React from "react";
 import { StyleSheet, View } from "react-native";
 import ActionButton from "../ActionButton";
-import useColors from "@/hooks/useColors";
-
 export default function Operations() {
     const navigate = useNavigate();
     const { t } = useI18N();
-    const colors = useColors();
 
     const actionButtons = [
         {

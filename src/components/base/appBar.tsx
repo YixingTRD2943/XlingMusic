@@ -102,26 +102,26 @@ export default function AppBar(props: IAppBarProps) {
 
     const getContainerStyle = (): ViewStyle => {
         switch (variant) {
-            case "transparent":
-                return {
-                    backgroundColor: "transparent",
-                    shadowOffset: { width: 0, height: 0 },
-                    shadowOpacity: 0,
-                    shadowRadius: 0,
-                    elevation: 0,
-                };
-            case "elevated":
-                return {
-                    backgroundColor: colors.appBar,
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.08,
-                    shadowRadius: 8,
-                    elevation: 4,
-                };
-            default:
-                return {
-                    backgroundColor: bgColor,
-                };
+        case "transparent":
+            return {
+                backgroundColor: "transparent",
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0,
+                shadowRadius: 0,
+                elevation: 0,
+            };
+        case "elevated":
+            return {
+                backgroundColor: colors.appBar,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.08,
+                shadowRadius: 8,
+                elevation: 4,
+            };
+        default:
+            return {
+                backgroundColor: bgColor,
+            };
         }
     };
 

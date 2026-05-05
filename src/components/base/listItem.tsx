@@ -62,7 +62,7 @@ function ListItem(props: IListItemProps) {
         hoverable = true,
     } = props;
 
-    const [isPressed, setIsPressed] = useState(false);
+    const [_isPressed, setIsPressed] = useState(false);
     const scale = useSharedValue(1);
 
     const defaultStyle: StyleProp<ViewStyle> = {
