@@ -52,34 +52,34 @@ const calculateTipPosition = (
     let triangleRotation = 0;
 
     switch (position) {
-        case "top":
-            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-            tipTop = childRect.y - tipHeight - margin - triangleSize;
-            triangleLeft = tipWidth / 2 - triangleSize / 2;
-            triangleTop = tipHeight;
-            triangleRotation = 180; // 指向下方
-            break;
-        case "bottom":
-            tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
-            tipTop = childRect.y + childRect.height + margin + triangleSize;
-            triangleLeft = tipWidth / 2 - triangleSize / 2;
-            triangleTop = -triangleSize;
-            triangleRotation = 0; // 指向上方
-            break;
-        case "left":
-            tipLeft = childRect.x - tipWidth - margin - triangleSize;
-            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-            triangleLeft = tipWidth;
-            triangleTop = tipHeight / 2 - triangleSize / 2;
-            triangleRotation = 90; // 指向右方
-            break;
-        case "right":
-            tipLeft = childRect.x + childRect.width + margin + triangleSize;
-            tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
-            triangleLeft = -triangleSize;
-            triangleTop = tipHeight / 2 - triangleSize / 2;
-            triangleRotation = -90; // 指向左方
-            break;
+    case "top":
+        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+        tipTop = childRect.y - tipHeight - margin - triangleSize;
+        triangleLeft = tipWidth / 2 - triangleSize / 2;
+        triangleTop = tipHeight;
+        triangleRotation = 180; // 指向下方
+        break;
+    case "bottom":
+        tipLeft = childRect.x + childRect.width / 2 - tipWidth / 2;
+        tipTop = childRect.y + childRect.height + margin + triangleSize;
+        triangleLeft = tipWidth / 2 - triangleSize / 2;
+        triangleTop = -triangleSize;
+        triangleRotation = 0; // 指向上方
+        break;
+    case "left":
+        tipLeft = childRect.x - tipWidth - margin - triangleSize;
+        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+        triangleLeft = tipWidth;
+        triangleTop = tipHeight / 2 - triangleSize / 2;
+        triangleRotation = 90; // 指向右方
+        break;
+    case "right":
+        tipLeft = childRect.x + childRect.width + margin + triangleSize;
+        tipTop = childRect.y + childRect.height / 2 - tipHeight / 2;
+        triangleLeft = -triangleSize;
+        triangleTop = tipHeight / 2 - triangleSize / 2;
+        triangleRotation = -90; // 指向左方
+        break;
     }
 
     return {
