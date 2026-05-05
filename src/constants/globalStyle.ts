@@ -1,22 +1,19 @@
 import { StyleSheet } from "react-native";
+import rpx from "@/utils/rpx";
 
 const globalStyle = StyleSheet.create({
-    /** flex 1 */
     flex1: {
         flex: 1,
     },
-    /** 满宽度 flex1 */
     fwflex1: {
         width: "100%",
         flex: 1,
     },
-    /** row 满宽度 flex1 */
     rowfwflex1: {
         width: "100%",
         flex: 1,
         flexDirection: "row",
     },
-    /** 居中 */
     fullCenter: {
         width: "100%",
         flex: 1,
@@ -31,6 +28,16 @@ const globalStyle = StyleSheet.create({
         flexShrink: 0,
         flexGrow: 1,
     },
-} as const);
+    safeArea: {
+        paddingTop: 0,
+        paddingBottom: 0,
+    },
+    screenPadding: {
+        paddingHorizontal: rpx(28),
+    },
+    cardSpacing: {
+        marginBottom: rpx(24),
+    },
+});
 
 export default globalStyle;

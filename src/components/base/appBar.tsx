@@ -25,6 +25,7 @@ import Animated, {
 import Portal from "./portal";
 import ListItem from "./listItem";
 import { IIconName } from "@/components/base/icon.tsx";
+import LinearGradient from "react-native-linear-gradient";
 
 interface IAppBarProps {
     titleTextOpacity?: number;
@@ -46,6 +47,7 @@ interface IAppBarProps {
     contentStyle?: StyleProp<ViewStyle>;
     actionComponent?: ReactNode;
     onBackPress?: () => void;
+    variant?: "default" | "transparent" | "elevated";
 }
 
 const ANIMATION_EASING: Animated.EasingFunction = Easing.out(Easing.exp);
@@ -69,12 +71,13 @@ export default function AppBar(props: IAppBarProps) {
         children,
         actionComponent,
         onBackPress,
+        variant = "default",
     } = props;
 
     const colors = useColors();
     const navigation = useNavigation();
 
-    const bgColor = color(colors.appBar ?? colors.primary).toString();
+    const bgColor = variant === "transparent" ? "transparent" : (color(colors.appBar ?? colors.primary).toString());
     const contentColor = _color ?? colors.appBarText;
 
     const [showMenu, setShowMenu] = useState(false);
@@ -93,17 +96,44 @@ export default function AppBar(props: IAppBarProps) {
     const transformStyle = useAnimatedStyle(() => {
         return {
             opacity: scaleRate.value,
+            transform: [{ scale: scaleRate.value }],
         };
     });
+
+    const getContainerStyle = (): ViewStyle => {
+        switch (variant) {
+            case "transparent":
+                return {
+                    backgroundColor: "transparent",
+                    shadowOffset: { width: 0, height: 0 },
+                    shadowOpacity: 0,
+                    shadowRadius: 0,
+                    elevation: 0,
+                };
+            case "elevated":
+                return {
+                    backgroundColor: colors.appBar,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 8,
+                    elevation: 4,
+                };
+            default:
+                return {
+                    backgroundColor: bgColor,
+                };
+        }
+    };
 
     return (
         <>
             {withStatusBar ? <StatusBar backgroundColor={bgColor} /> : null}
-            <View
+            <LinearGradient
+                colors={[bgColor, bgColor]}
                 style={[
                     styles.container,
+                    getContainerStyle(),
                     containerStyle,
-                    { backgroundColor: bgColor },
                 ]}>
                 <IconButton
                     name="arrow-left"
@@ -161,7 +191,7 @@ export default function AppBar(props: IAppBarProps) {
                         }}
                     />
                 ) : null}
-            </View>
+            </LinearGradient>
             <Portal>
                 {showMenu ? (
                     <TouchableWithoutFeedback
@@ -180,7 +210,7 @@ export default function AppBar(props: IAppBarProps) {
                                 left:
                                     (menuIconLayout?.x ?? 0) +
                                     (menuIconLayout?.width ?? 0) / 2 -
-                                    rpx(10),
+                                    rpx(12),
                                 top:
                                     (menuIconLayout?.y ?? 0) +
                                     (menuIconLayout?.height ?? 0) +
@@ -197,11 +227,11 @@ export default function AppBar(props: IAppBarProps) {
                         style={[
                             {
                                 backgroundColor: colors.background,
-                                right: rpx(24),
+                                right: rpx(28),
                                 top:
                                     (menuIconLayout?.y ?? 0) +
                                     (menuIconLayout?.height ?? 0) +
-                                    rpx(20) +
+                                    rpx(24) +
                                     (menuWithStatusBar
                                         ? OriginalStatusBar.currentHeight ?? 0
                                         : 0),
@@ -218,7 +248,6 @@ export default function AppBar(props: IAppBarProps) {
                                     heightType="small"
                                     onPress={() => {
                                         setShowMenu(false);
-                                        // async
                                         setTimeout(() => {
                                             it.onPress?.();
                                         }, 20);
@@ -239,19 +268,21 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         zIndex: 10000,
-        height: rpx(88),
+        height: rpx(96),
         flexDirection: "row",
         alignItems: "center",
-        paddingHorizontal: rpx(24),
+        paddingHorizontal: rpx(28),
+        borderBottomLeftRadius: rpx(28),
+        borderBottomRightRadius: rpx(28),
     },
     content: {
         flexDirection: "row",
         flexBasis: 0,
         alignItems: "center",
-        paddingHorizontal: rpx(24),
+        paddingHorizontal: rpx(28),
     },
     rightButton: {
-        marginLeft: rpx(28),
+        marginLeft: rpx(32),
     },
     blocker: {
         position: "absolute",
@@ -264,24 +295,24 @@ const styles = StyleSheet.create({
     bubbleCorner: {
         position: "absolute",
         borderColor: "transparent",
-        borderWidth: rpx(10),
+        borderWidth: rpx(12),
         zIndex: 10012,
         transformOrigin: "right top",
         opacity: 0,
     },
     menu: {
-        width: rpx(340),
-        maxHeight: rpx(600),
-        borderRadius: rpx(8),
+        width: rpx(360),
+        maxHeight: rpx(640),
+        borderRadius: rpx(20),
         zIndex: 10011,
         position: "absolute",
         opacity: 0,
         shadowOffset: {
             width: 0,
-            height: 2,
+            height: 8,
         },
-        shadowOpacity: 0.23,
-        shadowRadius: 2.62,
-        elevation: 4,
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
     },
 });

@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import {
     StyleProp,
     StyleSheet,
@@ -20,31 +20,32 @@ import {
 import FastImage from "./fastImage";
 import { ImageStyle } from "react-native-fast-image";
 import Icon, { IIconName } from "@/components/base/icon.tsx";
+import Animated, {
+    useSharedValue,
+    withSpring,
+    useAnimatedStyle,
+} from "react-native-reanimated";
 
 interface IListItemProps {
-    // 是否有左右边距
     withHorizontalPadding?: boolean;
-    // 左边距
     leftPadding?: number;
-    // 右边距
     rightPadding?: number;
-    // height:
     style?: StyleProp<ViewStyle>;
-    // 高度类型
     heightType?: "big" | "small" | "smallest" | "normal" | "none";
     children?: ReactNode;
     onPress?: () => void;
     onLongPress?: () => void;
+    hoverable?: boolean;
 }
 
-const defaultPadding = rpx(24);
-const defaultActionWidth = rpx(80);
+const defaultPadding = rpx(28);
+const defaultActionWidth = rpx(88);
 
 const Size = {
-    big: rpx(120),
-    normal: rpx(108),
-    small: rpx(96),
-    smallest: rpx(72),
+    big: rpx(140),
+    normal: rpx(112),
+    small: rpx(100),
+    smallest: rpx(76),
     none: undefined,
 };
 
@@ -58,7 +59,11 @@ function ListItem(props: IListItemProps) {
         children,
         onPress,
         onLongPress,
+        hoverable = true,
     } = props;
+
+    const [isPressed, setIsPressed] = useState(false);
+    const scale = useSharedValue(1);
 
     const defaultStyle: StyleProp<ViewStyle> = {
         paddingLeft: withHorizontalPadding ? leftPadding : 0,
@@ -68,16 +73,36 @@ function ListItem(props: IListItemProps) {
 
     const colors = useColors();
 
+    const handlePressIn = () => {
+        setIsPressed(true);
+        if (hoverable && onPress) {
+            scale.value = withSpring(0.99, { damping: 30, stiffness: 400 });
+        }
+    };
+
+    const handlePressOut = () => {
+        setIsPressed(false);
+        scale.value = withSpring(1, { damping: 30, stiffness: 400 });
+    };
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ scale: scale.value }],
+    }));
+
     return (
-        <TouchableHighlight
-            style={styles.container}
-            underlayColor={colors.listActive}
-            onPress={onPress}
-            onLongPress={onLongPress}>
-            <View style={[styles.container, defaultStyle, style]}>
-                {children}
-            </View>
-        </TouchableHighlight>
+        <Animated.View style={[animatedStyle]}>
+            <TouchableHighlight
+                style={styles.container}
+                underlayColor={colors.listActive}
+                onPress={onPress}
+                onLongPress={onLongPress}
+                onPressIn={handlePressIn}
+                onPressOut={handlePressOut}>
+                <View style={[styles.container, defaultStyle, style]}>
+                    {children}
+                </View>
+            </TouchableHighlight>
+        </Animated.View>
     );
 }
 
@@ -175,7 +200,7 @@ function ListItemIcon(props: IListItemIconProps) {
     );
 
     return onPress ? (
-        <TouchableOpacity onPress={onPress}>{innerContent}</TouchableOpacity>
+        <TouchableOpacity onPress={onPress} activeOpacity={0.7}>{innerContent}</TouchableOpacity>
     ) : (
         innerContent
     );
@@ -251,7 +276,7 @@ function Content(props: IContentProps) {
     let realDescription;
 
     if (typeof title === "string" || typeof title === "number") {
-        realTitle = <ThemeText numberOfLines={1}>{title}</ThemeText>;
+        realTitle = <ThemeText numberOfLines={1} fontSize="content">{title}</ThemeText>;
     } else {
         realTitle = title;
     }
@@ -300,13 +325,11 @@ export function ListItemHeader(props: { children?: ReactNode }) {
 }
 
 const styles = StyleSheet.create({
-    /** listitem */
     container: {
         width: "100%",
         flexDirection: "row",
         alignItems: "center",
     },
-    /** left */
     actionBase: {
         height: "100%",
         flexShrink: 0,
@@ -318,27 +341,28 @@ const styles = StyleSheet.create({
     },
 
     leftImage: {
-        width: rpx(80),
-        height: rpx(80),
-        borderRadius: rpx(20),
+        width: rpx(88),
+        height: rpx(88),
+        borderRadius: rpx(24),
     },
     imageMask: {
         position: "absolute",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#00000022",
+        backgroundColor: "rgba(0,0,0,0.4)",
     },
     itemContentContainer: {
         flex: 1,
         height: "100%",
         justifyContent: "center",
+        minWidth: 0,
     },
     contentDesc: {
-        marginTop: rpx(16),
+        marginTop: rpx(12),
     },
 
     listItemHeader: {
-        marginTop: rpx(20),
+        marginTop: rpx(24),
     },
 });
 
