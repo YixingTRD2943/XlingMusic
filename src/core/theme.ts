@@ -198,7 +198,7 @@ const themeStore = new GlobalState(darkTheme);
 const backgroundStore = new GlobalState<IBackgroundInfo | null>(null);
 
 function setup() {
-    const currentTheme = Config.getConfig("theme.selectedTheme") ?? "p-dark";
+    const currentTheme = Config.getConfig("theme.selectedTheme") ?? "tech";
 
     const themeMap: Record<string, any> = {
         "p-light": lightTheme,
@@ -215,7 +215,7 @@ function setup() {
         themeStore.setValue({
             id: currentTheme,
             dark: true,
-            colors: (Config.getConfig("theme.colors") as CustomizedColors) ?? darkTheme.colors,
+            colors: (Config.getConfig("theme.colors") as CustomizedColors) ?? techTheme.colors,
         });
     }
 
