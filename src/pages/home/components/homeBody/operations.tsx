@@ -59,17 +59,17 @@ export default function Operations() {
 const styles = StyleSheet.create({
     container: {
         width: rpx(750),
-        paddingHorizontal: rpx(24),
-        marginVertical: rpx(32),
+        paddingHorizontal: rpx(28),
+        marginVertical: rpx(36),
         flexDirection: "row",
         flexWrap: "nowrap",
     },
     actionButtonStyle: {
-        width: rpx(157.5),
-        height: rpx(160),
-        borderRadius: rpx(18),
+        width: rpx(150),
+        height: rpx(168),
+        borderRadius: rpx(28),
     },
     actionMarginLeft: {
-        marginLeft: rpx(24),
+        marginLeft: rpx(28),
     },
 });

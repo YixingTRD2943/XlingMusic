@@ -11,6 +11,7 @@ import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core
 import { musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
 import Icon from "@/components/base/icon.tsx";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function CircularPlayBtn() {
     const progress = useProgress();
@@ -31,7 +32,7 @@ function CircularPlayBtn() {
             }
             duration={100}
             radius={rpx(36)}
-            activeStrokeColor={colors.musicBarText}
+            activeStrokeColor={colors.primary}
             inActiveStrokeColor={colors.textSecondary}>
             <IconButton
                 accessibilityLabel={"播放或暂停歌曲"}
@@ -43,7 +44,7 @@ function CircularPlayBtn() {
                     right: 10,
                     bottom: 10,
                 }}
-                color={colors.musicBarText}
+                color={colors.primary}
                 onPress={async () => {
                     if (isPaused) {
                         await TrackPlayer.play();
@@ -55,6 +56,7 @@ function CircularPlayBtn() {
         </CircularProgressBase>
     );
 }
+
 function MusicBar() {
     const musicItem = useCurrentMusic();
 
@@ -80,19 +82,17 @@ function MusicBar() {
     return (
         <>
             {musicItem && !showKeyboard && (
-                <View
+                <TouchableOpacity
                     style={[
                         style.wrapper,
                         {
                             backgroundColor: colors.musicBar,
-                            paddingRight: safeAreaInsets.right + rpx(24),
+                            paddingRight: safeAreaInsets.right + rpx(28),
+                            shadowColor: colors.shadow,
                         },
                     ]}
                     accessible
                     accessibilityLabel={`歌曲: ${musicItem.title} 歌手: ${musicItem.artist}`}
-                    // onPress={() => {
-                    //     navigate(ROUTE_PATH.MUSIC_DETAIL);
-                    // }}
                 >
                     <MusicInfo musicItem={musicItem} />
                     <View style={style.actionGroup}>
@@ -105,11 +105,11 @@ function MusicBar() {
                             onPress={() => {
                                 showPanel("PlayList");
                             }}
-                            color={colors.musicBarText}
+                            color={colors.text}
                             style={[style.actionIcon]}
                         />
                     </View>
-                </View>
+                </TouchableOpacity>
             )}
         </>
     );
@@ -120,10 +120,17 @@ export default memo(MusicBar, () => true);
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(132),
+        height: rpx(140),
         flexDirection: "row",
         alignItems: "center",
-        paddingRight: rpx(24),
+        paddingRight: rpx(28),
+        paddingHorizontal: rpx(28),
+        borderTopLeftRadius: rpx(28),
+        borderTopRightRadius: rpx(28),
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 12,
+        elevation: 6,
     },
     actionGroup: {
         width: rpx(200),
@@ -132,6 +139,6 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     actionIcon: {
-        marginLeft: rpx(36),
+        marginLeft: rpx(40),
     },
 });
