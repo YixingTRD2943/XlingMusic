@@ -108,7 +108,7 @@ function HomeDrawer(props: any) {
                                 circleBgColor={colors.listActive}
                             />
                             <ListItem.Content title={item.title} />
-                            <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                            <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
                         </ListItem>
                     ))}
                 </View>
@@ -130,7 +130,7 @@ function HomeDrawer(props: any) {
                                 circleBgColor={colors.listActive}
                             />
                             <ListItem.Content title={item.title} />
-                            <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                            <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
                         </ListItem>
                     ))}
                     <ListItem key='language' onPress={() => {
@@ -191,7 +191,7 @@ function HomeDrawer(props: any) {
                             circleBgColor={colors.listActive}
                         />
                         <ListItem.Content title={`${t("common.about")} ${deviceInfoModule.getApplicationName()}`} />
-                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                        <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
                     </ListItem>
                 </View>
 
@@ -208,7 +208,7 @@ function HomeDrawer(props: any) {
                             circleBgColor={colors.listActive}
                         />
                         <ListItem.Content title={t("sidebar.backToDesktop")} />
-                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                        <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
                     </ListItem>
                     <ListItem
                         onPress={async () => {
@@ -223,7 +223,7 @@ function HomeDrawer(props: any) {
                             circleBgColor={colors.listActive}
                         />
                         <ListItem.Content title={t("sidebar.exitApp")} />
-                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                        <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
                     </ListItem>
                 </View>
             </DrawerContentScrollView>
