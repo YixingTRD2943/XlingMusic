@@ -19,6 +19,14 @@ export default function NavBar() {
     return (
         <View style={styles.container}>
             <View style={styles.headerRow}>
+                <IconButton
+                    name="bars-3"
+                    sizeType="normal"
+                    color={colors.text}
+                    onPress={() => {
+                        navigation.openDrawer();
+                    }}
+                />
                 <View style={styles.logoSection}>
                     <Icon 
                         name="musical-note" 
