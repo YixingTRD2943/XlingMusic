@@ -8,7 +8,7 @@ import Animated, {
     withRepeat,
     withTiming,
     Easing,
-    runOnJS,
+    cancelAnimation,
 } from "react-native-reanimated";
 
 interface INote {
@@ -72,10 +72,11 @@ function FloatingNote(props: IFloatingNoteProps) {
     const opacity = useSharedValue(0);
     const scale = useSharedValue(0.5);
     const wobble = useSharedValue(0);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
         if (!isPaused) {
-            const startAnimation = () => {
+            timerRef.current = setTimeout(() => {
                 offsetY.value = withRepeat(
                     withTiming(-note.size, {
                         duration: note.duration,
@@ -107,18 +108,29 @@ function FloatingNote(props: IFloatingNoteProps) {
                     -1,
                     false,
                 );
-            };
-
-            setTimeout(() => {
-                runOnJS(startAnimation)();
             }, note.delay);
+        } else {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+                timerRef.current = null;
+            }
+            cancelAnimation(offsetY);
+            cancelAnimation(opacity);
+            cancelAnimation(scale);
+            cancelAnimation(wobble);
+            opacity.value = withTiming(0, { duration: 300 });
         }
-    }, [isPaused, note.delay, note.size, note.duration, offsetY, opacity, scale, wobble]);
 
-    if (isPaused) {
-        offsetY.value = withTiming(offsetY.value, { duration: 0 });
-        opacity.value = withTiming(0, { duration: 300 });
-    }
+        return () => {
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
+            cancelAnimation(offsetY);
+            cancelAnimation(opacity);
+            cancelAnimation(scale);
+            cancelAnimation(wobble);
+        };
+    }, [isPaused, note]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [

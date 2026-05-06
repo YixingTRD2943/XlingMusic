@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useEffect } from "react";
 import rpx from "@/utils/rpx";
 import { ImgAsset } from "@/constants/assetsConst";
 import FastImage from "@/components/base/fastImage";
@@ -15,6 +15,7 @@ import Animated, {
     withRepeat,
     withTiming,
     Easing,
+    cancelAnimation,
 } from "react-native-reanimated";
 import { musicIsPaused } from "@/utils/trackUtils";
 import FloatingNotes from "./floatingNotes";
@@ -41,15 +42,17 @@ export default function AlbumCover(props: IProps) {
         }
     }, [orientation]);
 
-    if (!isPaused) {
-        rotation.value = withRepeat(
-            withTiming(360, { duration: 20000, easing: Easing.linear }),
-            -1,
-            false,
-        );
-    } else {
-        rotation.value = withTiming(rotation.value, { duration: 0 });
-    }
+    useEffect(() => {
+        if (!isPaused) {
+            rotation.value = withRepeat(
+                withTiming(rotation.value + 360, { duration: 20000, easing: Easing.linear }),
+                -1,
+                false,
+            );
+        } else {
+            cancelAnimation(rotation);
+        }
+    }, [isPaused, rotation]);  
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ rotate: `${rotation.value}deg` }],
