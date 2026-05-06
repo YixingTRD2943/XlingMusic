@@ -164,6 +164,8 @@ interface IListItemIconProps {
     contentStyle?: StyleProp<TextStyle>;
     onPress?: () => void;
     color?: string;
+    circleBg?: boolean;
+    circleBgColor?: string;
 }
 
 function ListItemIcon(props: IListItemIconProps) {
@@ -177,6 +179,8 @@ function ListItemIcon(props: IListItemIconProps) {
         contentStyle,
         onPress,
         color,
+        circleBg = false,
+        circleBgColor,
     } = props;
 
     const colors = useColors();
@@ -188,14 +192,27 @@ function ListItemIcon(props: IListItemIconProps) {
         flexBasis: fixedWidth ? width ?? defaultActionWidth : undefined,
     };
 
-    const innerContent = (
-        <View style={[styles.actionBase, defaultStyle, containerStyle]}>
+    const iconContent = circleBg ? (
+        <View style={[styles.iconCircle, { backgroundColor: circleBgColor || colors.listActive }]}>
             <Icon
                 name={icon}
                 size={iconSize}
                 style={contentStyle}
                 color={color || colors.text}
             />
+        </View>
+    ) : (
+        <Icon
+            name={icon}
+            size={iconSize}
+            style={contentStyle}
+            color={color || colors.text}
+        />
+    );
+
+    const innerContent = (
+        <View style={[styles.actionBase, defaultStyle, containerStyle]}>
+            {iconContent}
         </View>
     );
 
@@ -329,6 +346,8 @@ const styles = StyleSheet.create({
         width: "100%",
         flexDirection: "row",
         alignItems: "center",
+        borderRadius: rpx(24),
+        paddingHorizontal: rpx(20),
     },
     actionBase: {
         height: "100%",
@@ -358,11 +377,18 @@ const styles = StyleSheet.create({
         minWidth: 0,
     },
     contentDesc: {
-        marginTop: rpx(12),
+        marginTop: rpx(6),
     },
 
     listItemHeader: {
         marginTop: rpx(24),
+    },
+    iconCircle: {
+        width: rpx(64),
+        height: rpx(64),
+        borderRadius: rpx(32),
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
 

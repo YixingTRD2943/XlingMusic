@@ -1,5 +1,5 @@
-import Divider from "@/components/base/divider";
 import { IIconName } from "@/components/base/icon.tsx";
+import Icon from "@/components/base/icon";
 import ListItem from "@/components/base/listItem";
 import PageBackground from "@/components/base/pageBackground";
 import ThemeText from "@/components/base/themeText";
@@ -9,6 +9,7 @@ import { useI18N } from "@/core/i18n";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import TrackPlayer from "@/core/trackPlayer";
 import { checkUpdateAndShowResult } from "@/hooks/useCheckUpdate.ts";
+import useColors from "@/hooks/useColors";
 import NativeUtils from "@/native/utils";
 import rpx from "@/utils/rpx";
 import { useScheduleCloseCountDown } from "@/utils/scheduleClose";
@@ -35,6 +36,7 @@ function HomeDrawer(props: any) {
     }
 
     const { t, getSupportedLanguages, getLanguage, setLanguage } = useI18N();
+    const colors = useColors();
 
     const basicSetting: ISettingOptions[] = [
         {
@@ -88,51 +90,50 @@ function HomeDrawer(props: any) {
                     <ThemeText fontSize="appbar" fontWeight="bold">
                         {DeviceInfo.getApplicationName()}
                     </ThemeText>
-                    {/* <IconButton icon={'qrcode-scan'} size={rpx(36)} /> */}
                 </View>
-                <View style={style.card}>
-                    <ListItem withHorizontalPadding heightType="smallest">
-                        <ListItem.ListItemText
-                            fontSize="subTitle"
-                            fontWeight="bold">
-                            {t("common.setting")}
-                        </ListItem.ListItemText>
-                    </ListItem>
+
+                <View style={style.section}>
+                    <ThemeText style={style.sectionTitle} fontSize="subTitle" fontWeight="bold">
+                        {t("common.setting")}
+                    </ThemeText>
                     {basicSetting.map((item, index) => (
                         <ListItem
-                            withHorizontalPadding
                             key={"basic-setting-" + index}
-                            onPress={item.onPress}>
+                            onPress={item.onPress}
+                            style={style.menuItem}>
                             <ListItem.ListItemIcon
                                 icon={item.icon}
-                                width={rpx(48)}
+                                width={rpx(64)}
+                                circleBg
+                                circleBgColor={colors.listActive}
                             />
                             <ListItem.Content title={item.title} />
+                            <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
                         </ListItem>
                     ))}
                 </View>
-                <View style={style.card}>
-                    <ListItem withHorizontalPadding heightType="smallest">
-                        <ListItem.ListItemText
-                            fontSize="subTitle"
-                            fontWeight="bold">
-                            {t("common.other")}
-                        </ListItem.ListItemText>
-                    </ListItem>
+
+                <View style={style.section}>
+                    <ThemeText style={style.sectionTitle} fontSize="subTitle" fontWeight="bold">
+                        {t("common.other")}
+                    </ThemeText>
                     <CountDownItem />
                     {otherSetting.map((item, index) => (
                         <ListItem
-                            withHorizontalPadding
                             key={"other-setting-" + index}
-                            onPress={item.onPress}>
+                            onPress={item.onPress}
+                            style={style.menuItem}>
                             <ListItem.ListItemIcon
                                 icon={item.icon}
-                                width={rpx(48)}
+                                width={rpx(64)}
+                                circleBg
+                                circleBgColor={colors.listActive}
                             />
                             <ListItem.Content title={item.title} />
+                            <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
                         </ListItem>
                     ))}
-                    <ListItem withHorizontalPadding key='language' onPress={() => {
+                    <ListItem key='language' onPress={() => {
                         showDialog("RadioDialog", {
                             "content": getSupportedLanguages().map(item => ({
                                 title: item.name,
@@ -145,80 +146,86 @@ function HomeDrawer(props: any) {
                             },
                             defaultSelected: getLanguage().locale,
                         });
-                    }}>
-                        <ListItem.ListItemIcon icon='language' width={rpx(48)} />
+                    }} style={style.menuItem}>
+                        <ListItem.ListItemIcon icon='language' width={rpx(64)} circleBg circleBgColor={colors.listActive} />
                         <ListItem.Content title={t("sidebar.languageSettings")} />
-                        <ListItem.ListItemText fontSize='subTitle' position='right'>{getLanguage().name}</ListItem.ListItemText>
+                        <ListItem.ListItemText fontSize='subTitle' fontColor='textSecondary' position='right'>{getLanguage().name}</ListItem.ListItemText>
                     </ListItem>
                 </View>
 
-                <View style={style.card}>
-                    <ListItem withHorizontalPadding heightType="smallest">
-                        <ListItem.ListItemText
-                            fontSize="subTitle"
-                            fontWeight="bold">
-                            {t("common.software")}
-                        </ListItem.ListItemText>
-                    </ListItem>
+                <View style={style.section}>
+                    <ThemeText style={style.sectionTitle} fontSize="subTitle" fontWeight="bold">
+                        {t("common.software")}
+                    </ThemeText>
 
                     <ListItem
-                        withHorizontalPadding
                         key={"update"}
                         onPress={() => {
                             checkUpdateAndShowResult(true);
-                        }}>
+                        }}
+                        style={style.menuItem}>
                         <ListItem.ListItemIcon
                             icon={"arrow-path"}
-                            width={rpx(48)}
+                            width={rpx(64)}
+                            circleBg
+                            circleBgColor={colors.listActive}
                         />
                         <ListItem.Content title={t("sidebar.checkUpdate")} />
                         <ListItem.ListItemText
                             position="right"
-                            fontSize="subTitle">
-                            {`${t("sidebar.currentVersion")}${deviceInfoModule.getVersion()}`}
+                            fontSize="subTitle"
+                            fontColor="textSecondary">
+                            {deviceInfoModule.getVersion()}
                         </ListItem.ListItemText>
                     </ListItem>
                     <ListItem
-                        withHorizontalPadding
                         key={"about"}
                         onPress={() => {
                             navigateToSetting("about");
-                        }}>
+                        }}
+                        style={style.menuItem}>
                         <ListItem.ListItemIcon
                             icon={"information-circle"}
-                            width={rpx(48)}
+                            width={rpx(64)}
+                            circleBg
+                            circleBgColor={colors.listActive}
                         />
-                        <ListItem.Content
-                            title={`${t("common.about")} ${deviceInfoModule.getApplicationName()}`}
-                        />
+                        <ListItem.Content title={`${t("common.about")} ${deviceInfoModule.getApplicationName()}`} />
+                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
                     </ListItem>
                 </View>
 
-                <Divider />
-                <ListItem
-                    withHorizontalPadding
-                    onPress={() => {
-                        // 仅安卓生效
-                        BackHandler.exitApp();
-                    }}>
-                    <ListItem.ListItemIcon
-                        icon={"home-outline"}
-                        width={rpx(48)}
-                    />
-                    <ListItem.Content title={t("sidebar.backToDesktop")} />
-                </ListItem>
-                <ListItem
-                    withHorizontalPadding
-                    onPress={async () => {
-                        await TrackPlayer.reset();
-                        NativeUtils.exitApp();
-                    }}>
-                    <ListItem.ListItemIcon
-                        icon={"power-outline"}
-                        width={rpx(48)}
-                    />
-                    <ListItem.Content title={t("sidebar.exitApp")} />
-                </ListItem>
+                <View style={style.section}>
+                    <ListItem
+                        onPress={() => {
+                            BackHandler.exitApp();
+                        }}
+                        style={style.menuItem}>
+                        <ListItem.ListItemIcon
+                            icon={"home-outline"}
+                            width={rpx(64)}
+                            circleBg
+                            circleBgColor={colors.listActive}
+                        />
+                        <ListItem.Content title={t("sidebar.backToDesktop")} />
+                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                    </ListItem>
+                    <ListItem
+                        onPress={async () => {
+                            await TrackPlayer.reset();
+                            NativeUtils.exitApp();
+                        }}
+                        style={style.menuItem}>
+                        <ListItem.ListItemIcon
+                            icon={"power-outline"}
+                            width={rpx(64)}
+                            circleBg
+                            circleBgColor={colors.listActive}
+                        />
+                        <ListItem.Content title={t("sidebar.exitApp")} />
+                        <Icon name="chevron-right" size={rpx(32)} color={colors.textSecondary} />
+                    </ListItem>
+                </View>
             </DrawerContentScrollView>
         </>
     );
@@ -233,6 +240,7 @@ const style = StyleSheet.create({
     },
     scrollWrapper: {
         paddingTop: rpx(12),
+        paddingHorizontal: rpx(20),
     },
 
     header: {
@@ -242,15 +250,22 @@ const style = StyleSheet.create({
         justifyContent: "space-between",
         alignItems: "center",
         marginLeft: rpx(24),
+        marginBottom: rpx(16),
     },
-    card: {
+    section: {
         marginBottom: rpx(24),
     },
-    cardContent: {
-        paddingHorizontal: 0,
+    sectionTitle: {
+        paddingHorizontal: rpx(20),
+        paddingVertical: rpx(12),
+        color: "#999",
+    },
+    menuItem: {
+        backgroundColor: "rgba(255,255,255,0.08)",
+        marginBottom: rpx(12),
+        height: rpx(96),
     },
 
-    /** 倒计时 */
     countDownText: {
         height: ITEM_HEIGHT,
         textAlignVertical: "center",
@@ -260,16 +275,17 @@ const style = StyleSheet.create({
 function _CountDownItem() {
     const countDown = useScheduleCloseCountDown();
     const { t } = useI18N();
+    const colors = useColors();
 
     return (
         <ListItem
-            withHorizontalPadding
             onPress={() => {
                 showPanel("TimingClose");
-            }}>
-            <ListItem.ListItemIcon icon="alarm-outline" width={rpx(48)} />
+            }}
+            style={style.menuItem}>
+            <ListItem.ListItemIcon icon="alarm-outline" width={rpx(64)} circleBg circleBgColor={colors.listActive} />
             <ListItem.Content title={t("sidebar.scheduleClose")} />
-            <ListItem.ListItemText position="right" fontSize="subTitle">
+            <ListItem.ListItemText position="right" fontSize="subTitle" fontColor="textSecondary">
                 {countDown ? timeformat(countDown) : ""}
             </ListItem.ListItemText>
         </ListItem>
