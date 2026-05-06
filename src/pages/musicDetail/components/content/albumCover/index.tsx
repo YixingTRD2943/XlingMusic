@@ -4,11 +4,20 @@ import { ImgAsset } from "@/constants/assetsConst";
 import FastImage from "@/components/base/fastImage";
 import useOrientation from "@/hooks/useOrientation";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import { useCurrentMusic } from "@/core/trackPlayer";
+import { useCurrentMusic, useMusicState } from "@/core/trackPlayer";
 import globalStyle from "@/constants/globalStyle";
-import { View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Operations from "./operations";
 import { showPanel } from "@/components/panels/usePanel.ts";
+import Animated, {
+    useSharedValue,
+    useAnimatedStyle,
+    withRepeat,
+    withTiming,
+    Easing,
+} from "react-native-reanimated";
+import { musicIsPaused } from "@/utils/trackUtils";
+import FloatingNotes from "./floatingNotes";
 
 interface IProps {
     onTurnPageClick?: () => void;
@@ -19,20 +28,32 @@ export default function AlbumCover(props: IProps) {
 
     const musicItem = useCurrentMusic();
     const orientation = useOrientation();
+    const musicState = useMusicState();
+    const isPaused = musicIsPaused(musicState);
 
-    const artworkStyle = useMemo(() => {
+    const rotation = useSharedValue(0);
+
+    const artworkSize = useMemo(() => {
         if (orientation === "vertical") {
-            return {
-                width: rpx(500),
-                height: rpx(500),
-            };
+            return rpx(500);
         } else {
-            return {
-                width: rpx(260),
-                height: rpx(260),
-            };
+            return rpx(260);
         }
     }, [orientation]);
+
+    if (!isPaused) {
+        rotation.value = withRepeat(
+            withTiming(360, { duration: 20000, easing: Easing.linear }),
+            -1,
+            false,
+        );
+    } else {
+        rotation.value = withTiming(rotation.value, { duration: 0 });
+    }
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ rotate: `${rotation.value}deg` }],
+    }));
 
     const longPress = Gesture.LongPress()
         .onStart(() => {
@@ -54,16 +75,36 @@ export default function AlbumCover(props: IProps) {
 
     return (
         <>
-            <GestureDetector gesture={combineGesture}>
-                <View style={globalStyle.fullCenter}>
-                    <FastImage
-                        style={artworkStyle}
-                        source={musicItem?.artwork}
-                        placeholderSource={ImgAsset.albumDefault}
-                    />
+            <View style={globalStyle.fullCenter}>
+                <View style={[styles.albumWrapper, { width: artworkSize, height: artworkSize }]}>
+                    <GestureDetector gesture={combineGesture}>
+                        <Animated.View style={animatedStyle}>
+                            <FastImage
+                                style={[styles.albumCover, { width: artworkSize, height: artworkSize }]}
+                                source={musicItem?.artwork}
+                                placeholderSource={ImgAsset.albumDefault}
+                            />
+                        </Animated.View>
+                    </GestureDetector>
+                    <FloatingNotes isPaused={isPaused} size={artworkSize} />
                 </View>
-            </GestureDetector>
+            </View>
             <Operations />
         </>
     );
 }
+
+const styles = StyleSheet.create({
+    albumWrapper: {
+        borderRadius: rpx(250),
+        overflow: "hidden",
+        shadowColor: "rgba(0, 0, 0, 0.5)",
+        shadowOffset: { width: 0, height: 20 },
+        shadowOpacity: 0.5,
+        shadowRadius: 30,
+        elevation: 20,
+    },
+    albumCover: {
+        borderRadius: rpx(250),
+    },
+});
