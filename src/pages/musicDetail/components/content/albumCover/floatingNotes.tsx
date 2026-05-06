@@ -152,7 +152,7 @@ function FloatingNote(props: IFloatingNoteProps) {
                 },
             ]}>
             <Icon
-                name="music"
+                name="musical-note"
                 size={note.size}
                 color="rgba(255, 255, 255, 0.6)"
             />
