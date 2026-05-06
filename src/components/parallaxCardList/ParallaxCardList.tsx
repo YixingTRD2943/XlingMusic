@@ -97,8 +97,8 @@ function ParallaxCard({ index, totalCount, scrollY, children, style }: ParallaxC
             shadowColor: "#000",
             shadowOpacity,
             shadowRadius,
-            shadowOffset: { width: 0, height: scale.value * 8 },
-            zIndex: Math.round(scale.value * 100) + (totalCount - index),
+            shadowOffset: { width: 0, height: scale * 8 },
+            zIndex: Math.round(scale * 100) + (totalCount - index),
         };
     });
 
@@ -170,7 +170,7 @@ export default function ParallaxCardList({
     const scrollHandler = useAnimatedScrollHandler({
         onScroll: (event) => {
             scrollY.value = event.contentOffset.y;
-            lastVelocity.current = event.velocity.y;
+            lastVelocity.current = event.velocity?.y ?? 0;
         },
         onEndDrag: () => {
             // 惯性滚动结束后的弹性回弹效果
@@ -207,16 +207,11 @@ export default function ParallaxCardList({
     });
 
     const flingGesture = Gesture.Fling()
-        .onStart((event) => {
-            const velocity = event.velocityY;
-            const momentum = velocity * 50;
-      
+        .onStart(() => {
             if (scrollRef.current) {
                 const currentScrollY = scrollY.value;
-                const targetY = Math.max(0, currentScrollY + momentum);
-        
                 scrollRef.current.scrollTo({
-                    y: targetY,
+                    y: currentScrollY,
                     animated: true,
                 });
             }

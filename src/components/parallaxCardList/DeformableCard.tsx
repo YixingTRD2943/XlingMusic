@@ -134,7 +134,6 @@ export default function DeformableCard({ children, style, onDragEnd }: Deformabl
                         animatedStyle,
                         style,
                     ]}
-                    activeOpacity={0.95}
                 >
                     {children}
                 </Animated.View>
