@@ -1,4 +1,4 @@
-package `fun`.upup.musicfree.utils; // replace your-apps-package-name with your app’s package name
+package fun.upup.musicfree.utils; // replace your-apps-package-name with your app's package name
 import android.Manifest
 import android.content.Context
 import android.content.Intent

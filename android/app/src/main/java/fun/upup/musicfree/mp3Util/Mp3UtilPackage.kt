@@ -1,4 +1,4 @@
-package `fun`.upup.musicfree.mp3Util
+package fun.upup.musicfree.mp3Util
 
 import android.view.View
 import com.facebook.react.ReactPackage

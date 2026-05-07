@@ -1,4 +1,4 @@
-package `fun`.upup.musicfree
+package fun.upup.musicfree
 import expo.modules.ReactActivityDelegateWrapper
 
 import com.facebook.react.ReactActivity

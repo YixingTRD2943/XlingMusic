@@ -1,4 +1,4 @@
-package `fun`.upup.musicfree.lyricUtil
+package fun.upup.musicfree.lyricUtil
 
 import android.app.Activity
 import android.content.Context

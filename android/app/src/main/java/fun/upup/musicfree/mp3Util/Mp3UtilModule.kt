@@ -1,4 +1,4 @@
-package `fun`.upup.musicfree.mp3Util
+package fun.upup.musicfree.mp3Util
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
