@@ -1,0 +1,73 @@
+name: iOS 构建
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Install CocoaPods
+        run: |
+          cd ios
+          pod install --repo-update
+
+      - name: Create Export Options Plist
+        run: |
+          cat > ios/ExportOptions.plist << 'EOF'
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>method</key>
+    <string>development</string>
+    <key>uploadBitcode</key>
+    <false/>
+    <key>compileBitcode</key>
+    <false/>
+    <key>uploadSymbols</key>
+    <false/>
+</dict>
+</plist>
+EOF
+
+      - name: Build iOS Archive
+        run: |
+          xcodebuild archive \
+            -workspace ios/MusicFree.xcworkspace \
+            -scheme MusicFree \
+            -configuration Release \
+            -archivePath build/MusicFree.xcarchive \
+            -destination 'generic/platform=iOS' \
+            SKIP_INSTALL=NO
+
+      - name: Export IPA
+        run: |
+          xcodebuild -exportArchive \
+            -archivePath build/MusicFree.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist ios/ExportOptions.plist \
+            -allowProvisioningUpdates
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: MusicFree-iOS-${{ github.sha }}
+          path: build/ipa/*.ipa
+          retention-days: 7

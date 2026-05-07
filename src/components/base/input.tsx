@@ -13,10 +13,11 @@ interface IInputProps extends TextInputProps {
     fontColor?: string;
     hasHorizontalPadding?: boolean;
     onFocusChange?: (focused: boolean) => void;
+    numberOfLines?: number;
 }
 
 export default function Input(props: IInputProps) {
-    const { fontColor, hasHorizontalPadding = true, onFocusChange, ...restProps } = props;
+    const { fontColor, hasHorizontalPadding = true, onFocusChange, numberOfLines = 1, ...restProps } = props;
     const colors = useColors();
     const [isFocused, setIsFocused] = useState(false);
     const scale = useSharedValue(1);
@@ -25,6 +26,9 @@ export default function Input(props: IInputProps) {
 
     const defaultStyle = {
         color: currentColor,
+        numberOfLines,
+        textAlignVertical: "center" as const,
+        includeFontPadding: false,
     };
 
     const handleFocus = () => {
