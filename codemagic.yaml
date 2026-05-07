@@ -1,28 +1,40 @@
 workflows:
-  android-workflow:
-    name: Android Build
+  react-native-android:
+    name: Android Release Build
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      flutter: stable
-      node: 18.20.3
+      groups:
+        - android
     scripts:
       - npm install
       - cd android && ./gradlew assembleRelease --no-daemon
     artifacts:
       - android/app/build/outputs/apk/release/*.apk
+    publishing:
+      email:
+        recipients:
+          - user@example.com
 
-  ios-workflow:
-    name: iOS Build
+  react-native-ios:
+    name: iOS Release Build
     max_build_duration: 120
     instance_type: mac_mini_m2
     environment:
-      flutter: stable
-      node: 18.20.3
+      groups:
+        - apple
+      vars:
+        BUNDLE_ID: "fun.upup.musicfree"
+        XCODE_WORKSPACE: "MusicFree.xcworkspace"
+        XCODE_SCHEME: "MusicFree"
     scripts:
       - npm install
       - cd ios && pod install --repo-update
-      - xcodebuild archive -workspace ios/MusicFree.xcworkspace -scheme MusicFree -configuration Release -archivePath build/MusicFree.xcarchive -destination 'generic/platform=iOS' SKIP_INSTALL=NO
+      - xcodebuild archive -workspace ios/$XCODE_WORKSPACE -scheme $XCODE_SCHEME -configuration Release -archivePath build/MusicFree.xcarchive -destination 'generic/platform=iOS' SKIP_INSTALL=NO
       - xcodebuild -exportArchive -archivePath build/MusicFree.xcarchive -exportPath build/ipa -exportOptionsPlist ios/ExportOptions.plist -allowProvisioningUpdates
     artifacts:
       - build/ipa/*.ipa
+    publishing:
+      email:
+        recipients:
+          - user@example.com
