@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import NavBar from "@/components/base/appBar";
-import MusicBar from "@/components/musicBar";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeDrawer from "@/pages/home/components/drawer";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -78,7 +77,7 @@ function Profile() {
                     </ScrollView>
                 </>
             </HorizontalSafeAreaView>
-            <MusicBar />
+
         </SafeAreaView>
     );
 }
