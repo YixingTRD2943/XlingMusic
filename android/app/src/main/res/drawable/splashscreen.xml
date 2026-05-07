@@ -1,3 +1,40 @@
- <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@color/splashscreen_background"/>
- </layer-list>
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splashscreen_background" />
+    
+    <item>
+        <bitmap
+            android:src="@drawable/splashscreen_image"
+            android:gravity="center"
+            android:width="180dp"
+            android:height="180dp" />
+    </item>
+    
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#ffffff" />
+            <size
+                android:width="180dp"
+                android:height="180dp" />
+        </shape>
+    </item>
+    
+    <item>
+        <bitmap
+            android:src="@drawable/splashscreen_image"
+            android:gravity="center"
+            android:width="160dp"
+            android:height="160dp" />
+    </item>
+    
+    <item
+        android:bottom="60dp"
+        android:gravity="bottom|center">
+        <shape>
+            <padding
+                android:bottom="16dp"
+                android:left="32dp"
+                android:right="32dp" />
+        </shape>
+    </item>
+</layer-list>
