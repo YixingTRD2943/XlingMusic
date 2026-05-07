@@ -5,7 +5,7 @@ import NavBar from "./components/navBar";
 import MusicBar, { MusicBarVisibilityState } from "@/components/musicBar";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeDrawer from "./components/drawer";
-import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import StatusBar from "@/components/base/statusBar";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import globalStyle from "@/constants/globalStyle";
@@ -18,7 +18,6 @@ import Profile from "@/pages/profile";
 import rpx from "@/utils/rpx";
 
 const MUSIC_BAR_HEIGHT = rpx(140);
-const NAV_BAR_HEIGHT = rpx(144);
 
 function HomeContent() {
     const orientation = useOrientation();
@@ -52,8 +51,6 @@ function HomeWithDrawer() {
     const [activeTab, setActiveTab] = useState<TabType>("home");
     const [musicBarVisible, setMusicBarVisible] = useState(false);
     const [musicBarExpanded, setMusicBarExpanded] = useState(false);
-    
-    const safeAreaInsets = useSafeAreaInsets();
 
     const handleTabChange = (tab: TabType) => {
         setActiveTab(tab);
@@ -65,17 +62,17 @@ function HomeWithDrawer() {
     }, []);
 
     const contentBottomPadding = useCallback(() => {
-        let padding = NAV_BAR_HEIGHT + safeAreaInsets.bottom;
-        const navBarHeight = rpx(110) + rpx(34);  // 底部导航栏高度 + 安全区域
+        let padding = 0;
+        const navBarHeight = rpx(110);  // 底部导航栏高度
         padding += navBarHeight;
         if (musicBarVisible) {
             padding += musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
         }
         return padding;
-    }, [musicBarVisible, musicBarExpanded, safeAreaInsets.bottom]);
+    }, [musicBarVisible, musicBarExpanded]);
 
     return (
-        <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
+        <SafeAreaView edges={["top"]} style={styles.appWrapper}>
             <HomeStatusBar />
             <HorizontalSafeAreaView style={[globalStyle.flex1, { paddingBottom: contentBottomPadding() }]}>
                 {activeTab === "home" ? (
