@@ -63,7 +63,7 @@ function HomeWithDrawer() {
 
     const contentBottomPadding = useCallback(() => {
         let padding = 0;
-        const navBarHeight = rpx(110);  // 底部导航栏高度
+        const navBarHeight = rpx(110) + rpx(34);  // 底部导航栏高度 + 安全区域
         padding += navBarHeight;
         if (musicBarVisible) {
             padding += musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: rpx(110),
+        bottom: rpx(110) + rpx(34),
         zIndex: 1001,
     },
 });
