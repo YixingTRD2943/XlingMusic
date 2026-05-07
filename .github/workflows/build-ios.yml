@@ -37,6 +37,8 @@ jobs:
 <dict>
     <key>method</key>
     <string>development</string>
+    <key>teamID</key>
+    <string>ozpo-fbxn-ejfc-lgyw</string>
     <key>uploadBitcode</key>
     <false/>
     <key>compileBitcode</key>
@@ -55,6 +57,7 @@ EOF
             -configuration Release \
             -archivePath build/MusicFree.xcarchive \
             -destination 'generic/platform=iOS' \
+            -allowProvisioningUpdates \
             SKIP_INSTALL=NO
 
       - name: Export IPA
