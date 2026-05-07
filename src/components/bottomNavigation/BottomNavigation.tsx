@@ -93,8 +93,12 @@ export default function BottomNavigation({ activeTab, onTabChange, bottomOffset 
             label: "我的",
             icon: (
                 <View style={styles.profileIcon}>
-                    <View style={[styles.profileIconCircle, { borderColor: colors.text }]} />
-                    <View style={[styles.profileIconDot, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconHead, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconBody, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconArmLeft, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconArmRight, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconLegLeft, { backgroundColor: colors.text }]} />
+                    <View style={[styles.profileIconLegRight, { backgroundColor: colors.text }]} />
                 </View>
             ),
         },
@@ -188,25 +192,60 @@ const styles = StyleSheet.create({
         transform: [{ translateX: rpx(-6) }],
     },
     profileIcon: {
-        width: rpx(32),
-        height: rpx(32),
+        width: rpx(36),
+        height: rpx(40),
         position: "relative",
         alignItems: "center",
         justifyContent: "center",
     },
-    profileIconCircle: {
-        width: rpx(28),
-        height: rpx(28),
-        borderRadius: rpx(14),
-        borderWidth: 3,
+    profileIconHead: {
+        width: rpx(14),
+        height: rpx(14),
+        borderRadius: rpx(7),
         position: "absolute",
+        top: 0,
     },
-    profileIconDot: {
-        width: rpx(8),
-        height: rpx(8),
-        borderRadius: rpx(4),
+    profileIconBody: {
+        width: rpx(12),
+        height: rpx(16),
+        borderRadius: rpx(6),
         position: "absolute",
-        bottom: 0,
+        top: rpx(13),
+    },
+    profileIconArmLeft: {
+        width: rpx(5),
+        height: rpx(12),
+        borderRadius: rpx(3),
+        position: "absolute",
+        top: rpx(14),
+        left: 0,
+        transform: [{ rotate: "-15deg" }],
+    },
+    profileIconArmRight: {
+        width: rpx(5),
+        height: rpx(12),
+        borderRadius: rpx(3),
+        position: "absolute",
+        top: rpx(14),
         right: 0,
+        transform: [{ rotate: "15deg" }],
+    },
+    profileIconLegLeft: {
+        width: rpx(5),
+        height: rpx(12),
+        borderRadius: rpx(3),
+        position: "absolute",
+        top: rpx(27),
+        left: rpx(4),
+        transform: [{ rotate: "-5deg" }],
+    },
+    profileIconLegRight: {
+        width: rpx(5),
+        height: rpx(12),
+        borderRadius: rpx(3),
+        position: "absolute",
+        top: rpx(27),
+        right: rpx(4),
+        transform: [{ rotate: "5deg" }],
     },
 });
