@@ -143,7 +143,6 @@ function MusicBar({ onVisibilityChange, shouldHide = false }: MusicBarProps) {
                             {
                                 backgroundColor: colors.musicBar,
                                 paddingRight: safeAreaInsets.right + rpx(28),
-                                paddingBottom: safeAreaInsets.bottom,
                                 shadowColor: colors.shadow,
                             },
                         ]}
