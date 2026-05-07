@@ -26,6 +26,7 @@ import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-nati
 import i18n from "@/core/i18n";
 import bootstrapAtom from "./bootstrap.atom";
 import { getDefaultStore } from "jotai";
+import PermissionManager from "@/utils/permissionManager";
 
 
 // 依赖管理
@@ -71,6 +72,15 @@ async function bootstrapImpl() {
             await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
         }
     }
+    
+    // 检查通知权限
+    if (Platform.OS === "android" && Platform.Version >= 33) {
+        const notificationStatus = await PermissionManager.checkPermission("notification");
+        if (!notificationStatus.hasPermission && notificationStatus.canAskAgain) {
+            await PermissionManager.requestPermission("notification");
+        }
+    }
+    
     logger.mark("权限检查完成");
 
     // 2. 数据初始化

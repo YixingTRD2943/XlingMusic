@@ -18,6 +18,7 @@ import { clearLog, getErrorLogContent } from "@/utils/log";
 import { qualityKeys } from "@/utils/qualities";
 import rpx from "@/utils/rpx";
 import Toast from "@/utils/toast";
+import PermissionManager from "@/utils/permissionManager";
 import Clipboard from "@react-native-clipboard/clipboard";
 import Slider from "@react-native-community/slider";
 import React, { useCallback, useEffect, useRef, useState } from "react";
@@ -406,7 +407,7 @@ export default function BasicSetting() {
                 createSwitch(
                     t("basicSettings.useCelluarNetworkPlay"),
                     "basic.useCelluarNetworkPlay",
-                    useCelluarNetworkPlay ?? false,
+                    useCelluarNetworkPlay ?? true,
                 ),
                 createSwitch(
                     t("basicSettings.useCelluarNetworkDownload"),
@@ -703,28 +704,36 @@ function LyricSetting() {
         async newValue => {
             try {
                 if (newValue) {
-                    const hasPermission =
-                        await LyricUtil.checkSystemAlertPermission();
-
-                    if (hasPermission) {
-                        const statusBarLyricConfig = {
-                            topPercent: Config.getConfig("lyric.topPercent"),
-                            leftPercent: Config.getConfig("lyric.leftPercent"),
-                            align: Config.getConfig("lyric.align"),
-                            color: Config.getConfig("lyric.color"),
-                            backgroundColor: Config.getConfig("lyric.backgroundColor"),
-                            widthPercent: Config.getConfig("lyric.widthPercent"),
-                            fontSize: Config.getConfig("lyric.fontSize"),
-                        };
-                        LyricUtil.showStatusBarLyric(
-                            "MusicFree",
-                            statusBarLyricConfig ?? {}
-                        );
-                        Config.setConfig("lyric.showStatusBarLyric", true);
-                    } else {
-                        LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn(t("toast.noFloatWindowPermission"));
-                        });
+                    // 使用 PermissionManager 来确保权限
+                    const success = await PermissionManager.withPermission(
+                        "floatWindow",
+                        async () => {
+                            const statusBarLyricConfig = {
+                                topPercent: Config.getConfig("lyric.topPercent"),
+                                leftPercent: Config.getConfig("lyric.leftPercent"),
+                                align: Config.getConfig("lyric.align"),
+                                color: Config.getConfig("lyric.color"),
+                                backgroundColor: Config.getConfig("lyric.backgroundColor"),
+                                widthPercent: Config.getConfig("lyric.widthPercent"),
+                                fontSize: Config.getConfig("lyric.fontSize"),
+                            };
+                            await LyricUtil.showStatusBarLyric(
+                                "MusicFree",
+                                statusBarLyricConfig ?? {}
+                            );
+                            Config.setConfig("lyric.showStatusBarLyric", true);
+                            return true;
+                        },
+                        {
+                            rationaleTitle: "需要悬浮窗权限",
+                            rationaleMessage: "我们需要悬浮窗权限来显示桌面歌词",
+                            errorMessage: t("toast.noFloatWindowPermission"),
+                        }
+                    );
+                    
+                    if (!success) {
+                        // 如果没有权限，重新设置开关状态
+                        Config.setConfig("lyric.showStatusBarLyric", false);
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();

@@ -180,6 +180,11 @@ class AppConfig implements IAppConfig {
                 },
             ]));
         }
+
+        // 默认打开使用移动网络播放
+        if (!configStore.contains("basic.useCelluarNetworkPlay")) {
+            configStore.set("basic.useCelluarNetworkPlay", JSON.stringify(true));
+        }
     }
 
     setConfig<K extends keyof IAppConfigProperties>(

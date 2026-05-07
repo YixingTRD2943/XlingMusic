@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
 
 import NavBar from "./components/navBar";
@@ -13,25 +13,21 @@ import Theme from "@/core/theme";
 import HomeBody from "./components/homeBody";
 import HomeBodyHorizontal from "./components/homeBodyHorizontal";
 import useOrientation from "@/hooks/useOrientation";
+import BottomNavigation, { TabType } from "@/components/bottomNavigation/BottomNavigation";
+import Profile from "@/pages/profile";
 
-function Home() {
+function HomeContent() {
     const orientation = useOrientation();
 
     return (
-        <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
-            <HomeStatusBar />
-            <HorizontalSafeAreaView style={globalStyle.flex1}>
-                <>
-                    <NavBar />
-                    {orientation === "vertical" ? (
-                        <HomeBody />
-                    ) : (
-                        <HomeBodyHorizontal />
-                    )}
-                </>
-            </HorizontalSafeAreaView>
-            <MusicBar />
-        </SafeAreaView>
+        <>
+            <NavBar />
+            {orientation === "vertical" ? (
+                <HomeBody />
+            ) : (
+                <HomeBodyHorizontal />
+            )}
+        </>
     );
 }
 
@@ -46,20 +42,31 @@ function HomeStatusBar() {
     );
 }
 
-// function Body() {
-//     const orientation = useOrientation();
-//     return (
-//         <ScrollView
-//             style={[
-//                 styles.appWrapper,
-//                 orientation === 'horizontal' ? styles.flexRow : null,
-//             ]}>
-//             <Operations orientation={orientation} />
-//         </ScrollView>
-//     );
-// }
-
 const LeftDrawer = createDrawerNavigator();
+
+function HomeWithDrawer({ _navigation }: { _navigation: any }) {
+    const [activeTab, setActiveTab] = useState<TabType>("home");
+
+    const handleTabChange = (tab: TabType) => {
+        setActiveTab(tab);
+    };
+
+    return (
+        <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
+            <HomeStatusBar />
+            <HorizontalSafeAreaView style={globalStyle.flex1}>
+                {activeTab === "home" ? (
+                    <HomeContent />
+                ) : (
+                    <Profile />
+                )}
+            </HorizontalSafeAreaView>
+            <MusicBar />
+            <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+        </SafeAreaView>
+    );
+}
+
 export default function App() {
     return (
         <LeftDrawer.Navigator
@@ -71,7 +78,7 @@ export default function App() {
             }}
             initialRouteName="HOME-MAIN"
             drawerContent={props => <HomeDrawer {...props} />}>
-            <LeftDrawer.Screen name="HOME-MAIN" component={Home} />
+            <LeftDrawer.Screen name="HOME-MAIN" component={HomeWithDrawer} />
         </LeftDrawer.Navigator>
     );
 }

@@ -9,10 +9,11 @@ import { useI18N } from "@/core/i18n";
 import LyricUtil from "@/native/lyricUtil";
 import NativeUtils from "@/native/utils";
 import rpx from "@/utils/rpx";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { AppState, StyleSheet } from "react-native";
+import PermissionManager from "@/utils/permissionManager";
 
-type IPermissionTypes = "floatingWindow" | "fileStorage";
+type IPermissionTypes = "floatingWindow" | "fileStorage" | "notification";
 
 export default function Permissions() {
     const appState = useRef(AppState.currentState);
@@ -21,29 +22,30 @@ export default function Permissions() {
     >({
         floatingWindow: false,
         fileStorage: false,
-        // background: false,
+        notification: false,
     });
     const { t } = useI18N();
 
-    async function checkPermission(type?: IPermissionTypes) {
-        let newPermission = {
-            ...permissions,
-        };
+    const checkPermission = useCallback(async (type?: IPermissionTypes) => {
+        let newPermission = { ...permissions };
+        
         if (!type || type === "floatingWindow") {
             const hasPermission = await LyricUtil.checkSystemAlertPermission();
             newPermission.floatingWindow = hasPermission;
         }
+        
         if (!type || type === "fileStorage") {
             const hasPermission = await NativeUtils.checkStoragePermission();
-            console.log("HAS", hasPermission);
             newPermission.fileStorage = hasPermission;
         }
-        // if (!type || type === 'background') {
-
-        // }
+        
+        if (!type || type === "notification") {
+            const status = await PermissionManager.checkPermission("notification");
+            newPermission.notification = status.hasPermission;
+        }
 
         setPermissions(newPermission);
-    }
+    }, [permissions]);
 
     useEffect(() => {
         checkPermission();
@@ -56,15 +58,24 @@ export default function Permissions() {
                 ) {
                     checkPermission();
                 }
-
                 appState.current = nextAppState;
-            },
+            }
         );
-
         return () => {
             subscription.remove();
         };
-    }, []);
+    }, [checkPermission]);
+
+    const handleRequestNotification = async () => {
+        const hasPermission = await PermissionManager.requestPermission("notification");
+        if (!hasPermission) {
+            const status = await PermissionManager.checkPermission("notification");
+            if (!status.canAskAgain) {
+                PermissionManager.openSettings();
+            }
+        }
+        checkPermission("notification");
+    };
 
     return (
         <VerticalSafeAreaView style={globalStyle.fwflex1}>
@@ -73,6 +84,18 @@ export default function Permissions() {
             <ThemeText style={styles.description}>
                 {t("permissionSetting.description")}
             </ThemeText>
+            
+            <ListItem
+                withHorizontalPadding
+                heightType="big"
+                onPress={handleRequestNotification}>
+                <ListItem.Content
+                    title="通知权限"
+                    description="用以显示播放控制和消息通知"
+                />
+                <ThemeSwitch value={permissions.notification} />
+            </ListItem>
+            
             <ListItem
                 withHorizontalPadding
                 heightType="big"
@@ -85,6 +108,7 @@ export default function Permissions() {
                 />
                 <ThemeSwitch value={permissions.floatingWindow} />
             </ListItem>
+            
             <ListItem
                 withHorizontalPadding
                 heightType="big"
@@ -97,12 +121,6 @@ export default function Permissions() {
                 />
                 <ThemeSwitch value={permissions.fileStorage} />
             </ListItem>
-            {/* <ListItem withHorizontalPadding heightType="big">
-                <ListItem.Content
-                    title="后台运行"
-                    description="用以在后台播放音乐"></ListItem.Content>
-                <ThemeSwitch value={permissions.background}></ThemeSwitch>
-            </ListItem> */}
         </VerticalSafeAreaView>
     );
 }
