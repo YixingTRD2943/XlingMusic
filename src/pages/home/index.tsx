@@ -89,7 +89,7 @@ function HomeWithDrawer() {
                     visible={true}
                 />
             </View>
-            <View style={[styles.musicBarContainer, { bottom: rpx(110) + rpx(34) }]}>
+            <View style={[styles.musicBarContainer, { bottom: rpx(110) - rpx(20) }]}>
                 <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
             </View>
         </SafeAreaView>
