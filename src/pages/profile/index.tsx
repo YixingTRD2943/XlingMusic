@@ -27,7 +27,7 @@ function Profile() {
         { icon: "arrow-down-tray", title: "下载管理", onPress: () => navigate(ROUTE_PATH.DOWNLOADING) },
         { icon: "folder-music-outline", title: "本地音乐", onPress: () => navigate(ROUTE_PATH.LOCAL) },
         { icon: "bookmark-square", title: "收藏歌单", onPress: () => {} },
-        { icon: "cog-8-tooth", title: "设置", onPress: () => navigate(ROUTE_PATH.SETTING) },
+        { icon: "cog-8-tooth", title: "设置", onPress: () => navigate(ROUTE_PATH.SETTING, { type: "basic" }) },
     ];
 
     return (

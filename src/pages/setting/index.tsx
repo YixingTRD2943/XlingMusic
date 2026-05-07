@@ -9,23 +9,24 @@ import AppBar from "@/components/base/appBar";
 import { useI18N } from "@/core/i18n";
 
 export default function Setting() {
-    const { type } = useParams<"setting">();
-    const settingItem = settingTypes[type];
+    const params = useParams<"setting">();
+    const type = params?.type || "basic";
+    const settingItem = settingTypes[type] || settingTypes.basic;
 
     const { t } = useI18N();
 
     return (
         <SafeAreaView edges={["bottom", "top"]} style={style.wrapper}>
             <StatusBar />
-            {settingItem.showNav === false ? null : (
-                <AppBar>{t(settingItem.i18nKey as any)}</AppBar>
+            {settingItem?.showNav === false ? null : (
+                <AppBar>{t(settingItem?.i18nKey as any)}</AppBar>
             )}
 
-            {type === "plugin" ? (
+            {settingItem?.component && type === "plugin" ? (
                 <settingItem.component />
             ) : (
                 <HorizontalSafeAreaView style={style.wrapper}>
-                    <settingItem.component />
+                    {settingItem?.component && <settingItem.component />}
                 </HorizontalSafeAreaView>
             )}
         </SafeAreaView>
