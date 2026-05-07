@@ -17,5 +17,5 @@ rootProject.name = 'MusicFree'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 
-apply from: file("../node_modules/expo-modules-autolinking/scripts/android/autolinking_implementation.gradle")
+apply from: file("../node_modules/expo/scripts/autolinking.gradle")
 useExpoModules()

@@ -2,10 +2,19 @@
     <item android:drawable="@color/splashscreen_background" />
     
     <item>
+        <shape android:shape="oval">
+            <solid android:color="#ffffff" />
+            <size
+                android:width="180dp"
+                android:height="180dp" />
+        </shape>
+    </item>
+    
+    <item>
         <bitmap
-            android:src="@drawable/splashscreen_image"
+            android:src="@mipmap/ic_launcher"
             android:gravity="center"
-            android:width="200dp"
-            android:height="200dp" />
+            android:width="160dp"
+            android:height="160dp" />
     </item>
 </layer-list>
