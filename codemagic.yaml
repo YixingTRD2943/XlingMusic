@@ -1,0 +1,28 @@
+workflows:
+  android-workflow:
+    name: Android Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      node: 18.20.3
+    scripts:
+      - npm install
+      - cd android && ./gradlew assembleRelease --no-daemon
+    artifacts:
+      - android/app/build/outputs/apk/release/*.apk
+
+  ios-workflow:
+    name: iOS Build
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      node: 18.20.3
+    scripts:
+      - npm install
+      - cd ios && pod install --repo-update
+      - xcodebuild archive -workspace ios/MusicFree.xcworkspace -scheme MusicFree -configuration Release -archivePath build/MusicFree.xcarchive -destination 'generic/platform=iOS' SKIP_INSTALL=NO
+      - xcodebuild -exportArchive -archivePath build/MusicFree.xcarchive -exportPath build/ipa -exportOptionsPlist ios/ExportOptions.plist -allowProvisioningUpdates
+    artifacts:
+      - build/ipa/*.ipa
