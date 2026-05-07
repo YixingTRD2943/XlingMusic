@@ -64,14 +64,10 @@ function HomeWithDrawer() {
         setMusicBarExpanded(state.expanded);
     }, []);
 
-    const navBottomOffset = useCallback(() => {
-        if (!musicBarVisible) return 0;
-        const musicBarHeight = musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
-        return musicBarHeight + safeAreaInsets.bottom;
-    }, [musicBarVisible, musicBarExpanded, safeAreaInsets.bottom]);
-
     const contentBottomPadding = useCallback(() => {
         let padding = NAV_BAR_HEIGHT + safeAreaInsets.bottom;
+        const navBarHeight = rpx(110) + rpx(34);  // 底部导航栏高度 + 安全区域
+        padding += navBarHeight;
         if (musicBarVisible) {
             padding += musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
         }
@@ -90,13 +86,14 @@ function HomeWithDrawer() {
             </HorizontalSafeAreaView>
             
             <View style={[styles.overlaysContainer, { bottom: 0 }]}>
-                <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
                 <BottomNavigation 
                     activeTab={activeTab} 
                     onTabChange={handleTabChange}
-                    bottomOffset={navBottomOffset()}
                     visible={true}
                 />
+            </View>
+            <View style={[styles.musicBarContainer, { bottom: rpx(110) + rpx(34) }]}>
+                <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
             </View>
         </SafeAreaView>
     );
@@ -128,5 +125,12 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1000,
+    },
+    musicBarContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        zIndex: 1001,
+        marginBottom: rpx(110) + rpx(34),
     },
 });
