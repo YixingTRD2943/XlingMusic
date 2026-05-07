@@ -64,6 +64,7 @@ function ListItem(props: IListItemProps) {
 
     const [_isPressed, setIsPressed] = useState(false);
     const scale = useSharedValue(1);
+    const opacity = useSharedValue(1);
 
     const defaultStyle: StyleProp<ViewStyle> = {
         paddingLeft: withHorizontalPadding ? leftPadding : 0,
@@ -76,17 +77,20 @@ function ListItem(props: IListItemProps) {
     const handlePressIn = () => {
         setIsPressed(true);
         if (hoverable && onPress) {
-            scale.value = withSpring(0.99, { damping: 30, stiffness: 400 });
+            scale.value = withSpring(0.97, { damping: 25, stiffness: 350 });
+            opacity.value = withSpring(0.85, { damping: 25, stiffness: 350 });
         }
     };
 
     const handlePressOut = () => {
         setIsPressed(false);
-        scale.value = withSpring(1, { damping: 30, stiffness: 400 });
+        scale.value = withSpring(1, { damping: 25, stiffness: 350 });
+        opacity.value = withSpring(1, { damping: 25, stiffness: 350 });
     };
 
     const animatedStyle = useAnimatedStyle(() => ({
         transform: [{ scale: scale.value }],
+        opacity: opacity.value,
     }));
 
     return (
@@ -97,7 +101,8 @@ function ListItem(props: IListItemProps) {
                 onPress={onPress}
                 onLongPress={onLongPress}
                 onPressIn={handlePressIn}
-                onPressOut={handlePressOut}>
+                onPressOut={handlePressOut}
+                activeOpacity={0.85}>
                 <View style={[styles.container, defaultStyle, style]}>
                     {children}
                 </View>
@@ -384,11 +389,16 @@ const styles = StyleSheet.create({
         marginTop: rpx(24),
     },
     iconCircle: {
-        width: rpx(64),
-        height: rpx(64),
-        borderRadius: rpx(32),
+        width: rpx(68),
+        height: rpx(68),
+        borderRadius: rpx(24),
         justifyContent: "center",
         alignItems: "center",
+        shadowColor: "rgba(0,0,0,0.08)",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: rpx(6),
+        elevation: 3,
     },
 });
 

@@ -11,8 +11,6 @@ import {
     StyleSheet,
 } from "react-native";
 import Animated, {
-    Easing,
-    EasingFunction,
     runOnJS,
     useAnimatedReaction,
     useAnimatedStyle,
@@ -22,14 +20,10 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { panelInfoStore } from "../usePanel";
 import NativeUtils from "@/native/utils";
-
-const ANIMATION_EASING: EasingFunction = Easing.out(Easing.exp);
-const ANIMATION_DURATION = 250;
-
-const timingConfig = {
-    duration: ANIMATION_DURATION,
-    easing: ANIMATION_EASING,
-};
+import {
+    animationConfig,
+    OPACITY,
+} from "@/constants/animationConst";
 
 interface IPanelBaseProps {
     keyboardAvoidBehavior?: "height" | "padding" | "position" | "none";
@@ -47,6 +41,7 @@ export default function (props: IPanelBaseProps) {
         positionMethod = "bottom",
     } = props;
     const snapPoint = useSharedValue(0);
+    const isAnimatingRef = useRef(false);
 
     const colors = useColors();
     const [loading, setLoading] = useState(true); // 是否处于弹出状态
@@ -62,8 +57,17 @@ export default function (props: IPanelBaseProps) {
 
     const hideCallbackRef = useRef<Function[]>([]);
 
+    const handleHide = useCallback((callback?: () => void) => {
+        if (isAnimatingRef.current) return;
+        isAnimatingRef.current = true;
+        if (callback) {
+            hideCallbackRef.current.push(callback);
+        }
+        snapPoint.value = withTiming(0, animationConfig.exit);
+    }, []);
+
     useEffect(() => {
-        snapPoint.value = withTiming(1, timingConfig);
+        snapPoint.value = withTiming(1, animationConfig.enter);
 
         timerRef.current = setTimeout(() => {
             if (loading) {
@@ -78,7 +82,7 @@ export default function (props: IPanelBaseProps) {
         backHandlerRef.current = BackHandler.addEventListener(
             "hardwareBackPress",
             () => {
-                snapPoint.value = withTiming(0, timingConfig);
+                handleHide();
                 return true;
             },
         );
@@ -86,10 +90,7 @@ export default function (props: IPanelBaseProps) {
         const listenerSubscription = DeviceEventEmitter.addListener(
             "hidePanel",
             (callback?: () => void) => {
-                if (callback) {
-                    hideCallbackRef.current.push(callback);
-                }
-                snapPoint.value = withTiming(0, timingConfig);
+                handleHide(callback);
             },
         );
 
@@ -104,11 +105,14 @@ export default function (props: IPanelBaseProps) {
             }
             listenerSubscription.remove();
         };
-    }, []);
+    }, [handleHide]);
 
     const maskAnimated = useAnimatedStyle(() => {
         return {
-            opacity: snapPoint.value * 0.5,
+            opacity: withTiming(
+                snapPoint.value * OPACITY.mask,
+                snapPoint.value > 0.5 ? animationConfig.enter : animationConfig.exit,
+            ),
         };
     });
 
@@ -117,10 +121,16 @@ export default function (props: IPanelBaseProps) {
             transform: [
                 orientation === "vertical"
                     ? {
-                        translateY: (1 - snapPoint.value) * useAnimatedBase,
+                        translateY: withTiming(
+                            (1 - snapPoint.value) * useAnimatedBase,
+                            snapPoint.value > 0.5 ? animationConfig.enter : animationConfig.exit,
+                        ),
                     }
                     : {
-                        translateX: (1 - snapPoint.value) * useAnimatedBase,
+                        translateX: withTiming(
+                            (1 - snapPoint.value) * useAnimatedBase,
+                            snapPoint.value > 0.5 ? animationConfig.enter : animationConfig.exit,
+                        ),
                     },
             ],
         };
@@ -128,6 +138,7 @@ export default function (props: IPanelBaseProps) {
 
     const mountPanel = useCallback(() => {
         setLoading(false);
+        isAnimatingRef.current = false;
     }, []);
 
     const unmountPanel = useCallback(() => {
@@ -182,7 +193,7 @@ export default function (props: IPanelBaseProps) {
             <Pressable
                 style={style.maskWrapper}
                 onPress={() => {
-                    snapPoint.value = withTiming(0, timingConfig);
+                    handleHide();
                 }}>
                 <Animated.View
                     style={[style.maskWrapper, style.mask, maskAnimated]}

@@ -17,6 +17,7 @@ import { StatusBar } from "react-native";
 import { ReduceMotion, ReducedMotionConfig } from "react-native-reanimated";
 import { routes } from "@/core/router/routes.tsx";
 import ErrorBoundary from "@/components/errorBoundary";
+import { ANIMATION_DURATIONS } from "@/constants/animationConst";
 
 /**
  * 字体颜色
@@ -44,7 +45,10 @@ export default function Pages() {
                             screenOptions={{
                                 headerShown: false,
                                 animation: "slide_from_right",
-                                animationDuration: 100,
+                                animationDuration: ANIMATION_DURATIONS.normal,
+                                gestureEnabled: true,
+                                gestureDirection: "horizontal",
+                                presentation: "card",
                             }}>
                             {routes.map(route => (
                                 <Stack.Screen

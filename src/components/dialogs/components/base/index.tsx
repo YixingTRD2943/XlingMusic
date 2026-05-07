@@ -15,7 +15,11 @@ import Animated, {
     useSharedValue,
     withTiming,
 } from "react-native-reanimated";
-import { timingConfig } from "@/constants/commonConst";
+import {
+    animationConfig,
+    OPACITY,
+    SCALE,
+} from "@/constants/animationConst";
 import useColors from "@/hooks/useColors";
 import ThemeText from "@/components/base/themeText";
 import Divider from "@/components/base/divider";
@@ -35,6 +39,7 @@ function Dialog(props: IDialogProps) {
     const colors = useColors();
     const backHandlerRef = useRef<NativeEventSubscription>();
     const orientation = useOrientation();
+    const isDismissingRef = useRef(false);
 
     // 对话框宽度
     const dialogContainerStyle: ViewStyle =
@@ -46,8 +51,18 @@ function Dialog(props: IDialogProps) {
                 width: "80%",
             };
 
+    const handleDismiss = useMemo(() => {
+        return () => {
+            if (isDismissingRef.current) return;
+            isDismissingRef.current = true;
+            sharedShowValue.value = withTiming(0, animationConfig.exit, () => {
+                onDismiss?.();
+            });
+        };
+    }, [onDismiss]);
+
     useEffect(() => {
-        sharedShowValue.value = 1;
+        sharedShowValue.value = withTiming(1, animationConfig.enter);
         if (backHandlerRef.current) {
             backHandlerRef.current?.remove();
             backHandlerRef.current = undefined;
@@ -55,25 +70,24 @@ function Dialog(props: IDialogProps) {
         backHandlerRef.current = BackHandler.addEventListener(
             "hardwareBackPress",
             () => {
-                onDismiss?.();
+                handleDismiss();
                 return true;
             },
         );
 
         return () => {
-            sharedShowValue.value = 0;
             if (backHandlerRef.current) {
                 backHandlerRef.current?.remove();
                 backHandlerRef.current = undefined;
             }
         };
-    }, []);
+    }, [handleDismiss]);
 
     const containerStyle = useAnimatedStyle(() => {
         return {
             opacity: withTiming(
-                sharedShowValue.value,
-                timingConfig.animationFast,
+                OPACITY.transparent + sharedShowValue.value * OPACITY.mask,
+                sharedShowValue.value > 0.5 ? animationConfig.enter : animationConfig.exit,
             ),
         };
     });
@@ -83,8 +97,21 @@ function Dialog(props: IDialogProps) {
             transform: [
                 {
                     scale: withTiming(
-                        0.9 + sharedShowValue.value * 0.1,
-                        timingConfig.animationFast,
+                        SCALE.hidden + sharedShowValue.value * (SCALE.normal - SCALE.hidden),
+                        sharedShowValue.value > 0.5 ? animationConfig.enter : animationConfig.exit,
+                    ),
+                },
+            ],
+        };
+    });
+
+    const translateYAnimationStyle = useAnimatedStyle(() => {
+        return {
+            transform: [
+                {
+                    translateY: withTiming(
+                        (1 - sharedShowValue.value) * -rpx(40),
+                        sharedShowValue.value > 0.5 ? animationConfig.enter : animationConfig.exit,
                     ),
                 },
             ],
@@ -95,15 +122,15 @@ function Dialog(props: IDialogProps) {
         <View style={styles.backContainer}>
             <TouchableWithoutFeedback
                 style={styles.container}
-                onPress={onDismiss}>
+                onPress={handleDismiss}>
                 <Animated.View style={[styles.container, containerStyle]} />
             </TouchableWithoutFeedback>
             <Animated.View
                 style={[
                     styles.dialogContainer,
                     dialogContainerStyle,
-                    containerStyle,
                     scaleAnimationStyle,
+                    translateYAnimationStyle,
                     {
                         backgroundColor: colors.backdrop,
                         shadowColor: colors.shadow,

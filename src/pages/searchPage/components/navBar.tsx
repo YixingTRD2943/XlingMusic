@@ -119,9 +119,10 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     searchBar: {
-        minWidth: rpx(375),
+        minWidth: rpx(200),
         flex: 1,
-        paddingHorizontal: rpx(64),
+        paddingLeft: rpx(56),
+        paddingRight: rpx(48),
         borderRadius: rpx(64),
         height: rpx(64),
         maxHeight: rpx(64),
