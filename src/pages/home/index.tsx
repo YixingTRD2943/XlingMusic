@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 
 import NavBar from "./components/navBar";
@@ -52,7 +52,6 @@ function HomeWithDrawer() {
     const [activeTab, setActiveTab] = useState<TabType>("home");
     const [musicBarVisible, setMusicBarVisible] = useState(false);
     const [musicBarExpanded, setMusicBarExpanded] = useState(false);
-    const [navVisible, setNavVisible] = useState(true);
     
     const safeAreaInsets = useSafeAreaInsets();
 
@@ -79,17 +78,6 @@ function HomeWithDrawer() {
         return padding;
     }, [musicBarVisible, musicBarExpanded, safeAreaInsets.bottom]);
 
-    useEffect(() => {
-        const updateNavVisibility = () => {
-            if (musicBarVisible && musicBarExpanded) {
-                setNavVisible(false);
-            } else {
-                setNavVisible(true);
-            }
-        };
-        updateNavVisibility();
-    }, [musicBarVisible, musicBarExpanded]);
-
     return (
         <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
             <HomeStatusBar />
@@ -107,7 +95,7 @@ function HomeWithDrawer() {
                     activeTab={activeTab} 
                     onTabChange={handleTabChange}
                     bottomOffset={navBottomOffset()}
-                    visible={navVisible}
+                    visible={true}
                 />
             </View>
         </SafeAreaView>
