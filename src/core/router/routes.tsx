@@ -1,4 +1,4 @@
-import Home from "@/pages/home";
+import MainApp from "@/components/mainApp";
 import MusicDetail from "@/pages/musicDetail";
 import TopList from "@/pages/topList";
 import TopListDetail from "@/pages/topListDetail";
@@ -31,7 +31,7 @@ type IRoutes = {
 export const routes: Array<IRoutes> = [
     {
         path: ROUTE_PATH.HOME,
-        component: Home,
+        component: MainApp,
     },
     {
         path: ROUTE_PATH.MUSIC_DETAIL,
