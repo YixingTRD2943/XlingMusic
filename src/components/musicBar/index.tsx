@@ -185,10 +185,6 @@ const style = StyleSheet.create({
         paddingHorizontal: rpx(28),
         borderTopLeftRadius: rpx(28),
         borderTopRightRadius: rpx(28),
-        shadowOffset: { width: 0, height: -4 },
-        shadowOpacity: 0.12,
-        shadowRadius: 12,
-        elevation: 6,
     },
     actionGroup: {
         width: rpx(200),
