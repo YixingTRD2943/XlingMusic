@@ -58,10 +58,24 @@ function TabItem({ icon, label, isActive, onPress }: TabItemProps) {
 interface BottomNavigationProps {
     activeTab: TabType;
     onTabChange: (tab: TabType) => void;
+    bottomOffset?: number;
+    visible?: boolean;
 }
 
-export default function BottomNavigation({ activeTab, onTabChange }: BottomNavigationProps) {
+export default function BottomNavigation({ activeTab, onTabChange, bottomOffset = 0, visible = true }: BottomNavigationProps) {
     const colors = useColors();
+    const offset = useSharedValue(bottomOffset);
+    const opacity = useSharedValue(visible ? 1 : 0);
+
+    React.useEffect(() => {
+        offset.value = withSpring(bottomOffset, { damping: 20, stiffness: 300 });
+        opacity.value = withSpring(visible ? 1 : 0, { damping: 20, stiffness: 300 });
+    }, [bottomOffset, visible]);
+
+    const animatedStyle = useAnimatedStyle(() => ({
+        transform: [{ translateY: offset.value }],
+        opacity: opacity.value,
+    }));
 
     const tabs: { key: TabType; label: string; icon: React.ReactNode }[] = [
         {
@@ -87,7 +101,7 @@ export default function BottomNavigation({ activeTab, onTabChange }: BottomNavig
     ];
 
     return (
-        <View style={[styles.container, { backgroundColor: colors.backdrop }]}>
+        <Animated.View style={[styles.container, { backgroundColor: colors.backdrop }, animatedStyle]}>
             <View style={styles.safeArea} />
             <View style={styles.navBar}>
                 <View style={styles.navInner}>
@@ -102,7 +116,7 @@ export default function BottomNavigation({ activeTab, onTabChange }: BottomNavig
                     ))}
                 </View>
             </View>
-        </View>
+        </Animated.View>
     );
 }
 

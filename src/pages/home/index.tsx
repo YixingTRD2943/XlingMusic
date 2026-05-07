@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import React, { useState, useCallback, useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 
 import NavBar from "./components/navBar";
-import MusicBar from "@/components/musicBar";
+import MusicBar, { MusicBarVisibilityState } from "@/components/musicBar";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import HomeDrawer from "./components/drawer";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import StatusBar from "@/components/base/statusBar";
 import HorizontalSafeAreaView from "@/components/base/horizontalSafeAreaView.tsx";
 import globalStyle from "@/constants/globalStyle";
@@ -15,6 +15,10 @@ import HomeBodyHorizontal from "./components/homeBodyHorizontal";
 import useOrientation from "@/hooks/useOrientation";
 import BottomNavigation, { TabType } from "@/components/bottomNavigation/BottomNavigation";
 import Profile from "@/pages/profile";
+import rpx from "@/utils/rpx";
+
+const MUSIC_BAR_HEIGHT = rpx(140);
+const NAV_BAR_HEIGHT = rpx(144);
 
 function HomeContent() {
     const orientation = useOrientation();
@@ -46,23 +50,66 @@ const LeftDrawer = createDrawerNavigator();
 
 function HomeWithDrawer() {
     const [activeTab, setActiveTab] = useState<TabType>("home");
+    const [musicBarVisible, setMusicBarVisible] = useState(false);
+    const [musicBarExpanded, setMusicBarExpanded] = useState(false);
+    const [navVisible, setNavVisible] = useState(true);
+    
+    const safeAreaInsets = useSafeAreaInsets();
 
     const handleTabChange = (tab: TabType) => {
         setActiveTab(tab);
     };
 
+    const handleMusicBarVisibilityChange = useCallback((state: MusicBarVisibilityState) => {
+        setMusicBarVisible(state.visible);
+        setMusicBarExpanded(state.expanded);
+    }, []);
+
+    const navBottomOffset = useCallback(() => {
+        if (!musicBarVisible) return 0;
+        const musicBarHeight = musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
+        return musicBarHeight + safeAreaInsets.bottom;
+    }, [musicBarVisible, musicBarExpanded, safeAreaInsets.bottom]);
+
+    const contentBottomPadding = useCallback(() => {
+        let padding = NAV_BAR_HEIGHT + safeAreaInsets.bottom;
+        if (musicBarVisible) {
+            padding += musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
+        }
+        return padding;
+    }, [musicBarVisible, musicBarExpanded, safeAreaInsets.bottom]);
+
+    useEffect(() => {
+        const updateNavVisibility = () => {
+            if (musicBarVisible && musicBarExpanded) {
+                setNavVisible(false);
+            } else {
+                setNavVisible(true);
+            }
+        };
+        updateNavVisibility();
+    }, [musicBarVisible, musicBarExpanded]);
+
     return (
         <SafeAreaView edges={["top", "bottom"]} style={styles.appWrapper}>
             <HomeStatusBar />
-            <HorizontalSafeAreaView style={globalStyle.flex1}>
+            <HorizontalSafeAreaView style={[globalStyle.flex1, { paddingBottom: contentBottomPadding() }]}>
                 {activeTab === "home" ? (
                     <HomeContent />
                 ) : (
                     <Profile />
                 )}
             </HorizontalSafeAreaView>
-            <MusicBar />
-            <BottomNavigation activeTab={activeTab} onTabChange={handleTabChange} />
+            
+            <View style={[styles.overlaysContainer, { bottom: 0 }]}>
+                <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
+                <BottomNavigation 
+                    activeTab={activeTab} 
+                    onTabChange={handleTabChange}
+                    bottomOffset={navBottomOffset()}
+                    visible={navVisible}
+                />
+            </View>
         </SafeAreaView>
     );
 }
@@ -88,7 +135,10 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         flex: 1,
     },
-    flexRow: {
-        flexDirection: "row",
+    overlaysContainer: {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        zIndex: 1000,
     },
 });
