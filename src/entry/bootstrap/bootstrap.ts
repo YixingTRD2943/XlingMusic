@@ -19,7 +19,6 @@ import { errorLog, trace } from "@/utils/log";
 import { IPerfLogger, perfLogger } from "@/utils/perfLogger";
 import PersistStatus from "@/utils/persistStatus";
 import Toast from "@/utils/toast";
-import * as SplashScreen from "expo-splash-screen";
 import {  Linking, Platform } from "react-native";
 import { PERMISSIONS, check, request } from "react-native-permissions";
 import RNTrackPlayer, { AppKilledPlaybackBehavior, Capability } from "react-native-track-player";
@@ -39,13 +38,6 @@ MusicSheet.injectDependencies(Config);
 
 
 async function bootstrapImpl() {
-    await SplashScreen.preventAutoHideAsync()
-        .then(result =>
-            console.log(
-                `SplashScreen.preventAutoHideAsync() succeeded: ${result}`,
-            ),
-        )
-        .catch(console.warn); // it's good to explicitly catch and inspect any error
     const logger = perfLogger();
     // 1. 检查权限
     if (Platform.OS === "android" && Platform.Version >= 30) {
@@ -333,7 +325,4 @@ export default async function () {
             });
         }
     }
-    // 隐藏开屏动画
-    console.log("HIDE");
-    await SplashScreen.hideAsync();
 }
