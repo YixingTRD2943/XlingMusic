@@ -6,6 +6,8 @@ import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import android.os.Bundle
+import android.view.View
+import android.view.WindowManager
 
 class MainActivity : ReactActivity() {
 
@@ -25,5 +27,14 @@ class MainActivity : ReactActivity() {
   // https://reactnavigation.org/docs/getting-started/#installing-dependencies-into-a-bare-react-native-project
   override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(null);
+      
+      // Android 16 兼容性处理
+      if (android.os.Build.VERSION.SDK_INT >= 35) {
+          window.setDecorFitsSystemWindows(false)
+          window.setFlags(
+              WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+              WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+          )
+      }
   }
 }
