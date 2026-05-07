@@ -44,7 +44,7 @@ function HomeStatusBar() {
 
 const LeftDrawer = createDrawerNavigator();
 
-function HomeWithDrawer({ _navigation }: { _navigation: any }) {
+function HomeWithDrawer() {
     const [activeTab, setActiveTab] = useState<TabType>("home");
 
     const handleTabChange = (tab: TabType) => {

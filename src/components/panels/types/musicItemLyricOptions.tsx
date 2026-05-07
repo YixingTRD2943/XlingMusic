@@ -5,6 +5,7 @@ import { ImgAsset } from "@/constants/assetsConst";
 import { getMediaUniqueKey } from "@/utils/mediaUtils";
 import rpx from "@/utils/rpx";
 import Toast from "@/utils/toast";
+import PermissionManager from "@/utils/permissionManager";
 import Clipboard from "@react-native-clipboard/clipboard";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -99,28 +100,36 @@ export default function MusicItemLyricOptions(
             async onPress() {
                 const showStatusBarLyric = Config.getConfig("lyric.showStatusBarLyric");
                 if (!showStatusBarLyric) {
-                    const hasPermission =
-                        await LyricUtil.checkSystemAlertPermission();
-
-                    if (hasPermission) {
-                        const statusBarLyricConfig = {
-                            topPercent: Config.getConfig("lyric.topPercent"),
-                            leftPercent: Config.getConfig("lyric.leftPercent"),
-                            align: Config.getConfig("lyric.align"),
-                            color: Config.getConfig("lyric.color"),
-                            backgroundColor: Config.getConfig("lyric.backgroundColor"),
-                            widthPercent: Config.getConfig("lyric.widthPercent"),
-                            fontSize: Config.getConfig("lyric.fontSize"),
-                        };
-                        LyricUtil.showStatusBarLyric(
-                            "MusicFree",
-                            statusBarLyricConfig ?? {}
-                        );
-                        Config.setConfig("lyric.showStatusBarLyric", true);
-                    } else {
-                        LyricUtil.requestSystemAlertPermission().finally(() => {
-                            Toast.warn(t("panel.musicItemLyricOptions.desktopLyricPermissionError"));
-                        });
+                    // 使用 PermissionManager 来确保权限
+                    const success = await PermissionManager.withPermission(
+                        "floatWindow",
+                        async () => {
+                            const statusBarLyricConfig = {
+                                topPercent: Config.getConfig("lyric.topPercent"),
+                                leftPercent: Config.getConfig("lyric.leftPercent"),
+                                align: Config.getConfig("lyric.align"),
+                                color: Config.getConfig("lyric.color"),
+                                backgroundColor: Config.getConfig("lyric.backgroundColor"),
+                                widthPercent: Config.getConfig("lyric.widthPercent"),
+                                fontSize: Config.getConfig("lyric.fontSize"),
+                            };
+                            await LyricUtil.showStatusBarLyric(
+                                "MusicFree",
+                                statusBarLyricConfig ?? {}
+                            );
+                            Config.setConfig("lyric.showStatusBarLyric", true);
+                            return true;
+                        },
+                        {
+                            rationaleTitle: "需要悬浮窗权限",
+                            rationaleMessage: "我们需要悬浮窗权限来显示桌面歌词",
+                            errorMessage: t("panel.musicItemLyricOptions.desktopLyricPermissionError"),
+                        }
+                    );
+                    
+                    if (!success) {
+                        // 如果没有权限，保持原来的状态
+                        Config.setConfig("lyric.showStatusBarLyric", false);
                     }
                 } else {
                     LyricUtil.hideStatusBarLyric();
