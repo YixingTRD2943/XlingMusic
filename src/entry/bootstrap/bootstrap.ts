@@ -39,98 +39,70 @@ MusicSheet.injectDependencies(Config);
 
 async function bootstrapImpl() {
     const logger = perfLogger();
-    // 1. 检查权限
-    if (Platform.OS === "android" && Platform.Version >= 30) {
-        const hasPermission = await NativeUtils.checkStoragePermission();
-        if (
-            !hasPermission &&
-            !PersistStatus.get("app.skipBootstrapStorageDialog")
-        ) {
-            showDialog("CheckStorage");
-        }
-    } else {
-        const [readStoragePermission, writeStoragePermission] =
-            await Promise.all([
-                check(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE),
-                check(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE),
-            ]);
-        if (
-            !(
-                readStoragePermission === "granted" &&
-                writeStoragePermission === "granted"
-            )
-        ) {
-            await request(PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE);
-            await request(PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE);
-        }
+    
+    try {
+        // 最简单的初始化 - 先标记完成，让界面显示
+        getDefaultStore().set(bootstrapAtom, { state: "Done" });
+        
+        // 所有其他初始化在后台慢慢完成
+        setTimeout(async () => {
+            try {
+                await setupFolder();
+                await Config.setup();
+                Theme.setup();
+                i18n.setup();
+                
+                logger.mark("核心配置完成");
+
+                // 权限检查
+                if (Platform.OS === "android" && Platform.Version >= 30) {
+                    const hasPermission = await NativeUtils.checkStoragePermission();
+                    if (
+                        !hasPermission &&
+                        !PersistStatus.get("app.skipBootstrapStorageDialog")
+                    ) {
+                        showDialog("CheckStorage");
+                    }
+                }
+                
+                if (Platform.OS === "android" && Platform.Version >= 33) {
+                    const notificationStatus = await PermissionManager.checkPermission("notification");
+                    if (!notificationStatus.hasPermission && notificationStatus.canAskAgain) {
+                        await PermissionManager.requestPermission("notification");
+                    }
+                }
+
+                await Promise.all([
+                    MusicSheet.setup().then(() => logger.mark("MusicSheet")),
+                    musicHistory.setup().then(() => logger.mark("musicHistory")),
+                ]);
+
+                await PluginManager.setup();
+                logger.mark("插件初始化完成");
+                
+                await initTrackPlayer(logger).catch(() => {
+                    // 忽略播放器错误，不影响使用
+                });
+
+                await LocalMusicSheet.setup();
+                logger.mark("本地音乐初始化完成");
+
+                extraMakeup();
+                
+                ErrorUtils.setGlobalHandler(error => {
+                    errorLog("未捕获的错误", error);
+                });
+            } catch (e) {
+                errorLog("后台初始化失败", e);
+            }
+        }, 100);
+    } catch (e) {
+        errorLog("启动失败", e);
+        getDefaultStore().set(bootstrapAtom, { 
+            state: "Fatal", 
+            reason: e instanceof Error ? e : new Error("未知错误") 
+        });
     }
-    
-    // 检查通知权限
-    if (Platform.OS === "android" && Platform.Version >= 33) {
-        const notificationStatus = await PermissionManager.checkPermission("notification");
-        if (!notificationStatus.hasPermission && notificationStatus.canAskAgain) {
-            await PermissionManager.requestPermission("notification");
-        }
-    }
-    
-    logger.mark("权限检查完成");
-
-    // 2. 数据初始化
-    /** 初始化路径 */
-    await setupFolder();
-    trace("文件夹初始化完成");
-    logger.mark("文件夹初始化完成");
-
-
-
-    // 加载配置
-    await Promise.all([
-        Config.setup().then(() => {
-            logger.mark("Config");
-        }),
-        MusicSheet.setup().then(() => {
-            logger.mark("MusicSheet");
-        }),
-        musicHistory.setup().then(() => {
-            logger.mark("musicHistory");
-        }),
-    ]);
-    trace("配置初始化完成");
-    logger.mark("配置初始化完成");
-
-    // 加载插件
-    await PluginManager.setup();
-    logger.mark("插件初始化完成");
-    trace("插件初始化完成");
-
-    await initTrackPlayer(logger).catch(err => {
-        // 初始化播放器出错，延迟初始化
-        const bootstrapState = getDefaultStore().get(bootstrapAtom);
-
-        if (bootstrapState.state === "Loading") {
-            getDefaultStore().set(bootstrapAtom, {
-                state: "TrackPlayerError",
-                reason: err,
-            });
-        }
-    });
-
-    await LocalMusicSheet.setup();
-    trace("本地音乐初始化完成");
-    logger.mark("本地音乐初始化完成");
-
-    Theme.setup();
-    trace("主题初始化完成");
-    logger.mark("主题初始化完成");
-
-    extraMakeup();
-
-    i18n.setup();
-    logger.mark("语言模块初始化完成");
-    
-    ErrorUtils.setGlobalHandler(error => {
-        errorLog("未捕获的错误", error);
-    });
 }
 
 /** 初始化 */
@@ -311,11 +283,8 @@ export default async function () {
         getDefaultStore().set(bootstrapAtom, {
             "state": "Loading",
         });
-        await bootstrapImpl();
         bindEvents();
-        getDefaultStore().set(bootstrapAtom, {
-            "state": "Done",
-        });
+        await bootstrapImpl();
     } catch (e: any) {
         errorLog("初始化出错", e);
         if (getDefaultStore().get(bootstrapAtom).state === "Loading") {
