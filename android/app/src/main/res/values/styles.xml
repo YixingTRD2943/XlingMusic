@@ -11,7 +11,8 @@
         <item name="windowSplashScreenBackground">@color/splashscreen_background</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/splashscreen_image</item>
         <item name="postSplashScreenTheme">@style/AppTheme</item>
-        <item name="android:windowSplashScreenBrandingImage">@drawable/spashscreen_branding_image</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/branding_xlingmusic</item>
+        <item name="windowSplashScreenBrandingImage">@drawable/branding_xlingmusic</item>
     </style>
 
 </resources>
