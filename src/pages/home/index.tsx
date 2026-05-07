@@ -82,15 +82,15 @@ function HomeWithDrawer() {
                 )}
             </HorizontalSafeAreaView>
             
+            <View style={[styles.musicBarContainer, { bottom: 0 }]}>
+                <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
+            </View>
             <View style={[styles.overlaysContainer, { bottom: 0 }]}>
                 <BottomNavigation 
                     activeTab={activeTab} 
                     onTabChange={handleTabChange}
                     visible={true}
                 />
-            </View>
-            <View style={[styles.musicBarContainer, { bottom: rpx(110) - rpx(20) }]}>
-                <MusicBar onVisibilityChange={handleMusicBarVisibilityChange} />
             </View>
         </SafeAreaView>
     );
@@ -128,6 +128,5 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         zIndex: 1001,
-        marginBottom: rpx(110) + rpx(34),
     },
 });
