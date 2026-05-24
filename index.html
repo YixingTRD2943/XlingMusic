@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>520 情人节祝福</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 32px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(255, 154, 158, 0.4);
+            position: relative;
+            z-index: 10;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .name {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ff6b8a;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .name::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b8a, #ffc0cb);
+            border-radius: 2px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #ff9a9e;
+            letter-spacing: 2px;
+        }
+
+        .heart-number {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .number {
+            font-size: 72px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b8a, #ff8fab);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .message-card {
+            background: linear-gradient(145deg, #fff0f3, #ffe4e9);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 107, 138, 0.1);
+            border-radius: 50%;
+        }
+
+        .message-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 154, 158, 0.1);
+            border-radius: 50%;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .greeting .highlight {
+            color: #ff6b8a;
+            font-weight: 600;
+        }
+
+        .poem {
+            font-size: 15px;
+            color: #555;
+            line-height: 2;
+            margin-bottom: 25px;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .poem span {
+            display: block;
+            margin: 8px 0;
+        }
+
+        .confession {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .confession .number-text {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff6b8a;
+            display: inline-block;
+            margin: 0 8px;
+        }
+
+        .confession .text {
+            font-size: 16px;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        .closing {
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            margin-top: 20px;
+        }
+
+        .closing .heart-icon {
+            color: #ff6b8a;
+            font-size: 20px;
+            animation: heartbeat 1s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+        }
+
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 16px 30px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff6b8a, #ff8fab);
+            color: white;
+            box-shadow: 0 8px 25px rgba(255, 107, 138, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(255, 107, 138, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ff6b8a;
+            border: 2px solid #ff6b8a;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 107, 138, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .floating-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 107, 138, 0.6);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 25%; animation-delay: 1s; }
+        .heart:nth-child(3) { left: 40%; animation-delay: 2s; }
+        .heart:nth-child(4) { left: 55%; animation-delay: 3s; }
+        .heart:nth-child(5) { left: 70%; animation-delay: 4s; }
+        .heart:nth-child(6) { left: 85%; animation-delay: 5s; }
+        .heart:nth-child(7) { left: 15%; animation-delay: 2.5s; }
+        .heart:nth-child(8) { left: 80%; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .sparkles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: sparkle 2s ease-in-out infinite;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+
+        .sparkle:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+        .sparkle:nth-child(2) { top: 35%; left: 80%; animation-delay: 0.5s; }
+        .sparkle:nth-child(3) { top: 50%; left: 20%; animation-delay: 1s; }
+        .sparkle:nth-child(4) { top: 65%; left: 90%; animation-delay: 1.5s; }
+        .sparkle:nth-child(5) { top: 80%; left: 10%; animation-delay: 0.3s; }
+        .sparkle:nth-child(6) { top: 15%; left: 70%; animation-delay: 0.8s; }
+
+        @keyframes sparkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+                margin: 20px;
+            }
+
+            .number {
+                font-size: 56px;
+            }
+
+            .name {
+                font-size: 24px;
+            }
+
+            .message-card {
+                padding: 20px;
+            }
+
+            .poem {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-hearts">
+        <span class="heart">💕</span>
+        <span class="heart">💖</span>
+        <span class="heart">💗</span>
+        <span class="heart">💓</span>
+        <span class="heart">💘</span>
+        <span class="heart">💝</span>
+        <span class="heart">💞</span>
+        <span class="heart">❤️</span>
+    </div>
+
+    <div class="sparkles">
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+        <div class="sparkle"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="name">张洁</div>
+            <div class="subtitle">520快乐！</div>
+        </div>
+
+        <div class="heart-number">
+            <div class="number">520</div>
+        </div>
+
+        <div class="message-card">
+            <div class="greeting">
+                亲爱的<span class="highlight">张洁</span>，<br>
+                在这个特别的日子里，我想告诉你：
+            </div>
+
+            <div class="poem">
+                <span>你是我生命中最美的遇见，</span>
+                <span>你的笑容像阳光一样温暖我的心，</span>
+                <span>你的笑容像春风一样温暖我的灵魂，</span>
+                <span>你的温柔像春风一样轻抚我的灵魂。</span>
+            </div>
+
+            <div class="confession">
+                <span class="number-text">520</span>
+                <span>———</span>
+                <span class="number-text">我爱你</span>，
+                <div class="text">不止今天，而是每一天！</div>
+            </div>
+
+            <div class="closing">
+                愿我们的爱情永远甜蜜幸福！<span class="heart-icon">❤️</span>
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button class="btn btn-primary">💌 送祝福</button>
+            <button class="btn btn-secondary">✨ 惊喜动画</button>
+        </div>
+    </div>
+
+    <script>
+        document.querySelector('.btn-primary').addEventListener('click', function() {
+            alert('祝福已发送！愿你们永远幸福甜蜜！💕');
+        });
+
+        document.querySelector('.btn-secondary').addEventListener('click', function() {
+            createSurprise();
+        });
+
+        function createSurprise() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('span');
+                    heart.className = 'heart';
+                    heart.textContent = ['💕', '💖', '💗', '💓', '💘', '💝', '💞', '❤️'][Math.floor(Math.random() * 8)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDuration = (3 + Math.random() * 4) + 's';
+                    heart.style.fontSize = (16 + Math.random() * 16) + 'px';
+                    heart.style.opacity = 0.7;
+                    document.querySelector('.floating-hearts').appendChild(heart);
+
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 8000);
+                }, i * 100);
+            }
+        }
+    </script>
+</body>
+</html>
