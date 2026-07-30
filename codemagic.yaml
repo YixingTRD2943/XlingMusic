@@ -24,14 +24,14 @@ workflows:
       groups:
         - apple
       vars:
-        BUNDLE_ID: "fun.upup.musicfree"
-        XCODE_WORKSPACE: "MusicFree.xcworkspace"
-        XCODE_SCHEME: "MusicFree"
+        BUNDLE_ID: "com.xingling.app"
+        XCODE_WORKSPACE: "XingLing.xcworkspace"
+        XCODE_SCHEME: "XingLing"
     scripts:
       - npm install
       - cd ios && pod install --repo-update
-      - xcodebuild archive -workspace ios/$XCODE_WORKSPACE -scheme $XCODE_SCHEME -configuration Release -archivePath build/MusicFree.xcarchive -destination 'generic/platform=iOS' SKIP_INSTALL=NO
-      - xcodebuild -exportArchive -archivePath build/MusicFree.xcarchive -exportPath build/ipa -exportOptionsPlist ios/ExportOptions.plist -allowProvisioningUpdates
+      - xcodebuild archive -workspace ios/$XCODE_WORKSPACE -scheme $XCODE_SCHEME -configuration Release -archivePath build/XingLing.xcarchive -destination 'generic/platform=iOS' SKIP_INSTALL=NO
+      - xcodebuild -exportArchive -archivePath build/XingLing.xcarchive -exportPath build/ipa -exportOptionsPlist ios/ExportOptions.plist -allowProvisioningUpdates
     artifacts:
       - build/ipa/*.ipa
     publishing:

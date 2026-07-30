@@ -1,0 +1,154 @@
+:root {
+  /* ── Brand Prefix: mf ── */
+
+  /* ── Color System ── */
+  --mf-bg: #0a0a0a;
+  --mf-bg-elevated: #141414;
+  --mf-surface: #1a1a1a;
+  --mf-surface-hover: #252525;
+  --mf-surface-active: #2a2a2a;
+
+  --mf-text-primary: #ffffff;
+  --mf-text-secondary: #b3b3b3;
+  --mf-text-tertiary: #727272;
+  --mf-text-inverse: #0a0a0a;
+
+  --mf-brand: #1DB954;
+  --mf-brand-hover: #1ed760;
+  --mf-brand-muted: rgba(29, 185, 84, 0.15);
+  --mf-brand-subtle: rgba(29, 185, 84, 0.08);
+
+  --mf-gradient-start: #1DB954;
+  --mf-gradient-mid: #1ed760;
+  --mf-gradient-end: #169c46;
+
+  /* ── Semantic Colors ── */
+  --state-success: #1DB954;
+  --state-warning: #f59e0b;
+  --state-error: #ef4444;
+  --state-info: #3b82f6;
+
+  /* ── Border & Divider ── */
+  --mf-border: rgba(255, 255, 255, 0.08);
+  --mf-border-strong: rgba(255, 255, 255, 0.15);
+  --mf-divider: rgba(255, 255, 255, 0.06);
+
+  /* ── Radius ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ── Typography ── */
+  --font-display: "Circular Std", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: "Circular Std", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Shadow (restrained: alpha <= 0.05 for static) ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+  /* ── Transition ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* ── Z-Index ── */
+  --z-base: 0;
+  --z-surface: 10;
+  --z-bar: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+}
+
+/* ── Typography Classes ── */
+.mf-display {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-headline {
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-primary);
+}
+
+.mf-body-secondary {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-secondary);
+}
+
+.mf-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.mf-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-secondary);
+}

@@ -5,14 +5,17 @@ import { ResumeMode, SortType, localPluginPlatform } from "@/constants/commonCon
 import { IAppConfig } from "@/types/core/config";
 import { IInjectable } from "@/types/infra";
 import { isSameMediaItem } from "@/utils/mediaUtils";
+import Toast from "@/utils/toast";
 import EventEmitter from "eventemitter3";
 import { Immer } from "immer";
 import { atom, getDefaultStore, useAtomValue } from "jotai";
 import { nanoid } from "nanoid";
 import { useEffect, useMemo, useState } from "react";
+import { InteractionManager } from "react-native";
 import migrate, { migrateV2 } from "./migrate.ts";
 import SortedMusicList from "./sortedMusicList.ts";
 import storage from "./storage.ts";
+import songSourceMatcher from "@/core/songSourceMatcher";
 
 const produce = new Immer({
     autoFreeze: false,
@@ -176,10 +179,15 @@ class MusicSheetClazz implements IInjectable {
 
 
     /**
- * 新建歌单
- * @param title 歌单名称
- */
-    async addSheet(title: string) {
+     * 新建歌单
+     * @param title 歌单名称
+     * @param options 歌单选项
+     */
+    async addSheet(title: string, options?: {
+        description?: string;
+        privacy?: IMusic.PrivacyType;
+        coverImg?: string;
+    }) {
         const newId = nanoid();
         const musicSheets = getDefaultStore().get(musicSheetsBaseAtom);
 
@@ -189,9 +197,11 @@ class MusicSheetClazz implements IInjectable {
                 title,
                 platform: localPluginPlatform,
                 id: newId,
-                coverImg: undefined,
+                coverImg: options?.coverImg,
                 worksNum: 0,
                 createAt: Date.now(),
+                description: options?.description,
+                privacy: options?.privacy || "public",
             },
             ...musicSheets.slice(1),
         ];
@@ -354,8 +364,76 @@ class MusicSheetClazz implements IInjectable {
             sheetId,
             updateType: "length",
         });
+
+        // 自动匹配音源：为导入的歌曲异步匹配可用音源
+        this.autoMatchSources(sheetId, taggedMusicItems);
     }
 
+
+    /**
+     * 自动匹配音源 - 为导入的歌曲异步匹配可用音源并更新存储
+     */
+    private async autoMatchSources(
+        sheetId: string,
+        musicItems: IMusic.IMusicItem[],
+    ) {
+        const needMatch = musicItems.filter(
+            it => !it.source || Object.keys(it.source).length === 0,
+        );
+        if (!needMatch.length) return;
+
+        InteractionManager.runAfterInteractions(async () => {
+            try {
+                const totalStr = `共 ${needMatch.length} 首`;
+                Toast.warn(`${totalStr} 正在后台匹配音源...`);
+
+                const result = await songSourceMatcher.batchMatchSongSources(
+                    needMatch,
+                    "standard",
+                    (matched, total, current) => {
+                        if (matched % 5 === 0) {
+                            Toast.warn(`音源匹配中 ${matched}/${total}...`);
+                        }
+                    },
+                    true,
+                );
+
+                const musicList = this.getSortedMusicListBySheetId(sheetId);
+                let updated = false;
+                for (const matchedItem of result.items) {
+                    if (!matchedItem.source || Object.keys(matchedItem.source).length === 0) continue;
+                    const idx = musicList.musicList.findIndex(it =>
+                        isSameMediaItem(it, matchedItem),
+                    );
+                    if (idx !== -1) {
+                        musicList.musicList[idx].source = {
+                            ...(musicList.musicList[idx].source || {}),
+                            ...matchedItem.source,
+                        };
+                        if (matchedItem.url) {
+                            musicList.musicList[idx].url = matchedItem.url;
+                        }
+                        updated = true;
+                    }
+                }
+
+                if (updated) {
+                    await storage.setMusicList(sheetId, musicList.musicList);
+                }
+                let msg = `${totalStr}，匹配成功 ${result.success} 首`;
+                if (result.verified > 0) {
+                    msg += `，${result.verified} 首验证通过`;
+                }
+                if (result.failed > 0) {
+                    msg += `，${result.failed} 首匹配失败`;
+                }
+                Toast.success(msg);
+            } catch (e) {
+                console.warn("[MusicSheet] 自动匹配音源失败:", e);
+                Toast.warn("自动匹配音源失败");
+            }
+        });
+    }
 
     async removeMusicByIndex(sheetId: string, indices: number | number[]) {
         if (!Array.isArray(indices)) {

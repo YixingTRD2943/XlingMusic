@@ -21,7 +21,7 @@ import { timingConfig } from "@/constants/commonConst";
 
 interface IBarMusicItemProps {
     musicItem: IMusic.IMusicItem | null;
-    activeIndex: number; // 当前展示的是0/1/2
+    activeIndex: number;
     transformSharedValue: SharedValue<number>;
 }
 function _BarMusicItem(props: IBarMusicItemProps) {
@@ -53,12 +53,8 @@ function _BarMusicItem(props: IBarMusicItemProps) {
                 source={musicItem.artwork}
                 placeholderSource={ImgAsset.albumDefault}
             />
-            <Text
-                ellipsizeMode="tail"
-                accessible={false}
-                style={styles.textWrapper}
-                numberOfLines={1}>
-                <ThemeText fontSize="content" fontColor="musicBarText">
+            <View style={styles.textWrapper}>
+                <ThemeText fontSize="content" fontColor="musicBarText" fontWeight="bold" numberOfLines={1}>
                     {musicItem?.title}
                 </ThemeText>
                 {musicItem?.artist && (
@@ -66,12 +62,13 @@ function _BarMusicItem(props: IBarMusicItemProps) {
                         fontSize="description"
                         color={Color(colors.musicBarText)
                             .alpha(0.6)
-                            .toString()}>
-                        {" "}
-                        -{musicItem.artist}
+                            .toString()}
+                        numberOfLines={1}
+                        style={styles.artistText}>
+                        {musicItem.artist}
                     </ThemeText>
                 )}
-            </Text>
+            </View>
         </Animated.View>
     );
 }
@@ -93,12 +90,16 @@ const styles = StyleSheet.create({
     textWrapper: {
         flexGrow: 1,
         flexShrink: 1,
+        justifyContent: "center",
     },
     artworkImg: {
-        width: rpx(96),
-        height: rpx(96),
-        borderRadius: rpx(48),
-        marginRight: rpx(24),
+        width: rpx(80),
+        height: rpx(80),
+        borderRadius: rpx(18),
+        marginRight: rpx(20),
+    },
+    artistText: {
+        marginTop: rpx(4),
     },
 });
 
@@ -132,9 +133,7 @@ export default function MusicInfo(props: IMusicInfoProps) {
         };
     }, [musicItem, playLists]);
 
-    // +- 1
     const transformSharedValue = useSharedValue(0);
-
     const musicItemWidthValue = useSharedValue(0);
 
     const tapGesture = Gesture.Tap()
@@ -158,13 +157,11 @@ export default function MusicInfo(props: IMusicInfoProps) {
         })
         .onEnd((e, success) => {
             if (!success) {
-                // 还原到原始位置
                 transformSharedValue.value = withTiming(
                     0,
                     timingConfig.animationFast,
                 );
             } else {
-                // fling
                 const deltaX = e.translationX;
                 const vX = e.velocityX;
 
@@ -173,7 +170,6 @@ export default function MusicInfo(props: IMusicInfoProps) {
                     const rate = deltaX / musicItemWidthValue.value;
 
                     if (Math.abs(rate) > 0.3) {
-                        // 先判断距离
                         skip = vX > 0 ? 1 : -1;
                         transformSharedValue.value = withTiming(
                             skip,
@@ -183,7 +179,6 @@ export default function MusicInfo(props: IMusicInfoProps) {
                             },
                         );
                     } else if (Math.abs(vX) > 1500) {
-                        // 再判断速度
                         skip = vX > 0 ? 1 : -1;
                         transformSharedValue.value = skip;
                         runOnJS(skipMusicItem)(skip);

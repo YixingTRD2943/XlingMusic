@@ -1,19 +1,17 @@
 import React, { memo, useEffect, useState, useCallback } from "react";
-import { Keyboard, StyleSheet, View } from "react-native";
+import { ActivityIndicator, Keyboard, StyleSheet, View } from "react-native";
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withSpring,
 } from "react-native-reanimated";
 import rpx from "@/utils/rpx";
-import { CircularProgressBase } from "react-native-circular-progress-indicator";
 
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { showPanel } from "../panels/usePanel";
 import useColors from "@/hooks/useColors";
-import IconButton from "../base/iconButton";
-import TrackPlayer, { useCurrentMusic, useMusicState, useProgress } from "@/core/trackPlayer";
-import { musicIsPaused } from "@/utils/trackUtils";
+import TrackPlayer, { useCurrentMusic, useIsResolvingSource, useMusicState } from "@/core/trackPlayer";
+import { musicIsBuffering, musicIsPaused } from "@/utils/trackUtils";
 import MusicInfo from "./musicInfo";
 import Icon from "@/components/base/icon.tsx";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -23,47 +21,36 @@ export interface MusicBarVisibilityState {
     expanded: boolean;
 }
 
-function CircularPlayBtn() {
-    const progress = useProgress();
+function PlayPauseBtn() {
     const musicState = useMusicState();
+    const isResolving = useIsResolvingSource();
     const colors = useColors();
 
     const isPaused = musicIsPaused(musicState);
+    const isLoading = isResolving || musicIsBuffering(musicState);
 
     return (
-        <CircularProgressBase
-            activeStrokeWidth={rpx(4)}
-            inActiveStrokeWidth={rpx(2)}
-            inActiveStrokeOpacity={0.2}
-            value={
-                progress?.duration
-                    ? (100 * progress.position) / progress.duration
-                    : 0
-            }
-            duration={100}
-            radius={rpx(36)}
-            activeStrokeColor={colors.primary}
-            inActiveStrokeColor={colors.textSecondary}>
-            <IconButton
-                accessibilityLabel={"播放或暂停歌曲"}
-                name={isPaused ? "play" : "pause"}
-                sizeType={"normal"}
-                hitSlop={{
-                    top: 10,
-                    left: 10,
-                    right: 10,
-                    bottom: 10,
-                }}
-                color={colors.primary}
-                onPress={async () => {
-                    if (isPaused) {
-                        await TrackPlayer.play();
-                    } else {
-                        await TrackPlayer.pause();
-                    }
-                }}
-            />
-        </CircularProgressBase>
+        <TouchableOpacity
+            style={[styles.playBtn, { backgroundColor: colors.primary }]}
+            onPress={async () => {
+                if (isLoading) return;
+                if (isPaused) {
+                    await TrackPlayer.play();
+                } else {
+                    await TrackPlayer.pause();
+                }
+            }}
+        >
+            {isLoading ? (
+                <ActivityIndicator color="#ffffff" size={rpx(32)} />
+            ) : (
+                <Icon
+                    name={isPaused ? "play" : "pause"}
+                    size={rpx(32)}
+                    color="#ffffff"
+                />
+            )}
+        </TouchableOpacity>
     );
 }
 
@@ -142,6 +129,7 @@ function MusicBar({ onVisibilityChange, shouldHide = false }: MusicBarProps) {
                             style.wrapper,
                             {
                                 backgroundColor: colors.musicBar,
+                                borderTopColor: colors.border,
                                 paddingRight: safeAreaInsets.right + rpx(28),
                             },
                         ]}
@@ -152,18 +140,19 @@ function MusicBar({ onVisibilityChange, shouldHide = false }: MusicBarProps) {
                     >
                         <MusicInfo musicItem={musicItem} />
                         <View style={style.actionGroup}>
-                            <CircularPlayBtn />
-                            <Icon
-                                accessible
-                                accessibilityLabel="播放列表"
-                                name="playlist"
-                                size={rpx(56)}
-                                onPress={() => {
-                                    showPanel("PlayList");
-                                }}
-                                color={colors.text}
-                                style={[style.actionIcon]}
-                            />
+                            <PlayPauseBtn />
+                            <TouchableOpacity
+                                style={style.listBtn}
+                                onPress={() => showPanel("PlayList")}
+                            >
+                                <Icon
+                                    accessible
+                                    accessibilityLabel="播放列表"
+                                    name="playlist"
+                                    size={rpx(44)}
+                                    color={colors.textSecondary}
+                                />
+                            </TouchableOpacity>
                         </View>
                     </TouchableOpacity>
                 </Animated.View>
@@ -177,21 +166,32 @@ export default memo(MusicBar, () => true);
 const style = StyleSheet.create({
     wrapper: {
         width: "100%",
-        height: rpx(140),
+        height: rpx(132),
         flexDirection: "row",
         alignItems: "center",
         paddingRight: rpx(28),
         paddingHorizontal: rpx(28),
-        borderTopLeftRadius: rpx(28),
-        borderTopRightRadius: rpx(28),
+        borderTopWidth: 1,
     },
     actionGroup: {
-        width: rpx(200),
-        justifyContent: "flex-end",
         flexDirection: "row",
         alignItems: "center",
+        gap: rpx(20),
     },
-    actionIcon: {
-        marginLeft: rpx(40),
+    listBtn: {
+        width: rpx(72),
+        height: rpx(72),
+        justifyContent: "center",
+        alignItems: "center",
+    },
+});
+
+const styles = StyleSheet.create({
+    playBtn: {
+        width: rpx(72),
+        height: rpx(72),
+        borderRadius: rpx(36),
+        justifyContent: "center",
+        alignItems: "center",
     },
 });

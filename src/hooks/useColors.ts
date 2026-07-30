@@ -6,6 +6,7 @@ export interface CustomizedColors {
     background: string;
     text: string;
     textSecondary?: string;
+    textTertiary?: string;
     textHighlight?: string;
     pageBackground?: string;
     shadow?: string;

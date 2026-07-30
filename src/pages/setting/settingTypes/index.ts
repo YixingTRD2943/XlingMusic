@@ -1,9 +1,17 @@
-import deviceInfoModule from "react-native-device-info";
+import type deviceInfoModuleType from "react-native-device-info";
 import AboutSetting from "./aboutSetting";
 import BackupSetting from "./backupSetting";
 import BasicSetting from "./basicSetting";
 import PluginSetting from "./pluginSetting";
 import ThemeSetting from "./themeSetting";
+
+let appName = "XingLing";
+try {
+    const deviceInfoModule: typeof deviceInfoModuleType = require("react-native-device-info");
+    appName = deviceInfoModule.getApplicationName() || "XingLing";
+} catch {
+    // ignore
+}
 
 const settingTypes: Record<
     string,
@@ -36,7 +44,7 @@ const settingTypes: Record<
         component: BackupSetting,
     },
     about: {
-        title: `关于${deviceInfoModule.getApplicationName()}`,
+        title: `关于${appName}`,
         i18nKey: "common.about",
         component: AboutSetting,
     },

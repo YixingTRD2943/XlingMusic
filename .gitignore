@@ -86,3 +86,8 @@ scripts/
 .expo
 dist/
 web-build/
+# Windows reserved device name
+nul
+
+# Temp files
+temp_music_project/

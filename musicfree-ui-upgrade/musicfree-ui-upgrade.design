@@ -1,0 +1,198 @@
+{
+  "data": [
+    {
+      "id": "page-home",
+      "title": "首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 36,
+        "y": 72,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home.html",
+        "interactions": [
+          {
+            "domId": "nav-playlist",
+            "targetPageId": "page-playlist",
+            "hideEdge": true
+          },
+          {
+            "domId": "nav-player",
+            "targetPageId": "page-player",
+            "hideEdge": true
+          },
+          {
+            "domId": "tab-profile",
+            "targetPageId": "page-playlist",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-playlist",
+      "title": "歌单详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 420,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/playlist.html",
+        "interactions": [
+          {
+            "domId": "back-home",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-player",
+      "title": "播放详情",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 840,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/player.html",
+        "interactions": [
+          {
+            "domId": "back-to-home",
+            "targetPageId": "page-home",
+            "hideEdge": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "image-001",
+      "title": "周杰伦歌单封面",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 0,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/cover-jaychou.jpg"
+      }
+    },
+    {
+      "id": "image-002",
+      "title": "随机歌单封面",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 420,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/cover-random.jpg"
+      }
+    },
+    {
+      "id": "image-003",
+      "title": "Lo-Fi歌单封面",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 840,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/cover-lofi.jpg"
+      }
+    },
+    {
+      "id": "image-004",
+      "title": "正在播放封面",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 1260,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/cover-now-playing.jpg"
+      }
+    },
+    {
+      "id": "image-005",
+      "title": "背景氛围图",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 1680,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/bg-ambient.jpg"
+      }
+    },
+    {
+      "id": "image-006",
+      "title": "发现新歌卡片",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 2100,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/card-discover.jpg"
+      }
+    },
+    {
+      "id": "image-007",
+      "title": "热门排行卡片",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 2520,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/card-charts.jpg"
+      }
+    },
+    {
+      "id": "image-008",
+      "title": "最近播放卡片",
+      "type": "image",
+      "version": 1,
+      "createdAt": 1752498300000,
+      "canvasData": {
+        "x": 2940,
+        "y": 666
+      },
+      "devMetadata": {
+        "imageSrc": "assets/card-history.jpg"
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "mobile",
+    "projectName": "MusicFree 视觉升级",
+    "showEdge": false
+  }
+}

@@ -1,0 +1,238 @@
+================================================================================
+ MusicFree 开发环境 - 启动服务器与连接 MuMu 模拟器指令手册
+================================================================================
+
+【目录】
+  1. 环境准备
+  2. 连接 MuMu 模拟器
+  3. 启动 Metro 开发服务器
+  4. 构建并安装应用到模拟器
+  5. 常用调试命令
+  6. 常见问题排查
+
+================================================================================
+【1. 环境准备】
+================================================================================
+
+# 进入项目目录
+cd E:\XingMusic
+
+# 首次运行需安装依赖
+npm install
+
+# 设置环境变量（Windows PowerShell）
+$env:ANDROID_HOME="C:\Users\29436\android-sdk"
+$env:ANDROID_SDK_ROOT="C:\Users\29436\android-sdk"
+$env:JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"   # 或你的 JDK 路径
+
+# 验证环境
+node --version          # 需要 >= 18
+npm --version
+adb devices             # 验证 ADB 可用
+
+================================================================================
+【2. 连接 MuMu 模拟器】
+================================================================================
+
+# 确保 MuMu 模拟器已启动（在 MuMu Player 中手动启动）
+
+# 方式一：使用项目自带脚本
+npm run connect-mumu
+
+# 方式二：手动执行
+adb kill-server
+adb connect localhost:7555
+
+# 验证连接状态
+adb devices
+# 预期输出：
+# List of devices attached
+# 127.0.0.1:7555    device
+
+# 【重要】设置端口转发（必须执行，否则模拟器无法连接 Metro 服务器）
+# MuMu 模拟器（默认端口 7555）
+adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+# 如果使用其他端口，替换设备 ID，例如：
+# adb -s 127.0.0.1:16384 reverse tcp:8081 tcp:8081
+
+# 如果 7555 端口连接失败，尝试其他端口：
+adb connect 127.0.0.1:16384    # MuMu 12 默认端口
+adb connect 127.0.0.1:62001    # MuMu 部分版本
+
+# 如果使用 USB 连接真机
+adb devices                     # 查看设备
+adb -s <deviceId> reverse tcp:8081 tcp:8081  # 端口转发（必须执行）
+
+
+================================================================================
+【3. 启动 Metro 开发服务器】
+================================================================================
+
+# 方式一：启动 Metro（需要保持运行的终端）
+npm start
+
+# 方式二：清除缓存后启动（推荐首次或修改配置后使用）
+npx react-native start --reset-cache
+
+# Metro 服务器启动后默认监听：
+#   http://localhost:8081
+
+# 【注意】如果模拟器提示 "Could not connect to development server"
+# 请确保已执行端口转发命令（参见第 2 节）：
+#   adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+# 或重启 ADB 后重新执行：
+#   adb kill-server && adb start-server
+#   adb connect localhost:7555
+#   adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+
+
+================================================================================
+【4. 构建并安装应用到模拟器】
+================================================================================
+
+# 方式一：在另一个终端执行（Metro 服务器需先启动）
+npm run android
+
+# 方式二：设置环境变量后执行（推荐方式）
+$env:ANDROID_HOME="C:\Users\29436\android-sdk"
+$env:ANDROID_SDK_ROOT="C:\Users\29436\android-sdk"
+npm run android
+
+# 方式三：构建 Release 版本
+cd E:\XingMusic\android
+.\gradlew assembleRelease
+# 输出文件：android\app\build\outputs\apk\release\app-release.apk
+
+# 手动安装 APK
+adb install android\app\build\outputs\apk\debug\app-x86_64-debug.apk
+adb install -r <apk路径>   # 覆盖安装
+
+
+================================================================================
+【5. 常用调试命令】
+================================================================================
+
+# 查看正在运行的 React Native JS 日志
+adb logcat -s ReactNativeJS:V
+
+# 查看最近的错误日志
+adb logcat -d -s ReactNativeJS:E
+
+# 启动应用（冷启动）
+adb shell am start -n com.xingling.app/.MainActivity
+
+# 强制停止应用
+adb shell am force-stop com.xingling.app
+
+# 清除应用数据
+adb shell pm clear com.xingling.app
+
+# 重启应用（热更新不生效时）
+adb shell am force-stop com.xingling.app
+adb shell am start -n com.xingling.app/.MainActivity
+
+# 查看模拟器屏幕
+adb shell screencap /sdcard/screen.png
+adb pull /sdcard/screen.png .
+
+# 截图到电脑
+adb exec-out screencap -p > screen.png
+
+
+================================================================================
+【6. 常见问题排查】
+================================================================================
+
+# 问题：端口 8081 被占用 (EADDRINUSE)
+# 解决方案：
+netstat -ano | findstr :8081        # 查找占用进程
+taskkill /F /PID <进程ID>          # 终止进程
+
+# 问题：Could not connect to development server（无法连接开发服务器）
+# 解决方案：
+# 1. 确认 Metro 服务器正在运行（参见第 3 节）
+# 2. 确认模拟器已连接：
+adb devices
+# 3. 设置端口转发（关键步骤！）：
+adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+# 4. 在模拟器中按 Ctrl+M 打开开发者菜单，选择 "Reload"
+# 5. 如果仍不行，重启 ADB 服务：
+adb kill-server
+adb start-server
+adb connect localhost:7555
+adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+
+# 问题：MuMu 模拟器连接失败
+# 解决方案：
+# 1. 确保 MuMu 模拟器已完全启动
+# 2. 检查防火墙是否阻止 ADB
+# 3. 尝试使用不同端口：
+adb connect 127.0.0.1:16384
+adb connect 127.0.0.1:7555
+# 4. 重启 ADB 服务
+adb kill-server
+adb start-server
+adb connect 127.0.0.1:7555
+
+# 问题：应用加载后白屏/黑屏
+# 解决方案：
+# 1. 清除 Metro 缓存
+cd E:\XingMusic
+Remove-Item -Recurse -Force node_modules\.cache -ErrorAction SilentlyContinue
+Remove-Item -Recurse -Force .react-native -ErrorAction SilentlyContinue
+npx react-native start --reset-cache
+# 2. 重新加载应用
+adb shell input keyevent KEYCODE_MENU    # 打开开发者菜单
+# 或在模拟器中：Ctrl + M
+# 选择 "Reload"
+
+# 问题：热更新不生效
+# 解决方案：
+# 1. 在设备上摇一摇或按 Ctrl+M 打开菜单
+# 2. 选择 "Reload" 或 "Restart"
+# 3. 检查 Metro 服务器是否仍在运行
+# 4. 重启 Metro 并清除缓存
+
+# 问题：APK 安装失败
+# 解决方案：
+# 1. 卸载旧版本
+adb uninstall com.xingling.app
+# 2. 重新安装
+npm run android
+
+# 问题：JAVA_HOME 未设置
+# 解决方案：
+# 找到 JDK 路径，例如：
+$env:JAVA_HOME="C:\Program Files\Android\Android Studio\jbr"
+# 或
+$env:JAVA_HOME="C:\Program Files\Java\jdk-17"
+# 验证：
+java -version
+
+
+================================================================================
+【快速启动流程 - 一键复制】
+================================================================================
+
+# 终端 1：连接模拟器并设置端口转发
+cd E:\XingMusic
+npm run connect-mumu
+adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+
+# 终端 2：启动 Metro 服务器
+cd E:\XingMusic
+$env:ANDROID_HOME="C:\Users\29436\android-sdk"
+npm start
+
+# 终端 3：构建并安装
+cd E:\XingMusic
+$env:ANDROID_HOME="C:\Users\29436\android-sdk"
+npm run android
+
+# 【故障排查】如果提示 "Could not connect to development server"：
+# 1. 确认 Metro 服务器正在运行（终端 2 未关闭）
+# 2. 重新执行端口转发：
+#    adb -s 127.0.0.1:7555 reverse tcp:8081 tcp:8081
+# 3. 在模拟器中按 Ctrl+M 打开开发者菜单，选择 "Reload"
+
+================================================================================

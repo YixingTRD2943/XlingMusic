@@ -7,14 +7,12 @@ export default function useOnceEffect(
     const flag = useRef<boolean>(false);
 
     useEffect(() => {
-        let result;
         if (flag.current) {
-            return result;
+            return;
         }
         if (!deps || deps.every(_ => !!_)) {
             flag.current = true;
-            result = cb();
+            return cb();
         }
-        return result;
     }, deps);
 }

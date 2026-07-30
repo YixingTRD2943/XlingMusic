@@ -72,6 +72,8 @@ import TShirtOutlineIcon from "@/assets/icons/t-shirt-outline.svg";
 import TranslationIcon from "@/assets/icons/translation.svg";
 import TrashOutlineIcon from "@/assets/icons/trash-outline.svg";
 import TrophyIcon from "@/assets/icons/trophy.svg";
+import ChevronDownIcon from "@/assets/icons/chevron-down.svg";
+import ChevronRightIcon from "@/assets/icons/chevron-right.svg";
 import UserIcon from "@/assets/icons/user.svg";
 import XMarkIcon from "@/assets/icons/x-mark.svg";
 
@@ -93,6 +95,8 @@ export type IIconName =
     | "check-circle-outline"
     | "check-circle"
     | "check"
+    | "chevron-down"
+    | "chevron-right"
     | "circle-stack"
     | "clock-outline"
     | "code-bracket-square"
@@ -175,6 +179,8 @@ const iconMap = {
     "check-circle-outline": CheckCircleOutlineIcon,
     "check-circle": CheckCircleIcon,
     check: CheckIcon,
+    "chevron-down": ChevronDownIcon,
+    "chevron-right": ChevronRightIcon,
     "circle-stack": CircleStackIcon,
     "clock-outline": ClockOutlineIcon,
     "code-bracket-square": CodeBracketSquareIcon,
@@ -243,6 +249,11 @@ export default function Icon(props: IProps) {
     } as SvgProps;
 
     const Component = iconMap[name];
+
+    if (!Component) {
+        console.warn(`Icon "${name}" not found in iconMap`);
+        return null;
+    }
 
     return <Component {...newProps} />;
 }

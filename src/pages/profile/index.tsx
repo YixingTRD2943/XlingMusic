@@ -13,21 +13,46 @@ import rpx from "@/utils/rpx";
 import useColors from "@/hooks/useColors";
 import Icon from "@/components/base/icon";
 import ListItem from "@/components/base/listItem";
-import { useNavigate } from "@/core/router";
 import { ROUTE_PATH } from "@/core/router";
 import { IIconName } from "@/components/base/icon.tsx";
+import { NavigationProp } from "@react-navigation/native";
 
-function Profile() {
+function Profile({ navigation }: { navigation: NavigationProp<any> }) {
     const colors = useColors();
-    const navigate = useNavigate();
+    const navigate = (route: string, params?: any) => navigation.navigate(route, params);
 
-    const menuItems: Array<{ icon: IIconName; title: string; onPress: () => void }> = [
-        { icon: "heart", title: "我喜欢", onPress: () => {} },
-        { icon: "clock-outline", title: "播放历史", onPress: () => navigate(ROUTE_PATH.HISTORY) },
-        { icon: "arrow-down-tray", title: "下载管理", onPress: () => navigate(ROUTE_PATH.DOWNLOADING) },
-        { icon: "folder-music-outline", title: "本地音乐", onPress: () => navigate(ROUTE_PATH.LOCAL) },
+    const menuItems: Array<{
+        icon: IIconName;
+        title: string;
+        onPress: () => void;
+    }> = [
+        {
+            icon: "heart",
+            title: "我喜欢",
+            onPress: () =>
+                navigate(ROUTE_PATH.LOCAL_SHEET_DETAIL, { id: "favorite" }),
+        },
+        {
+            icon: "clock-outline",
+            title: "播放历史",
+            onPress: () => navigate(ROUTE_PATH.HISTORY),
+        },
+        {
+            icon: "arrow-down-tray",
+            title: "下载管理",
+            onPress: () => navigate(ROUTE_PATH.DOWNLOADING),
+        },
+        {
+            icon: "folder-music-outline",
+            title: "本地音乐",
+            onPress: () => navigate(ROUTE_PATH.LOCAL),
+        },
         { icon: "bookmark-square", title: "收藏歌单", onPress: () => {} },
-        { icon: "cog-8-tooth", title: "设置", onPress: () => navigate(ROUTE_PATH.SETTING, { type: "basic" }) },
+        {
+            icon: "cog-8-tooth",
+            title: "设置",
+            onPress: () => navigate(ROUTE_PATH.SETTING, { type: "basic" }),
+        },
     ];
 
     return (
@@ -41,21 +66,34 @@ function Profile() {
                     />
                     <ScrollView style={styles.scrollView}>
                         <View style={styles.header}>
-                            <View style={[styles.avatar, { backgroundColor: colors.primary + "30" }]}>
-                                <Icon name="user" size={rpx(64)} color={colors.text} />
+                            <View
+                                style={[
+                                    styles.avatar,
+                                    { backgroundColor: colors.primary + "30" },
+                                ]}>
+                                <Icon
+                                    name="user"
+                                    size={rpx(64)}
+                                    color={colors.text}
+                                />
                             </View>
                             <View style={styles.userInfo}>
                                 <ThemeText fontSize="title" fontWeight="bold">
                                     星玲音乐
                                 </ThemeText>
-                                <ThemeText fontSize="subTitle" fontColor="textSecondary">
+                                <ThemeText
+                                    fontSize="subTitle"
+                                    fontColor="textSecondary">
                                     享受音乐的美好
                                 </ThemeText>
                             </View>
                         </View>
 
                         <View style={styles.section}>
-                            <ThemeText style={styles.sectionTitle} fontSize="subTitle" fontWeight="bold">
+                            <ThemeText
+                                style={styles.sectionTitle}
+                                fontSize="subTitle"
+                                fontWeight="bold">
                                 我的音乐
                             </ThemeText>
                             {menuItems.map((item, index) => (
@@ -70,14 +108,17 @@ function Profile() {
                                         circleBgColor={colors.listActive}
                                     />
                                     <ListItem.Content title={item.title} />
-                                    <Icon name="arrow-right-end-on-rectangle" size={rpx(32)} color={colors.textSecondary} />
+                                    <Icon
+                                        name="arrow-right-end-on-rectangle"
+                                        size={rpx(32)}
+                                        color={colors.textSecondary}
+                                    />
                                 </ListItem>
                             ))}
                         </View>
                     </ScrollView>
                 </>
             </HorizontalSafeAreaView>
-
         </SafeAreaView>
     );
 }
@@ -94,7 +135,10 @@ function ProfileStatusBar() {
 }
 
 const LeftDrawer = createDrawerNavigator();
-export default function ProfileApp() {
+interface ProfileAppProps {
+    navigation?: NavigationProp<any>;
+}
+export default function ProfileApp({ navigation }: ProfileAppProps) {
     return (
         <LeftDrawer.Navigator
             screenOptions={{
@@ -105,7 +149,9 @@ export default function ProfileApp() {
             }}
             initialRouteName="PROFILE-MAIN"
             drawerContent={props => <HomeDrawer {...props} />}>
-            <LeftDrawer.Screen name="PROFILE-MAIN" component={Profile} />
+            <LeftDrawer.Screen name="PROFILE-MAIN">
+                {() => <Profile navigation={navigation} />}
+            </LeftDrawer.Screen>
         </LeftDrawer.Navigator>
     );
 }

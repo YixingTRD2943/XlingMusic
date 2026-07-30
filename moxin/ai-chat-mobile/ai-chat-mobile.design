@@ -1,0 +1,79 @@
+{
+  "data": [
+    {
+      "id": "page-home-yuanbao",
+      "title": "首页 - 元宝风格",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753024802000,
+      "canvasData": {
+        "x": -24,
+        "y": 300,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home-yuanbao.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-chat",
+      "title": "对话",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753024800000,
+      "canvasData": {
+        "x": -24,
+        "y": 24,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/chat.html",
+        "interactions": [
+          {
+            "domId": "nav-settings",
+            "targetPageId": "page-settings",
+            "transitionLabel": "打开设置"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-settings",
+      "title": "设置",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1753024800000,
+      "canvasData": {
+        "x": 300,
+        "y": 24,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings.html",
+        "interactions": [
+          {
+            "domId": "back-chat",
+            "targetPageId": "page-chat",
+            "hideEdge": true,
+            "transitionLabel": "返回对话"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": false,
+    "deviceType": "mobile",
+    "projectName": "AI 助手 App",
+    "designLibrary": {
+      "name": "源力",
+      "id": "dl_builtin_volcengine",
+      "version": null,
+      "scope": "built-in-global",
+      "path": "c:\\Users\\29436\\.trae-cn\\design_libraries\\dl_builtin_volcengine",
+      "versionSource": null
+    },
+    "visualEditorEnabled": true
+  }
+}

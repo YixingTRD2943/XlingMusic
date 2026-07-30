@@ -9,6 +9,7 @@ import TitleAndTag from "./titleAndTag";
 import ThemeText from "../base/themeText";
 import TrackPlayer from "@/core/trackPlayer";
 import Icon from "@/components/base/icon.tsx";
+import useColors from "@/hooks/useColors";
 
 interface IMusicItemProps {
     index?: string | number;
@@ -35,6 +36,9 @@ export default function MusicItem(props: IMusicItemProps) {
         containerStyle,
         highlight = false,
     } = props;
+    const colors = useColors();
+
+    const hasSource = musicItem.source && Object.keys(musicItem.source).length > 0;
 
     return (
         <ListItem
@@ -80,6 +84,14 @@ export default function MusicItem(props: IMusicItemProps) {
                                 size={rpx(22)}
                             />
                         )}
+                        {!hasSource && !LocalMusicSheet.isLocalMusic(musicItem) && (
+                            <Icon
+                                style={styles.icon}
+                                color="#e6a23c"
+                                name="exclamation-circle"
+                                size={rpx(22)}
+                            />
+                        )}
                         <ThemeText
                             numberOfLines={1}
                             fontSize="description"
@@ -87,6 +99,13 @@ export default function MusicItem(props: IMusicItemProps) {
                             {musicItem.artist}
                             {musicItem.album ? ` - ${musicItem.album}` : ""}
                         </ThemeText>
+                        {!hasSource && (
+                            <ThemeText
+                                fontSize="tag"
+                                color="#e6a23c">
+                                {" 音源待匹配"}
+                            </ThemeText>
+                        )}
                     </View>
                 }
             />

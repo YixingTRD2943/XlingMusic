@@ -1,15 +1,24 @@
 {
-  "extends": "@react-native/typescript-config/tsconfig.json",
-  "compilerOptions": {
-    /* Visit https://aka.ms/tsconfig.json to read more about this file */
-
-    /* Completeness */
-    "noImplicitAny": false,
-    "skipLibCheck": true,                                 /* Skip type checking all .d.ts files. */
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"]
+        },
+        "target": "ESNext",
+        "module": "ESNext",
+        "moduleResolution": "bundler",
+        "allowJs": true,
+        "allowImportingTsExtensions": true,
+        "jsx": "react-native",
+        "strict": false,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true
     },
-    "types": ["node"]
-  }
+    "include": ["src/**/*", "*.js"],
+    "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
 }

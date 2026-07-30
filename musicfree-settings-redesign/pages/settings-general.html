@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基本设置 - MusicFree</title>
+    <style id="theme-vars">
+:root {
+  /* === Brand Colors === */
+  --color-bg: #0a0a0a;
+  --color-bg-elevated: #141414;
+  --color-surface: #1a1a1a;
+  --color-surface-hover: #222222;
+  --color-primary: #1DB954;
+  --color-primary-hover: #1ed760;
+  --color-primary-muted: rgba(29, 185, 84, 0.12);
+  --color-text: #ffffff;
+  --color-text-secondary: rgba(255, 255, 255, 0.55);
+  --color-text-tertiary: rgba(255, 255, 255, 0.3);
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-strong: rgba(255, 255, 255, 0.14);
+  --color-divider: rgba(255, 255, 255, 0.06);
+  --color-switch-off: #3a3a3c;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-success: #1DB954;
+
+  /* === Semantic Aliases (required by fill-html-head.mjs) === */
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-muted: rgba(255, 255, 255, 0.04);
+  --color-muted-foreground: var(--color-text-secondary);
+  --color-radius-sm: var(--radius-sm);
+  --color-radius-md: var(--radius-md);
+  --color-radius-lg: var(--radius-lg);
+
+  /* === Typography === */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Noto Sans SC', 'Helvetica Neue', sans-serif;
+  --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+
+  --text-xs: 11px;
+  --text-xs-lh: 16px;
+  --text-sm: 13px;
+  --text-sm-lh: 18px;
+  --text-base: 15px;
+  --text-base-lh: 22px;
+  --text-lg: 17px;
+  --text-lg-lh: 24px;
+  --text-xl: 20px;
+  --text-xl-lh: 28px;
+
+  /* === Spacing === */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+
+  /* === Radius === */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* === Shadows === */
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-float: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-background);
+    --color-foreground: var(--color-foreground);
+    --color-card: var(--color-card);
+    --color-primary: var(--color-primary);
+    --color-muted: var(--color-muted);
+    --color-muted-foreground: var(--color-muted-foreground);
+    --color-border: var(--color-border);
+    --radius-sm: var(--color-radius-sm);
+    --radius-md: var(--color-radius-md);
+    --radius-lg: var(--color-radius-lg);
+  }
+  @layer base {
+    body { background: var(--color-background); color: var(--color-foreground); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style id="semantic-token-fallback">
+      .bg-background { background-color: var(--color-background); }
+      .text-background { color: var(--color-background); }
+      .border-background { border-color: var(--color-background); }
+      .ring-background { --tw-ring-color: var(--color-background); }
+      .bg-foreground { background-color: var(--color-foreground); }
+      .text-foreground { color: var(--color-foreground); }
+      .border-foreground { border-color: var(--color-foreground); }
+      .ring-foreground { --tw-ring-color: var(--color-foreground); }
+      .bg-card { background-color: var(--color-card); }
+      .text-card { color: var(--color-card); }
+      .border-card { border-color: var(--color-card); }
+      .ring-card { --tw-ring-color: var(--color-card); }
+      .bg-primary { background-color: var(--color-primary); }
+      .text-primary { color: var(--color-primary); }
+      .border-primary { border-color: var(--color-primary); }
+      .ring-primary { --tw-ring-color: var(--color-primary); }
+      .bg-muted { background-color: var(--color-muted); }
+      .text-muted { color: var(--color-muted); }
+      .border-muted { border-color: var(--color-muted); }
+      .ring-muted { --tw-ring-color: var(--color-muted); }
+      .bg-muted-foreground { background-color: var(--color-muted-foreground); }
+      .text-muted-foreground { color: var(--color-muted-foreground); }
+      .border-muted-foreground { border-color: var(--color-muted-foreground); }
+      .ring-muted-foreground { --tw-ring-color: var(--color-muted-foreground); }
+      .bg-border { background-color: var(--color-border); }
+      .text-border { color: var(--color-border); }
+      .border-border { border-color: var(--color-border); }
+      .ring-border { --tw-ring-color: var(--color-border); }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen antialiased">
+    <main class="mx-auto max-w-[430px] min-h-screen relative" style="background: var(--color-bg);">
+
+      <!-- Status Bar -->
+      <div class="flex items-center justify-between px-5 h-[44px] pt-[env(safe-area-inset-top,0px)]" style="color: var(--color-text);">
+        <span class="text-[15px] font-semibold tracking-tight">20:13</span>
+        <div class="flex items-center gap-[6px]" style="color: var(--color-text);">
+          <!-- Wifi icon -->
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12.55a11 11 0 0 1 14.08 0"/>
+            <path d="M1.42 9a16 16 0 0 1 21.16 0"/>
+            <path d="M8.53 16.11a6 6 0 0 1 6.95 0"/>
+            <circle cx="12" cy="20" r="1"/>
+          </svg>
+          <!-- Battery icon -->
+          <svg width="22" height="16" viewBox="0 0 28 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="1" y="3.5" width="22" height="9" rx="2"/>
+            <path d="M24 7v2" stroke-width="2.5" stroke-linecap="round"/>
+            <rect x="3" y="5.5" width="16" height="5" rx="1" fill="var(--color-text)" stroke="none"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- Navigation Header -->
+      <div class="flex items-center h-[44px] px-2">
+        <div class="w-[44px] h-[44px] flex items-center justify-center rounded-[var(--radius-md)]" style="color: var(--color-text);">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </div>
+        <h1 class="flex-1 text-center text-[17px] font-semibold pr-[44px]" style="color: var(--color-text);">基本设置</h1>
+      </div>
+
+      <!-- Tab Bar (sticky) -->
+      <div class="sticky top-0 z-10" style="background: var(--color-bg);">
+        <div class="flex items-center px-4 h-[44px] border-b" style="border-color: var(--color-border);">
+          <button data-dom-id="tab-general" class="relative flex-1 h-full flex items-center justify-center text-[15px] font-medium" style="color: var(--color-text);">
+            常规
+            <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-[24px] h-[2.5px] rounded-full" style="background: var(--color-primary);"></span>
+          </button>
+          <button data-dom-id="tab-playback" class="flex-1 h-full flex items-center justify-center text-[15px] font-medium" style="color: var(--color-text-secondary);">
+            播放
+          </button>
+          <button data-dom-id="tab-download" class="flex-1 h-full flex items-center justify-center text-[15px] font-medium" style="color: var(--color-text-secondary);">
+            下载
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="pb-[40px]">
+
+        <!-- Section Label: 通用 -->
+        <div class="mt-[24px] mb-[8px] pl-5 pr-4 text-[13px] font-semibold" style="color: var(--color-text-secondary);">通用</div>
+
+        <!-- Card Group 1: 通用 -->
+        <div class="mx-4 rounded-[var(--radius-lg)] overflow-hidden" style="background: var(--color-surface);">
+
+          <!-- 历史记录最多保存条数 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">历史记录最多保存条数</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px]" style="color: var(--color-text-secondary);">50</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 打开歌曲详情页时 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">打开歌曲详情页时</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px] max-w-[140px] truncate" style="color: var(--color-text-secondary);">默认展示歌曲封面</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 处于歌曲详情页时常亮 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">处于歌曲详情页时常亮</span>
+            <div class="toggle-switch off"></div>
+          </div>
+
+          <!-- 关联歌词方式 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">关联歌词方式</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px]" style="color: var(--color-text-secondary);">搜索歌词</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 通知栏显示关闭按钮 -->
+          <div class="flex items-center h-[52px] px-[20px]">
+            <div class="flex-1">
+              <span class="text-[15px]" style="color: var(--color-text);">通知栏显示关闭按钮</span>
+              <span class="text-[12px] ml-[4px]" style="color: var(--color-text-tertiary);">(重启后生效)</span>
+            </div>
+            <div class="toggle-switch off"></div>
+          </div>
+
+        </div>
+
+        <!-- Section Label: 歌单 & 专辑 -->
+        <div class="mt-[24px] mb-[8px] pl-5 pr-4 text-[13px] font-semibold" style="color: var(--color-text-secondary);">歌单 &amp; 专辑</div>
+
+        <!-- Card Group 2: 歌单 & 专辑 -->
+        <div class="mx-4 rounded-[var(--radius-lg)] overflow-hidden" style="background: var(--color-surface);">
+
+          <!-- 点击搜索结果内单曲时 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">点击搜索结果内单曲时</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px]" style="color: var(--color-text-secondary);">播放歌曲</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 点击专辑内单曲时 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">点击专辑内单曲时</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px]" style="color: var(--color-text-secondary);">播放专辑</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 打开歌曲详情页时 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">打开歌曲详情页时</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px] max-w-[140px] truncate" style="color: var(--color-text-secondary);">默认展示歌曲封面</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- 新建歌单时默认歌曲排序 -->
+          <div class="flex items-center h-[52px] px-[20px]">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">新建歌单时默认歌曲排序</span>
+            <div class="flex items-center gap-[4px] flex-shrink-0">
+              <span class="text-[14px] max-w-[140px] truncate" style="color: var(--color-text-secondary);">按歌曲名排序</span>
+              <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                <polyline points="6 4 10 8 6 12"/>
+              </svg>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Section Label: 插件 -->
+        <div class="mt-[24px] mb-[8px] pl-5 pr-4 text-[13px] font-semibold" style="color: var(--color-text-secondary);">插件</div>
+
+        <!-- Card Group 3: 插件 -->
+        <div class="mx-4 rounded-[var(--radius-lg)] overflow-hidden" style="background: var(--color-surface);">
+
+          <!-- 软件启动时自动更新插件 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">软件启动时自动更新插件</span>
+            <div class="toggle-switch off"></div>
+          </div>
+
+          <!-- 安装插件时不校验版本 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">安装插件时不校验版本</span>
+            <div class="toggle-switch off"></div>
+          </div>
+
+          <!-- 启用插件懒加载 -->
+          <div class="flex items-center h-[52px] px-[20px]">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">启用插件懒加载</span>
+            <div class="toggle-switch off"></div>
+          </div>
+
+        </div>
+
+        <!-- Section Label: 网络 -->
+        <div class="mt-[24px] mb-[8px] pl-5 pr-4 text-[13px] font-semibold" style="color: var(--color-text-secondary);">网络</div>
+
+        <!-- Card Group 4: 网络 -->
+        <div class="mx-4 rounded-[var(--radius-lg)] overflow-hidden" style="background: var(--color-surface);">
+
+          <!-- 使用移动网络播放 -->
+          <div class="flex items-center h-[52px] px-[20px] border-b" style="border-color: var(--color-border);">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">使用移动网络播放</span>
+            <div class="toggle-switch on"></div>
+          </div>
+
+          <!-- 使用移动网络下载 -->
+          <div class="flex items-center h-[52px] px-[20px]">
+            <span class="flex-1 text-[15px]" style="color: var(--color-text);">使用移动网络下载</span>
+            <div class="toggle-switch off"></div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <style>
+      /* Toggle switch */
+      .toggle-switch {
+        position: relative;
+        width: 44px;
+        height: 26px;
+        flex-shrink: 0;
+        border-radius: var(--radius-full);
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        outline: none;
+        border: none;
+      }
+      .toggle-switch::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.2s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      }
+      .toggle-switch.off {
+        background-color: var(--color-switch-off);
+      }
+      .toggle-switch.on {
+        background-color: var(--color-primary);
+      }
+      .toggle-switch.on::before {
+        transform: translateX(18px);
+      }
+
+      /* Scrollbar hide */
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</body>
+</html>

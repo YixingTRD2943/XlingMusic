@@ -1,4 +1,3 @@
-import AppBar from "@/components/base/appBar";
 import { showDialog } from "@/components/dialogs/useDialog";
 import { showPanel } from "@/components/panels/usePanel.ts";
 import { SortType } from "@/constants/commonConst.ts";
@@ -8,109 +7,97 @@ import { ROUTE_PATH, useParams } from "@/core/router";
 import { default as Toast, default as toast } from "@/utils/toast";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
+import { StyleSheet, View } from "react-native";
+import rpx from "@/utils/rpx";
+import IconButton from "@/components/base/iconButton";
+import ThemeText from "@/components/base/themeText";
 
-export default function () {
+export default function NavBar() {
     const navigation = useNavigation<any>();
     const { id = "favorite" } = useParams<"local-sheet-detail">();
     const musicSheet = useSheetItem(id);
     const { t } = useI18N();
 
     return (
-        <>
-            <AppBar
-                menu={[
-                    {
-                        icon: "pencil-outline",
-                        title: t("sheetDetail.editSheetInfo"),
-                        onPress() {
-                            showPanel("EditMusicSheetInfo", {
-                                musicSheet: musicSheet,
-                            });
-                        },
-                    },
-                    {
-                        icon: "pencil-square",
-                        title: t("sheetDetail.batchEditMusic"),
-                        onPress() {
-                            navigation.navigate(ROUTE_PATH.MUSIC_LIST_EDITOR, {
-                                musicList: musicSheet.musicList,
-                                musicSheet: musicSheet,
-                            });
-                        },
-                    },
-                    {
-                        icon: "sort-outline",
-                        title: t("sheetDetail.sortMusic"),
-                        onPress() {
-                            showDialog("RadioDialog", {
-                                content: [
-                                    {
-                                        value: SortType.Title,
-                                        label: t("sheetDetail.sortMusicOption.byTitle"),
-                                    },
-                                    {
-                                        value: SortType.Artist,
-                                        label: t("sheetDetail.sortMusicOption.byArtist"),
-                                    },
-                                    {
-                                        value: SortType.Album,
-                                        label: t("sheetDetail.sortMusicOption.byAlbum"),
-                                    },
-                                    {
-                                        value: SortType.Newest,
-                                        label: t("sheetDetail.sortMusicOption.newest"),
-                                    },
-                                    {
-                                        value: SortType.Oldest,
-                                        label: t("sheetDetail.sortMusicOption.oldest"),
-                                    },
-                                ],
-                                defaultSelected:
-                                    MusicSheet.getSheetMeta(id, "sort") ||
-                                    SortType.None,
-                                title: t("sheetDetail.sortMusic"),
-                                async onOk(value) {
-                                    await MusicSheet.setSortType(
-                                        id,
-                                        value as SortType,
-                                    );
-                                    toast.success(t("toast.sortHasBeenUpdated"));
+        <View style={styles.container}>
+            <View style={styles.left}>
+                <IconButton
+                    name="arrow-left"
+                    sizeType="normal"
+                    color="white"
+                    onPress={() => navigation.goBack()}
+                />
+            </View>
+            <View style={styles.center}>
+                <ThemeText fontSize="title" fontWeight="bold" numberOfLines={1}>
+                    {t("common.sheet")}
+                </ThemeText>
+            </View>
+            <View style={styles.right}>
+                <IconButton
+                    name="ellipsis-vertical"
+                    sizeType="normal"
+                    color="white"
+                    onPress={() => {
+                        showDialog("RadioDialog", {
+                            content: [
+                                {
+                                    value: SortType.Title,
+                                    label: t("sheetDetail.sortMusicOption.byTitle"),
                                 },
-                            });
-                        },
-                    },
-                    {
-                        icon: "trash-outline",
-                        title: t("sheetDetail.deleteSheet"),
-                        show: id !== "favorite",
-                        onPress() {
-                            showDialog("SimpleDialog", {
-                                title: t("sheetDetail.deleteSheet"),
-                                content: t("sheetDetail.deleteSheetContent", {
-                                    name: musicSheet.title,
-                                }),
-                                onOk: async () => {
-                                    await MusicSheet.removeSheet(id);
-                                    Toast.success(t("toast.deleteSuccess"));
-                                    navigation.goBack();
+                                {
+                                    value: SortType.Artist,
+                                    label: t("sheetDetail.sortMusicOption.byArtist"),
                                 },
-                            });
-                        },
-                    },
-                ]}
-                actions={[
-                    {
-                        icon: "magnifying-glass",
-                        onPress() {
-                            navigation.navigate(ROUTE_PATH.SEARCH_MUSIC_LIST, {
-                                musicList: musicSheet?.musicList,
-                                musicSheet: musicSheet,
-                            });
-                        },
-                    },
-                ]}>
-                {t("common.sheet")}
-            </AppBar>
-        </>
+                                {
+                                    value: SortType.Album,
+                                    label: t("sheetDetail.sortMusicOption.byAlbum"),
+                                },
+                                {
+                                    value: SortType.Newest,
+                                    label: t("sheetDetail.sortMusicOption.newest"),
+                                },
+                                {
+                                    value: SortType.Oldest,
+                                    label: t("sheetDetail.sortMusicOption.oldest"),
+                                },
+                            ],
+                            defaultSelected:
+                                MusicSheet.getSheetMeta(id, "sort") ||
+                                SortType.None,
+                            title: t("sheetDetail.sortMusic"),
+                            async onOk(value) {
+                                await MusicSheet.setSortType(
+                                    id,
+                                    value as SortType,
+                                );
+                                toast.success(t("toast.sortHasBeenUpdated"));
+                            },
+                        });
+                    }}
+                />
+            </View>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flexDirection: "row",
+        alignItems: "center",
+        height: rpx(100),
+        paddingHorizontal: rpx(24),
+    },
+    left: {
+        width: rpx(80),
+        alignItems: "flex-start",
+    },
+    center: {
+        flex: 1,
+        alignItems: "center",
+    },
+    right: {
+        width: rpx(80),
+        alignItems: "flex-end",
+    },
+});

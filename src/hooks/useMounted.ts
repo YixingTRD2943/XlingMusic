@@ -8,7 +8,7 @@ export function useOnMounted() {
         onMounted.current = true;
         setTimeout(() => {
             setLoading(false);
-        });
+        }, 50);
 
         return () => {
             onMounted.current = false;

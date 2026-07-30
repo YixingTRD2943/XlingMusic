@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TextProps } from "react-native";
+import { Platform, Text, TextProps } from "react-native";
 import { fontSizeConst, fontWeightConst } from "@/constants/uiConst";
 import useColors, { CustomizedColors } from "@/hooks/useColors";
 
@@ -23,12 +23,17 @@ export default function ThemeText(props: IThemeTextProps) {
         opacity,
     } = props;
 
+    const fontSizeValue = fontSizeConst[fontSize];
+    const androidOffset = fontSizeValue * 0.25;
     const themeStyle = {
         color: color ?? colors[fontColor],
-        fontSize: fontSizeConst[fontSize],
+        fontSize: fontSizeValue,
         fontWeight: fontWeightConst[fontWeight],
         includeFontPadding: false,
+        textAlignVertical: "center",
+        lineHeight: fontSizeValue * 1.4,
         opacity,
+        transform: Platform.OS === "android" ? [{ translateY: -androidOffset }] : undefined,
     };
 
     const _style = Array.isArray(style)

@@ -32,10 +32,15 @@ const QQ_MUSIC_PATTERNS = [
 ];
 
 const NETEASE_PATTERNS = [
+    /music\.163\.com\/m\/playlist\?id=(\d+)/i,
     /music\.163\.com\/playlist\?id=(\d+)/i,
     /music\.163\.com\/playlist\/(\d+)/i,
+    /music\.163\.com\/songlist\?id=(\d+)/i,
+    /music\.163\.com\/songlist\/(\d+)/i,
     /y\.music\.163\.com\/m\/songlist\?id=(\d+)/i,
+    /y\.music\.163\.com\/m\/playlist\?id=(\d+)/i,
     /music\.163\.com\/.*?id=(\d+).*?type=playlist/i,
+    /music\.163\.com\/#\/playlist\?id=(\d+)/i,
 ];
 
 const KUGOU_PATTERNS = [

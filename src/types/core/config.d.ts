@@ -21,6 +21,9 @@ export interface IAppConfigProperties {
     "basic.playQualityOrder": "asc" | "desc";
     "basic.defaultDownloadQuality": IMusic.IQualityKey;
     "basic.downloadQualityOrder": "asc" | "desc";
+    "basic.downloadAutoDeleteFailedFile": boolean;
+    "basic.downloadAutoAddToSheet": boolean;
+    "basic.downloadAutoAddSheetName": string;
     "basic.musicDetailDefault": "album" | "lyric";
     "basic.musicDetailAwake": boolean;
     "basic.maxHistoryLen": number;
@@ -31,6 +34,7 @@ export interface IAppConfigProperties {
     "basic.showExitOnNotification": boolean;
     "basic.musicOrderInLocalSheet": SortType;
     "basic.tryChangeSourceWhenPlayFail": boolean;
+    "basic.retryDelayWhenPlayFail": number;
 
     // Lyric
     "lyric.showStatusBarLyric": boolean;

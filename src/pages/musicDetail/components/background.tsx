@@ -23,7 +23,8 @@ export default function Background() {
     return (
         <>
             <View style={style.background} />
-            <Image style={style.blur} blurRadius={50} source={artworkSource} />
+            <Image style={style.blur} blurRadius={80} source={artworkSource} />
+            <View style={style.overlay} />
         </>
     );
 }
@@ -47,6 +48,16 @@ const style = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        opacity: 0.5,
+        opacity: 0.4,
+    },
+    overlay: {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
     },
 });

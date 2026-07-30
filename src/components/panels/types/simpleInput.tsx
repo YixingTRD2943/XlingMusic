@@ -19,6 +19,7 @@ interface ISimpleInputProps {
     maxLength?: number;
     placeholder?: string;
     autoFocus?: boolean;
+    defaultValue?: string;
 }
 
 export default function SimpleInput(props: ISimpleInputProps) {
@@ -31,9 +32,10 @@ export default function SimpleInput(props: ISimpleInputProps) {
         hints,
         title,
         autoFocus = true,
+        defaultValue,
     } = props;
 
-    const [input, setInput] = useState("");
+    const [input, setInput] = useState(defaultValue ?? "");
     const colors = useColors();
 
     return (

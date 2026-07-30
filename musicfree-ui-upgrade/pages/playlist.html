@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>歌单详情</title>
+    <style id="theme-vars">
+:root {
+  /* ── Brand Prefix: mf ── */
+
+  /* ── Color System ── */
+  --mf-bg: #0a0a0a;
+  --mf-bg-elevated: #141414;
+  --mf-surface: #1a1a1a;
+  --mf-surface-hover: #252525;
+  --mf-surface-active: #2a2a2a;
+
+  --mf-text-primary: #ffffff;
+  --mf-text-secondary: #b3b3b3;
+  --mf-text-tertiary: #727272;
+  --mf-text-inverse: #0a0a0a;
+
+  --mf-brand: #1DB954;
+  --mf-brand-hover: #1ed760;
+  --mf-brand-muted: rgba(29, 185, 84, 0.15);
+  --mf-brand-subtle: rgba(29, 185, 84, 0.08);
+
+  --mf-gradient-start: #1DB954;
+  --mf-gradient-mid: #1ed760;
+  --mf-gradient-end: #169c46;
+
+  /* ── Semantic Colors ── */
+  --state-success: #1DB954;
+  --state-warning: #f59e0b;
+  --state-error: #ef4444;
+  --state-info: #3b82f6;
+
+  /* ── Border & Divider ── */
+  --mf-border: rgba(255, 255, 255, 0.08);
+  --mf-border-strong: rgba(255, 255, 255, 0.15);
+  --mf-divider: rgba(255, 255, 255, 0.06);
+
+  /* ── Radius ── */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ── Typography ── */
+  --font-display: "Circular Std", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body: "Circular Std", "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+
+  --text-xs: 0.6875rem;
+  --text-sm: 0.75rem;
+  --text-base: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+  --text-4xl: 2.5rem;
+
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.02em;
+
+  /* ── Spacing ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+
+  /* ── Shadow (restrained: alpha <= 0.05 for static) ── */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-float: 0 20px 60px rgba(0, 0, 0, 0.25);
+
+  /* ── Transition ── */
+  --transition-fast: 150ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* ── Z-Index ── */
+  --z-base: 0;
+  --z-surface: 10;
+  --z-bar: 100;
+  --z-overlay: 200;
+  --z-modal: 300;
+}
+
+/* ── Typography Classes ── */
+.mf-display {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-headline {
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: var(--leading-tight);
+  color: var(--mf-text-primary);
+}
+
+.mf-body {
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-primary);
+}
+
+.mf-body-secondary {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-secondary);
+}
+
+.mf-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-tertiary);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.mf-label {
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: var(--leading-normal);
+  color: var(--mf-text-secondary);
+}
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-border: var(--mf-border);
+  }
+  @layer base {
+    body { background: var(--mf-surface); color: var(--mf-text-primary); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="pb-24">
+        <!-- Status Bar Spacer -->
+        <div class="h-11 w-full" style="background: var(--mf-bg);" aria-hidden="true"></div>
+
+        <!-- Navigation Bar -->
+        <header class="sticky top-0 z-30 flex h-11 items-center px-4" style="background: var(--mf-bg);">
+            <div class="flex w-10 items-center justify-start">
+                <a href="home.html" data-dom-id="back-home" class="inline-flex h-8 w-8 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="返回首页">
+                    <i data-lucide="arrow-left" class="h-5 w-5" style="color: var(--mf-text-primary);"></i>
+                </a>
+            </div>
+            <div class="min-w-0 flex-1 text-center">
+                <h1 class="mf-headline truncate" style="text-wrap: balance; word-break: keep-all;">歌单</h1>
+            </div>
+            <div class="flex w-10 items-center justify-end">
+                <button class="inline-flex h-8 w-8 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-5 w-5" style="color: var(--mf-text-primary);"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Playlist Header Section -->
+        <section class="px-4 pt-4 pb-2" style="background: var(--mf-bg);">
+            <div class="flex gap-4">
+                <!-- Cover Art -->
+                <img
+                    src="../assets/cover-jaychou.jpg"
+                    alt="周杰伦 歌单封面"
+                    class="h-[120px] w-[120px] shrink-0 rounded-2xl object-cover"
+                    style="box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.3);"
+                >
+                <!-- Playlist Info -->
+                <div class="flex min-w-0 flex-1 flex-col justify-center gap-2">
+                    <h2 class="mf-title truncate" style="text-wrap: balance; word-break: keep-all;">周杰伦</h2>
+                    <div class="flex items-center gap-1.5">
+                        <span class="mf-body-secondary whitespace-nowrap">196首歌曲</span>
+                    </div>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">2025年创建</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-4 flex gap-3">
+                <button class="flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2.5 transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]" style="background: var(--mf-brand);">
+                    <i data-lucide="play" class="h-4 w-4" style="color: var(--mf-text-inverse);"></i>
+                    <span class="mf-label" style="color: var(--mf-text-inverse); font-weight: 600;">播放全部</span>
+                </button>
+                <button class="flex flex-1 items-center justify-center gap-2 rounded-full px-5 py-2.5 transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98]" style="border: 1px solid var(--mf-border-strong); background: transparent;">
+                    <i data-lucide="download" class="h-4 w-4" style="color: var(--mf-text-secondary);"></i>
+                    <span class="mf-label">下载</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Song List -->
+        <section class="mt-2" style="background: var(--mf-bg);">
+            <!-- Song Item 1 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">1</span>
+                <img src="../assets/cover-jaychou.jpg" alt="以父之名" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">以父之名</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">4:23</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 2 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">2</span>
+                <img src="../assets/cover-jaychou.jpg" alt="晴天" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">晴天</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">4:29</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 3 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">3</span>
+                <img src="../assets/cover-jaychou.jpg" alt="七里香" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">七里香</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">4:59</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 4 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">4</span>
+                <img src="../assets/cover-jaychou.jpg" alt="稻香" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">稻香</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">3:43</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 5 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">5</span>
+                <img src="../assets/cover-jaychou.jpg" alt="简单爱" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">简单爱</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">4:30</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 6 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">6</span>
+                <img src="../assets/cover-jaychou.jpg" alt="夜曲" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">夜曲</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">3:46</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 7 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">7</span>
+                <img src="../assets/cover-jaychou.jpg" alt="青花瓷" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">青花瓷</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">3:59</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+
+            <!-- Song Item 8 -->
+            <div class="flex items-center gap-3 px-4 py-3 transition-colors duration-150" style="border-bottom: 1px solid var(--mf-divider);">
+                <span class="w-8 text-right shrink-0 mf-body-secondary" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">8</span>
+                <img src="../assets/cover-jaychou.jpg" alt="双截棍" class="h-11 w-11 shrink-0 rounded-lg object-cover">
+                <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <p class="mf-body truncate" style="font-weight: 600;">双截棍</p>
+                    <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+                </div>
+                <span class="mf-body-secondary shrink-0" style="font-size: var(--text-sm); font-variant-numeric: tabular-nums;">3:22</span>
+                <button class="ml-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="更多选项">
+                    <i data-lucide="ellipsis-vertical" class="h-4 w-4" style="color: var(--mf-text-tertiary);"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Mini Player Bar (Fixed Bottom) -->
+        <div class="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 px-4" style="height: 64px; background: rgba(20, 20, 20, 0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-top: 1px solid var(--mf-border);">
+            <img src="../assets/cover-jaychou.jpg" alt="以父之名" class="h-10 w-10 shrink-0 rounded-lg object-cover">
+            <div class="flex min-w-0 flex-1 flex-col gap-0.5">
+                <p class="mf-body truncate" style="font-size: var(--text-sm); font-weight: 600;">以父之名</p>
+                <p class="mf-body-secondary truncate" style="font-size: var(--text-xs);">周杰伦</p>
+            </div>
+            <button class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-transform duration-150 hover:scale-110 active:scale-95" style="background: var(--mf-brand);" aria-label="播放">
+                <i data-lucide="play" class="h-4 w-4" style="color: var(--mf-text-inverse);"></i>
+            </button>
+            <button class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-opacity duration-150 hover:opacity-80 active:opacity-60" aria-label="下一首">
+                <i data-lucide="skip-forward" class="h-5 w-5" style="color: var(--mf-text-secondary);"></i>
+            </button>
+        </div>
+    </main>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

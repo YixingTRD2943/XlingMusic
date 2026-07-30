@@ -73,7 +73,7 @@ export default function BackupSetting() {
                 copyToCacheDirectory: true,
                 type: "application/json",
             });
-            if (pickResult.canceled) {
+            if (pickResult.canceled || !pickResult.assets || pickResult.assets.length === 0) {
                 return;
             }
             const result = await readAsStringAsync(pickResult.assets[0].uri);
@@ -82,8 +82,13 @@ export default function BackupSetting() {
                     title: t("backupAndResume.resumeFromLocalFile"),
                     loadingText: t("backupAndResume.resuming"),
                     async task() {
-                        await delay(300, false);
-                        return Backup.resume(result, resumeMode);
+                        try {
+                            await delay(300, false);
+                            return Backup.resume(result, resumeMode);
+                        } catch (e) {
+                            console.error("[设置] 恢复备份失败:", e);
+                            throw e;
+                        }
                     },
                     onResolve(_, hideDialog) {
                         Toast.success(t("toast.resumeSuccess"));
@@ -97,7 +102,7 @@ export default function BackupSetting() {
                     onReject(reason, hideDialog) {
                         hideDialog();
                         resolve(false);
-                        console.log(reason);
+                        console.error("[设置] 恢复备份失败:", reason);
                         Toast.warn(t("toast.resumeFail", { reason: reason?.message ?? reason }));
                     },
                 });
@@ -116,15 +121,20 @@ export default function BackupSetting() {
             async onOk(text, closePanel) {
                 try {
                     const url = text.trim();
-                    if (url.endsWith(".json") || url.endsWith(".txt")) {
-                        const raw = (await axios.get(text)).data;
-                        await Backup.resume(raw, resumeMode);
-                        Toast.success(t("toast.resumeSuccess"));
-                        closePanel();
-                    } else {
-                        throw "无效的URL";
+                    if (!url) {
+                        Toast.warn(t("toast.invalidInput"));
+                        return;
                     }
+                    if (!url.startsWith("http://") && !url.startsWith("https://")) {
+                        Toast.warn(t("toast.invalidUrl"));
+                        return;
+                    }
+                    const raw = (await axios.get(url)).data;
+                    await Backup.resume(raw, resumeMode);
+                    Toast.success(t("toast.resumeSuccess"));
+                    closePanel();
                 } catch (e: any) {
+                    console.error("[设置] 从URL恢复失败:", e);
                     Toast.warn(t("toast.resumeFail", { reason: e?.message ?? e }));
                 }
             },
@@ -132,28 +142,28 @@ export default function BackupSetting() {
     }
 
     async function onResumeFromWebdav() {
-        const url = Config.getConfig("webdav.url");
-        const username = Config.getConfig("webdav.username");
-        const password = Config.getConfig("webdav.password");
-
-        if (!(username && password && url)) {
-            Toast.warn(t("toast.resumePreCheckFailed"));
-            return;
-        }
-        const client = createClient(url, {
-            authType: AuthType.Password,
-            username: username,
-            password: password,
-        });
-
-        if (!(await client.exists("/MusicFree/MusicFreeBackup.json"))) {
-            Toast.warn(t("toast.backupFileNotFound"));
-            return;
-        }
-
         try {
+            const url = Config.getConfig("webdav.url");
+            const username = Config.getConfig("webdav.username");
+            const password = Config.getConfig("webdav.password");
+
+            if (!(username && password && url)) {
+                Toast.warn(t("toast.resumePreCheckFailed"));
+                return;
+            }
+            const client = createClient(url, {
+                authType: AuthType.Password,
+                username: username,
+                password: password,
+            });
+
+            if (!(await client.exists("/XingLing/XingLingBackup.json"))) {
+                Toast.warn(t("toast.backupFileNotFound"));
+                return;
+            }
+
             const resumeData = await client.getFileContents(
-                "/MusicFree/MusicFreeBackup.json",
+                "/XingLing/XingLingBackup.json",
                 {
                     format: "text",
                 },
@@ -164,19 +174,20 @@ export default function BackupSetting() {
             );
             Toast.success(t("toast.resumeSuccess"));
         } catch (e: any) {
+            console.error("[设置] WebDAV恢复失败:", e);
             Toast.warn(t("toast.resumeFail", { reason: e?.message ?? e }));
         }
     }
 
     async function onBackupToWebdav() {
-        const username = Config.getConfig("webdav.username");
-        const password = Config.getConfig("webdav.password");
-        const url = Config.getConfig("webdav.url");
-        if (!(username && password && url)) {
-            Toast.warn(t("toast.resumePreCheckFailed"));
-            return;
-        }
         try {
+            const username = Config.getConfig("webdav.username");
+            const password = Config.getConfig("webdav.password");
+            const url = Config.getConfig("webdav.url");
+            if (!(username && password && url)) {
+                Toast.warn(t("toast.resumePreCheckFailed"));
+                return;
+            }
             const client = createClient(url, {
                 authType: AuthType.Password,
                 username: username,
@@ -184,12 +195,11 @@ export default function BackupSetting() {
             });
 
             const raw = Backup.backup();
-            if (!(await client.exists("/MusicFree"))) {
-                await client.createDirectory("/MusicFree");
+            if (!(await client.exists("/XingLing"))) {
+                await client.createDirectory("/XingLing");
             }
-            // 临时文件
             await client.putFileContents(
-                "/MusicFree/MusicFreeBackup.json",
+                "/XingLing/XingLingBackup.json",
                 raw,
                 {
                     overwrite: true,
@@ -197,6 +207,7 @@ export default function BackupSetting() {
             );
             Toast.success(t("toast.backupSuccess"));
         } catch (e: any) {
+            console.error("[设置] WebDAV备份失败:", e);
             Toast.warn(t("toast.backupFail", { reason: e?.message ?? e }));
         }
     }

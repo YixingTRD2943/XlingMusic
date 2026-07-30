@@ -1,5 +1,14 @@
-pluginManagement { includeBuild("../node_modules/@react-native/gradle-plugin") }
+pluginManagement {
+    includeBuild("../node_modules/@react-native/gradle-plugin")
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 plugins { id("com.facebook.react.settings") }
+
 extensions.configure(com.facebook.react.ReactSettingsExtension){ ex ->
   def command = [
     'node',
@@ -13,7 +22,8 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex ->
   ].toList()
   ex.autolinkLibrariesFromCommand(command)
 }
-rootProject.name = 'MusicFree'
+
+rootProject.name = 'XingLing'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
 

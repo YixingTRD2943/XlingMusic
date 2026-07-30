@@ -39,7 +39,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
-import playerPluginScheduler, { PluginPlayState } from "@/core/playerPluginScheduler";
+import playerPluginScheduler from "@/core/playerPluginScheduler";
 
 
 
@@ -47,6 +47,7 @@ const currentMusicAtom = atom<IMusic.IMusicItem | null>(null);
 const repeatModeAtom = atom<MusicRepeatMode>(MusicRepeatMode.QUEUE);
 const qualityAtom = atom<IMusic.IQualityKey>("standard");
 const playListAtom = atom<IMusic.IMusicItem[]>([]);
+const isResolvingSourceAtom = atom<boolean>(false);
 
 
 class TrackPlayer extends EventEmitter<{
@@ -136,8 +137,9 @@ class TrackPlayer extends EventEmitter<{
      * 初始化播放插件调度器，同步当前已加载的插件列表
      */
     private initPluginScheduler(): void {
-        const plugins = this.pluginManagerService.getSortedPlugins?.() ?? [];
-        playerPluginScheduler.setPlugins(plugins);
+        playerPluginScheduler.setPluginGetter(() =>
+            this.pluginManagerService.getSortedPlugins?.() ?? [],
+        );
     }
 
 
@@ -253,7 +255,9 @@ class TrackPlayer extends EventEmitter<{
                             code: e.code,
                         });
 
-                        this.handlePlayFail();
+                        this.consecutivePlayFailures++;
+                        errorLog("[TrackPlayer] 播放出错，连续失败次数:", this.consecutivePlayFailures);
+                        await this.handlePlayFail();
                     }
                 },
             );
@@ -488,6 +492,9 @@ class TrackPlayer extends EventEmitter<{
 
             // 5. 获取音源
             let track: IMusic.IMusicItem;
+            let source: IPlugin.IMediaSourceResult | null = null;
+
+            getDefaultStore().set(isResolvingSourceAtom, true);
 
             // 5.1 通过插件调度器获取音源（多插件智能轮询）
             const qualityOrder = getQualityOrder(
@@ -498,13 +505,36 @@ class TrackPlayer extends EventEmitter<{
             const schedulerResult = await playerPluginScheduler.tryPlayWithPlugins(
                 musicItem,
                 qualityOrder[0] ?? "standard",
-                async (plugin, item, quality) => {
-                    try {
-                        const result = await plugin?.methods?.getMediaSource?.(item, quality);
-                        return result ?? null;
-                    } catch {
-                        return null;
+                async (plugin) => {
+                    // 优先尝试直接用原 musicItem 获取音源（适用于 id 匹配的场景）
+                    for (const q of qualityOrder) {
+                        try {
+                            const result = await plugin?.methods?.getMediaSource?.(musicItem, q);
+                            if (result?.url) return result;
+                        } catch { }
                     }
+                    // 直接匹配失败 → 搜索该插件，寻找匹配原唱的版本
+                    if (plugin?.hasMethod?.("search") && (musicItem.title || musicItem.artist)) {
+                        try {
+                            const query = `${musicItem.title} ${musicItem.artist}`.trim();
+                            if (query) {
+                                const searchResult = await plugin.methods.search(query, 1, "music");
+                                const items = searchResult?.data ?? [];
+                                // 优先选歌手完全匹配的（原唱）
+                                const originals = items.filter(
+                                    it => it.artist === musicItem.artist
+                                );
+                                const matched = originals.length > 0 ? originals[0] : items[0];
+                                if (matched) {
+                                    for (const q of qualityOrder) {
+                                        const result = await plugin?.methods?.getMediaSource?.(matched, q);
+                                        if (result?.url) return result;
+                                    }
+                                }
+                            }
+                        } catch { }
+                    }
+                    return null;
                 },
             );
 
@@ -512,59 +542,45 @@ class TrackPlayer extends EventEmitter<{
                 source = schedulerResult.source;
                 this.setQuality(qualityOrder[0] ?? "standard");
 
-                // 插件成功播放，重置歌曲的错误计数
                 playerPluginScheduler.resetSongErrorCount(musicItem);
-            } else {
-                source = null;
             }
 
             if (!this.isCurrentMusic(musicItem)) {
+                getDefaultStore().set(isResolvingSourceAtom, false);
                 return;
             }
             if (!source) {
-                // 如果有source
                 if (musicItem.source) {
                     for (let quality of qualityOrder) {
                         if (musicItem.source[quality]?.url) {
-                            source = musicItem.source[quality]!;
+                            source = musicItem.source[quality];
                             this.setQuality(quality);
-
                             break;
                         }
                     }
                 }
-                // 5.4 如果插件调度器和source字段都未能提供音源
                 if (!source && !musicItem.url) {
-                    // 无可用URL，判定资源失效
+                    getDefaultStore().set(isResolvingSourceAtom, false);
                     errorLog("[TrackPlayer] 歌曲无可用音源", { songId: musicItem.id, platform: musicItem.platform });
-                    // 标记歌曲资源彻底失效
-                    playerPluginScheduler.resetAllCounters();
                     throw new Error(PlayFailReason.INVALID_SOURCE);
                 } else if (!source && musicItem.url) {
-                    // 音乐项有原始URL但插件无法提供，使用原始URL兜底
-                    source = {
-                        url: musicItem.url,
-                    };
+                    source = { url: musicItem.url };
                     this.setQuality("standard");
                 } else {
-                    source = {
-                        url: musicItem.url,
-                    };
+                    source = { url: musicItem.url };
                     this.setQuality("standard");
                 }
             }
 
-            // 6. 特殊类型源
             if (getUrlExt(source.url) === ".m3u8") {
-                // @ts-ignore
-                source.type = "hls";
+                (source as any).type = "hls";
             }
-            // 7. 合并结果
             track = this.mergeTrackSource(musicItem, source) as IMusic.IMusicItem;
 
             // 8. 新增历史记录
             this.musicHistoryService.addMusic(musicItem);
 
+            getDefaultStore().set(isResolvingSourceAtom, false);
             trace("获取音源成功", track);
             // 9. 设置音源
             await this.setTrackSource(track as Track);
@@ -572,20 +588,54 @@ class TrackPlayer extends EventEmitter<{
             // 播放成功，重置连续失败计数
             this.consecutivePlayFailures = 0;
 
-            // 10. 获取补充信息
+            // 10. 获取补充信息（先尝试匹配到的插件，再尝试平台插件）
             let info: Partial<IMusic.IMusicItem> | null = null;
             try {
-                const infoPlugin = this.pluginManagerService.getByMedia(musicItem);
-                info = (await infoPlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
-                if (
-                    (typeof info?.url === "string" && info.url.trim() === "") ||
-                    (info?.url && typeof info.url !== "string")
-                ) {
-                    delete info.url;
+                const successfulAttempt = schedulerResult.success
+                    ? schedulerResult.attempts.find(a => a.success)
+                    : null;
+                if (successfulAttempt?.pluginName) {
+                    const sourcePlugin = this.pluginManagerService.getByName(successfulAttempt.pluginName);
+                    info = (await sourcePlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
+                    if (
+                        (typeof info?.url === "string" && info.url.trim() === "") ||
+                        (info?.url && typeof info.url !== "string")
+                    ) {
+                        delete info.url;
+                    }
+                }
+                if (!info?.artwork) {
+                    const infoPlugin = this.pluginManagerService.getByMedia(musicItem);
+                    if (!successfulAttempt?.pluginName || infoPlugin?.name !== successfulAttempt.pluginName) {
+                        const platformInfo = (await infoPlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
+                        if (platformInfo) {
+                            info = info ? { ...info, ...platformInfo } : platformInfo;
+                            if (
+                                (typeof info?.url === "string" && info.url.trim() === "") ||
+                                (info?.url && typeof info.url !== "string")
+                            ) {
+                                delete info.url;
+                            }
+                        }
+                    }
                 }
             } catch { }
 
-            // 11. 设置补充信息
+            // 11. 尝试从本地文件提取专辑封面
+            if (!info?.artwork && !track?.artwork) {
+                try {
+                    const localPath = getLocalPath(track as IMusic.IMusicItem);
+                    if (localPath) {
+                        const { default: Mp3Util } = await import("@/native/mp3Util");
+                        const coverImg = await Mp3Util.getMediaCoverImg(localPath);
+                        if (coverImg) {
+                            info = { ...(info ?? {}), artwork: coverImg };
+                        }
+                    }
+                } catch { }
+            }
+
+            // 12. 设置补充信息
             if (info && this.isCurrentMusic(musicItem)) {
                 const mergedTrack = this.mergeTrackSource(track, info);
                 getDefaultStore().set(currentMusicAtom, mergedTrack as IMusic.IMusicItem);
@@ -925,19 +975,47 @@ class TrackPlayer extends EventEmitter<{
 
 
     private async handlePlayFail() {
-        // 如果自动跳转下一曲, 500ms后自动跳转
         if (!this.configService.getConfig("basic.autoStopWhenError")) {
-            await delay(500);
             const currentMusic = this.currentMusic;
             if (currentMusic) {
                 const isExhausted = playerPluginScheduler.isSongExhausted(currentMusic);
                 if (isExhausted) {
-                    // 歌曲资源彻底失效，直接切下一首（不重新尝试当前歌曲）
-                    trace("[TrackPlayer] 歌曲资源已失效，切到下一首", { songId: currentMusic.id });
+                    trace("[TrackPlayer] 歌曲资源已失效，尝试搜索同歌曲名备用音源", { songId: currentMusic.id });
+                    const similar = await this.getSimilarMusic(currentMusic);
+                    if (similar) {
+                        trace("[TrackPlayer] 找到备用音源，替换当前歌曲并重试", { platform: similar.platform, id: similar.id, title: similar.title });
+                        const playList = this.playList;
+                        const newPlayList = produce(playList, draft => {
+                            if (this.currentIndex >= 0 && this.currentIndex < draft.length) {
+                                draft[this.currentIndex] = {
+                                    ...similar,
+                                    [timeStampSymbol]: draft[this.currentIndex][timeStampSymbol],
+                                    [sortIndexSymbol]: draft[this.currentIndex][sortIndexSymbol],
+                                } as IMusic.IMusicItem;
+                            }
+                        });
+                        this.setPlayList(newPlayList);
+                        this.consecutivePlayFailures = 0;
+                        playerPluginScheduler.resetSongErrorCount(currentMusic);
+                        await this.play(similar, true);
+                        return;
+                    }
+                    trace("[TrackPlayer] 未找到备用音源，切到下一首");
                 } else {
-                    // 仅是插件尝试失败，尝试恢复播放（使用备用插件）
-                    trace("[TrackPlayer] 插件尝试失败，让播放队列自动恢复");
+                    const retryDelay = this.configService.getConfig("basic.retryDelayWhenPlayFail") ?? 2;
+                    if (retryDelay === -1) {
+                        trace("[TrackPlayer] 插件尝试失败，设置为永不切歌，持续重试");
+                        await delay(2000);
+                        await this.play(currentMusic, true);
+                        return;
+                    }
+                    trace(`[TrackPlayer] 插件尝试失败，${retryDelay}秒后重试当前歌曲`);
+                    await delay(retryDelay * 1000);
+                    await this.play(currentMusic, true);
+                    return;
                 }
+            } else {
+                await delay(500);
             }
             await this.skipToNext();
         }
@@ -1028,6 +1106,7 @@ export const usePlayList = () => useAtomValue(playListAtom);
 export const useCurrentMusic = () => useAtomValue(currentMusicAtom);
 export const useRepeatMode = () => useAtomValue(repeatModeAtom);
 export const useMusicQuality = () => useAtomValue(qualityAtom);
+export const useIsResolvingSource = () => useAtomValue(isResolvingSourceAtom);
 export function useMusicState() {
     const playbackState = usePlaybackState();
 

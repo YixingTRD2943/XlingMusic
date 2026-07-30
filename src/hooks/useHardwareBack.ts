@@ -7,20 +7,29 @@ export default function (
 ) {
     const backHandlerRef = useRef<NativeEventSubscription>();
     useEffect(() => {
-        if (backHandlerRef.current) {
-            backHandlerRef.current.remove();
-            backHandlerRef.current = undefined;
-        }
-
-        backHandlerRef.current = BackHandler.addEventListener(
-            "hardwareBackPress",
-            onHardwareBackPress,
-        );
-
-        return () => {
+        try {
             if (backHandlerRef.current) {
                 backHandlerRef.current.remove();
                 backHandlerRef.current = undefined;
+            }
+
+            backHandlerRef.current = BackHandler.addEventListener(
+                "hardwareBackPress",
+                onHardwareBackPress,
+            );
+        } catch (e) {
+            console.error("HardwareBackPress listener error:", e);
+            backHandlerRef.current = undefined;
+        }
+
+        return () => {
+            try {
+                if (backHandlerRef.current) {
+                    backHandlerRef.current.remove();
+                    backHandlerRef.current = undefined;
+                }
+            } catch (e) {
+                console.error("HardwareBackPress cleanup error:", e);
             }
         };
     }, deps);

@@ -1,10 +1,10 @@
 import React, { Component, ReactNode, useEffect, useState } from "react";
-import { View, Text, StyleSheet, ScrollView, Image, Platform } from "react-native";
+import { View, Text, StyleSheet, ScrollView, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
 import useColors from "@/hooks/useColors";
 import rpx from "@/utils/rpx";
 import LinkText from "@/components/base/linkText";
-import { ImgAsset } from "@/constants/assetsConst";
+
 import ThemeText from "@/components/base/themeText";
 
 interface DeviceInfoProps {
@@ -238,29 +238,7 @@ function ErrorFallback({ error, errorInfo }: ErrorFallbackProps) {
                             </ThemeText>
                         </View>
 
-                        {/* 微信公众号 */}
-                        <View style={[styles.feedbackItem, { backgroundColor: colors.card, borderColor: colors.divider }]}>
-                            <ThemeText 
-                                fontSize="content" 
-                                fontWeight="medium"
-                                style={[styles.feedbackLabel, { color: colors.text }]}
-                            >
-                                💬 微信公众号【一只猫头猫】:
-                            </ThemeText>
-                            <View style={styles.qrCodeContainer}>
-                                <Image 
-                                    source={ImgAsset.wechatChannel} 
-                                    style={styles.qrCode}
-                                    resizeMode="contain"
-                                />
-                                <ThemeText 
-                                    fontSize="description" 
-                                    style={[styles.qrCodeHint, { color: colors.textSecondary }]}
-                                >
-                                    扫描二维码关注公众号反馈
-                                </ThemeText>
-                            </View>
-                        </View>
+
                     </View>
                 </View>
             </ScrollView>
@@ -367,18 +345,6 @@ const styles = StyleSheet.create({
     },
     link: {
         lineHeight: rpx(36),
-    },
-    qrCodeContainer: {
-        alignItems: "center",
-        gap: rpx(16),
-    },
-    qrCode: {
-        width: rpx(300),
-        height: rpx(300),
-        borderRadius: rpx(12),
-    },
-    qrCodeHint: {
-        textAlign: "center",
     },
     bottomTip: {
         alignItems: "center",

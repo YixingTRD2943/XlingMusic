@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import Header from "./header";
 import MusicList from "@/components/musicList";
 import { useParams } from "@/core/router";
@@ -7,6 +8,7 @@ import globalStyle from "@/constants/globalStyle";
 import { useSheetItem } from "@/core/musicSheet";
 import { RequestStateCode } from "@/constants/commonConst";
 import { useCurrentMusic } from "@/core/trackPlayer";
+import rpx from "@/utils/rpx";
 
 export default function SheetMusicList() {
     const { id = "favorite" } = useParams<"local-sheet-detail">();
@@ -22,8 +24,8 @@ export default function SheetMusicList() {
                 showIndex
                 state={RequestStateCode.IDLE}
                 highlightMusicItem={currentMusic}
-
             />
+            <View style={{ height: rpx(132) }} />
         </HorizontalSafeAreaView>
     );
 }

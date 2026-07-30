@@ -279,6 +279,7 @@ export interface ILanguageData {
     "backupAndResume.resumeMode.overwrite": string; // 覆盖
 
     // 基本设置相关
+    "basicSettings.title": string; // 基本设置
     "basicSettings.common": string; // 通用
     "basicSettings.maxHistoryLength": string; // 最大历史记录长度
     "basicSettings.musicDetailDefault": string; // 音乐详情默认
@@ -289,6 +290,7 @@ export interface ILanguageData {
     "basicSettings.associateLyricType.input": string; // 输入
     "basicSettings.associateLyricType.search": string; // 搜索
     "basicSettings.showExitOnNotification": string; // 通知中显示退出
+    "basicSettings.showExitOnNotification.desc": string; // 在系统通知栏中显示退出按钮
     "basicSettings.sheetAndAlbum": string; // 歌单和专辑
     "basicSettings.clickMusicInSearch": string; // 点击搜索中的音乐
     "basicSettings.clickMusicInSearch.playMusic": string; // 播放歌曲
@@ -314,6 +316,12 @@ export interface ILanguageData {
     "basicSettings.autoPlayWhenAppStart": string; // 软件启动时自动播放歌曲
     "basicSettings.tryChangeSourceWhenPlayFail": string; // 播放失败时尝试更换音源
     "basicSettings.autoStopWhenError": string; // 播放失败时自动暂停
+    "basicSettings.retryDelayWhenPlayFail": string; // 音源加载超时重试延迟
+    "basicSettings.retryDelayWhenPlayFail.1s": string; // 1秒
+    "basicSettings.retryDelayWhenPlayFail.3s": string; // 3秒
+    "basicSettings.retryDelayWhenPlayFail.5s": string; // 5秒
+    "basicSettings.retryDelayWhenPlayFail.10s": string; // 10秒
+    "basicSettings.retryDelayWhenPlayFail.never": string; // 永不切歌，持续寻找
     "basicSettings.tempRemoteDuck": string; // 播放被暂时打断时
     "basicSettings.tempRemoteDuck.pause": string; // 暂停播放
     "basicSettings.tempRemoteDuck.lowerVolume": string; // 降低音量
@@ -323,7 +331,13 @@ export interface ILanguageData {
     "basicSettings.playQualityOrder.asc": string; // 播放更高音质
     "basicSettings.playQualityOrder.desc": string; // 播放更低音质
     
+    "basicSettings.audioFocus": string; // 音频焦点
+    "basicSettings.quality": string; // 音质
+    "basicSettings.sheetAndAlbum": string; // 歌单&专辑
+    
     "basicSettings.download": string; // 下载
+    "basicSettings.downloadSettings": string; // 下载设置
+    "basicSettings.downloadManagement": string; // 下载管理
     "basicSettings.downloadPath": string; // 下载路径
     "basicSettings.fileSelector.selectFolder": string; // 选择文件夹
     "basicSettings.maxDownload": string; // 最大同时下载数目
@@ -331,6 +345,9 @@ export interface ILanguageData {
     "basicSettings.downloadQualityOrder": string; // 默认下载音质缺失时
     "basicSettings.downloadQualityOrder.asc": string; // 下载更高音质
     "basicSettings.downloadQualityOrder.desc": string; // 下载更低音质
+    "basicSettings.download.downloadAutoDeleteFailedFile": string; // 下载失败时自动删除文件
+    "basicSettings.download.downloadAutoAddToSheet": string; // 下载后自动添加到歌单
+    "basicSettings.download.downloadAutoAddSheetName": string; // 自动添加的歌单名称
     
     "basicSettings.network": string; // 网络
     "basicSettings.useCelluarNetworkPlay": string; // 使用移动网络播放
@@ -389,6 +406,11 @@ export interface ILanguageData {
     "toast.logCleared": string; // 日志已清空
     "toast.noFloatWindowPermission": string; // 无悬浮窗权限
     "toast.folderNotExistOrNoPermission": string; // 文件夹不存在或无权限
+    "toast.operationFailed": string; // 操作失败
+    "toast.copyFailed": string; // 复制失败
+    "toast.invalidInput": string; // 输入无效
+    "toast.invalidUrl": string; // 无效的URL
+    "toast.updateCheckFailed": string; // 检查更新失败
     
     // 音质相关
     "musicQuality.low": string; // 低音质

@@ -46,44 +46,53 @@ async function bootstrapImpl() {
         // 所有其他初始化在后台慢慢完成
         setTimeout(async () => {
             try {
-                await setupFolder();
-                await Config.setup();
+                await setupFolder().catch(e => errorLog("目录初始化失败", e));
+                await Config.setup().catch(e => errorLog("配置初始化失败", e));
                 Theme.setup();
                 i18n.setup();
                 
                 logger.mark("核心配置完成");
 
-                // 权限检查
+                let hasStoragePermission = true;
                 if (Platform.OS === "android" && Platform.Version >= 30) {
-                    const hasPermission = await NativeUtils.checkStoragePermission();
-                    if (
-                        !hasPermission &&
-                        !PersistStatus.get("app.skipBootstrapStorageDialog")
-                    ) {
-                        showDialog("CheckStorage");
+                    try {
+                        hasStoragePermission = await NativeUtils.checkStoragePermission();
+                        if (
+                            !hasStoragePermission &&
+                            !PersistStatus.get("app.skipBootstrapStorageDialog")
+                        ) {
+                            showDialog("CheckStorage");
+                        }
+                    } catch (e) {
+                        errorLog("存储权限检查失败", e);
+                        hasStoragePermission = false;
                     }
                 }
                 
                 if (Platform.OS === "android" && Platform.Version >= 33) {
-                    const notificationStatus = await PermissionManager.checkPermission("notification");
-                    if (!notificationStatus.hasPermission && notificationStatus.canAskAgain) {
-                        await PermissionManager.requestPermission("notification");
+                    try {
+                        const notificationStatus = await PermissionManager.checkPermission("notification");
+                        if (!notificationStatus.hasPermission && notificationStatus.canAskAgain) {
+                            await PermissionManager.requestPermission("notification");
+                        }
+                    } catch (e) {
+                        errorLog("通知权限检查失败", e);
                     }
                 }
 
                 await Promise.all([
-                    MusicSheet.setup().then(() => logger.mark("MusicSheet")),
-                    musicHistory.setup().then(() => logger.mark("musicHistory")),
+                    MusicSheet.setup().then(() => logger.mark("MusicSheet")).catch(e => errorLog("MusicSheet初始化失败", e)),
+                    musicHistory.setup().then(() => logger.mark("musicHistory")).catch(e => errorLog("musicHistory初始化失败", e)),
                 ]);
 
-                await PluginManager.setup();
+                await PluginManager.setup().catch(e => errorLog("插件初始化失败", e));
                 logger.mark("插件初始化完成");
                 
                 await initTrackPlayer(logger).catch(() => {
                     // 忽略播放器错误，不影响使用
                 });
 
-                await LocalMusicSheet.setup();
+                await LocalMusicSheet.setup(hasStoragePermission).catch(e => errorLog("本地音乐初始化失败", e));
                 logger.mark("本地音乐初始化完成");
 
                 extraMakeup();
@@ -99,7 +108,7 @@ async function bootstrapImpl() {
         errorLog("启动失败", e);
         getDefaultStore().set(bootstrapAtom, { 
             state: "Fatal", 
-            reason: e instanceof Error ? e : new Error("未知错误") 
+            reason: e instanceof Error ? e : new Error("未知错误"), 
         });
     }
 }

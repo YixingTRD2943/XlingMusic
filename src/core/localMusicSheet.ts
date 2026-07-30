@@ -19,13 +19,21 @@ import { ReadDirItem, exists, readDir, unlink } from "react-native-fs";
 let localSheet: IMusic.IMusicItem[] = [];
 const localSheetStateMapper = new StateMapper(() => localSheet);
 
-export async function setup() {
+export async function setup(hasStoragePermission = true) {
     const sheet = await getStorage(StorageKeys.LocalMusicSheet);
     if (sheet) {
         let validSheet: IMusic.IMusicItem[] = [];
         for (let musicItem of sheet) {
             const localPath = getLocalPath(musicItem);
-            if (localPath && (await exists(localPath))) {
+            if (localPath && hasStoragePermission) {
+                try {
+                    if (await exists(localPath)) {
+                        validSheet.push(musicItem);
+                    }
+                } catch {
+                    validSheet.push(musicItem);
+                }
+            } else {
                 validSheet.push(musicItem);
             }
         }

@@ -114,7 +114,7 @@ export default function MusicItemLyricOptions(
                                 fontSize: Config.getConfig("lyric.fontSize"),
                             };
                             await LyricUtil.showStatusBarLyric(
-                                "MusicFree",
+                                "XingLing",
                                 statusBarLyricConfig ?? {}
                             );
                             Config.setConfig("lyric.showStatusBarLyric", true);

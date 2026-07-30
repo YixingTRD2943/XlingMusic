@@ -89,6 +89,14 @@ static def getVersion() {
     return packageJson["version"]
 }
 
+static def getVersionCode(String version) {
+    def parts = version.split('\\.')
+    def major = parts.size() > 0 ? parts[0].toInteger() : 0
+    def minor = parts.size() > 1 ? parts[1].toInteger() : 0
+    def patch = parts.size() > 2 ? parts[2].toInteger() : 0
+    return major * 100000 + minor * 1000 + patch
+}
+
 // static def versionStringToCode(String version) {
 //     def parts = version.split('\\.')
 //     def versionCode = 0
@@ -103,7 +111,7 @@ static def getVersion() {
 // }
 
 def appVersion = getVersion()
-def appVersionCode = 400011
+def appVersionCode = getVersionCode(appVersion)
 
 
 android {
@@ -111,10 +119,10 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace "fun.upup.musicfree"
+    namespace "com.xingling.app"
 
     defaultConfig {
-        applicationId "fun.upup.musicfree"
+        applicationId "com.xingling.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode appVersionCode

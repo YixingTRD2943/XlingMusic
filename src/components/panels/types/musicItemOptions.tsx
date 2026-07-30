@@ -31,6 +31,7 @@ import { getMediaExtraProperty } from "@/utils/mediaExtra";
 import lyricManager from "@/core/lyricManager";
 import { useI18N } from "@/core/i18n";
 import pluginManager from "@/core/pluginManager";
+import songSourceMatcher, { MediaSourceMatchResult } from "@/core/songSourceMatcher";
 
 interface IMusicItemOptionsProps {
     /** 歌曲信息 */
@@ -229,6 +230,20 @@ export default function MusicItemOptions(props: IMusicItemOptionsProps) {
             onPress: () => {
                 mediaCache.removeMediaCache(musicItem);
                 Toast.success(t("panel.musicItemOptions.cacheCleared"));
+            },
+        },
+        {
+            icon: "link",
+            title: "匹配音源",
+            show: !musicItem.source || Object.keys(musicItem.source).length === 0,
+            onPress: async () => {
+                hidePanel();
+                const result = await songSourceMatcher.matchSongSource(musicItem);
+                if (result.result === MediaSourceMatchResult.Success && result.url) {
+                    Toast.success("音源匹配成功");
+                } else {
+                    Toast.warn(result.error || "音源匹配失败，请检查是否已安装对应插件");
+                }
             },
         },
     ];

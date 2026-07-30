@@ -1,0 +1,60 @@
+{
+  "project": {
+    "name": "MusicFree 设置页面重设计",
+    "operation": "create",
+    "designRead": "mobile settings UI / music app user / dark theme / information-dense / flat-over-fancy",
+    "designDials": { "layoutVariance": 2, "motionIntensity": 1, "visualDensity": 4 }
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "brandCssPath": "colors_and_type.css",
+    "styleConstraints": { "radiusMax": 14, "staticShadowAlphaMax": 0.04 }
+  },
+  "pages": [
+    {
+      "nodeId": "page-settings-general",
+      "title": "设置 - 常规",
+      "htmlSrc": "pages/settings-general.html",
+      "pageType": "information-dense",
+      "visualNorthStar": "iOS Settings + Material You card groups, dark theme, green accent toggles",
+      "compositionPattern": "scrollable-list",
+      "stateRole": "base",
+      "stateGroupId": "sg-settings-tabs",
+      "imagePlan": []
+    },
+    {
+      "nodeId": "page-settings-playback",
+      "title": "设置 - 播放",
+      "htmlSrc": "pages/settings-playback.html",
+      "pageType": "information-dense",
+      "visualNorthStar": "iOS Settings + Material You card groups, dark theme, green accent toggles",
+      "compositionPattern": "scrollable-list",
+      "stateRole": "derived",
+      "stateGroupId": "sg-settings-tabs",
+      "baseStatePageId": "page-settings-general",
+      "imagePlan": []
+    },
+    {
+      "nodeId": "page-settings-download",
+      "title": "设置 - 下载",
+      "htmlSrc": "pages/settings-download.html",
+      "pageType": "information-dense",
+      "visualNorthStar": "iOS Settings + Material You card groups, dark theme, green accent toggles",
+      "compositionPattern": "scrollable-list",
+      "stateRole": "derived",
+      "stateGroupId": "sg-settings-tabs",
+      "baseStatePageId": "page-settings-general",
+      "imagePlan": []
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [],
+  "hiddenInteractionPlan": [
+    { "domId": "tab-playback", "from": "page-settings-general", "to": "page-settings-playback", "label": "切换到播放标签" },
+    { "domId": "tab-download", "from": "page-settings-general", "to": "page-settings-download", "label": "切换到下载标签" },
+    { "domId": "tab-general", "from": "page-settings-playback", "to": "page-settings-general", "label": "切换到常规标签" },
+    { "domId": "tab-download", "from": "page-settings-playback", "to": "page-settings-download", "label": "切换到下载标签" },
+    { "domId": "tab-general", "from": "page-settings-download", "to": "page-settings-general", "label": "切换到常规标签" },
+    { "domId": "tab-playback", "from": "page-settings-download", "to": "page-settings-playback", "label": "切换到播放标签" }
+  ]
+}

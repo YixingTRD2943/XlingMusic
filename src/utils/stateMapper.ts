@@ -1,28 +1,40 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export default class StateMapper<T> {
     private getFun: () => T;
-    private cbs: Set<Function> = new Set([]);
+    private cbs: Set<() => void> = new Set();
+    private mountedRef = { current: true };
+
     constructor(getFun: () => T) {
         this.getFun = getFun;
     }
 
     notify = () => {
-        this.cbs.forEach(_ => _?.());
+        if (!this.mountedRef.current) return;
+        this.cbs.forEach(cb => cb?.());
     };
 
     useMappedState = () => {
-        const [_state, _setState] = useState<T>(this.getFun);
-        const updateState = () => {
-            _setState(this.getFun());
-        };
+        const [state, setState] = useState<T>(this.getFun);
+        const mounted = useRef(true);
+
+        const updateState = useCallback(() => {
+            if (mounted.current) {
+                setState(this.getFun());
+            }
+        }, []);
+
         useEffect(() => {
+            mounted.current = true;
             this.cbs.add(updateState);
+
             return () => {
+                mounted.current = false;
                 this.cbs.delete(updateState);
             };
-        }, []);
-        return _state;
+        }, [updateState]);
+
+        return state;
     };
 }
 

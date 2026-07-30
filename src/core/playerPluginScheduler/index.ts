@@ -1,7 +1,6 @@
 import { errorLog, trace, devLog } from "@/utils/log";
 import delay from "@/utils/delay";
-import { IPlugin } from "@/types/plugin";
-import type { IMusic } from "@/types/music";
+import type { Plugin } from "@/core/pluginManager/plugin";
 
 export enum PluginPlayState {
     PLUGIN_FAILED = "plugin_failed",
@@ -19,7 +18,7 @@ export interface IPluginPlayAttempt {
 
 export interface IPluginPlayResult {
     success: boolean;
-    source?: IMusic.IMediaSourceResult;
+    source?: IPlugin.IMediaSourceResult;
     attempts: IPluginPlayAttempt[];
     finalState: PluginPlayState;
 }
@@ -47,41 +46,111 @@ const DEFAULT_CONFIG: ISchedulerConfig = {
  */
 class PlayerPluginScheduler {
     private config: ISchedulerConfig;
-    private sortedPlugins: IPlugin[] = [];
+    private getPlugins: () => Plugin[];
     private songErrorCounter: Map<string, number> = new Map();
     private pluginErrorCounter: Map<string, number> = new Map();
     private lastPlayedPlugin: Map<string, string> = new Map();
+    private platformPluginScore: Map<string, Map<string, number>> = new Map();
 
-    constructor(config?: Partial<ISchedulerConfig>) {
+    constructor(
+        getPlugins?: () => Plugin[],
+        config?: Partial<ISchedulerConfig>,
+    ) {
+        this.getPlugins = getPlugins ?? (() => []);
         this.config = { ...DEFAULT_CONFIG, ...config };
     }
 
     /**
-     * 设置插件列表（按优先级排序）
-     * @param plugins 插件数组，按优先级从高到低排列
+     * 设置插件列表获取函数（每次调用时动态获取最新列表）
+     * @param getPluginsFn 返回插件实例数组的函数
      */
-    setPlugins(plugins: IPlugin[]): void {
-        this.sortedPlugins = [...plugins].sort(
-            (a, b) => (a.order ?? 0) - (b.order ?? 0),
-        );
+    setPluginGetter(getPluginsFn: () => Plugin[]): void {
+        this.getPlugins = getPluginsFn;
     }
 
     /**
-     * 更新单个插件的优先级
+     * 获取当前可用的播放插件列表（动态查询，始终为最新）
      */
-    updatePluginOrder(pluginName: string, order: number): void {
-        const plugin = this.sortedPlugins.find(p => p.name === pluginName);
-        if (plugin) {
-            plugin.order = order;
-            this.sortedPlugins.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    getAvailablePlugins(): Plugin[] {
+        return this.getPlugins().filter(p => {
+            try {
+                return typeof p.isAvailable === "function" ? p.isAvailable() : p.state === 2;
+            } catch {
+                return false;
+            }
+        });
+    }
+
+    /**
+     * 获取按相关性排序的插件列表，最匹配的插件排在最前
+     * @param musicItem 当前要播放的歌曲
+     */
+    getRankedPlugins(musicItem: IMusic.IMusicItem): Plugin[] {
+        const available = this.getAvailablePlugins();
+        const platform = musicItem.platform;
+        const platformHistory = this.platformPluginScore.get(platform);
+
+        return available
+            .map(plugin => ({
+                plugin,
+                score: this.calculatePluginScore(plugin, platform, platformHistory),
+            }))
+            .sort((a, b) => b.score - a.score)
+            .map(item => item.plugin);
+    }
+
+    /**
+     * 计算插件与歌曲的匹配度分数
+     */
+    private calculatePluginScore(
+        plugin: Plugin,
+        platform: string,
+        platformHistory: Map<string, number> | undefined,
+    ): number {
+        let score = 0;
+
+        // 1. 平台精确匹配（最高权重）
+        if (plugin.name === platform) {
+            score += 100;
         }
-    }
+        if (plugin.hash === platform) {
+            score += 100;
+        }
 
-    /**
-     * 获取当前可用的播放插件列表（按优先级）
-     */
-    getAvailablePlugins(): IPlugin[] {
-        return this.sortedPlugins.filter(p => p.enabled !== false);
+        // 2. 已支持的平台方法
+        if (plugin.name && platform && typeof plugin.name === "string") {
+            if (plugin.name.toLowerCase() === platform.toLowerCase()) {
+                score += 80;
+            }
+            if (plugin.name.includes(platform) || platform.includes(plugin.name)) {
+                score += 50;
+            }
+        }
+
+        // 3. 历史成功记录
+        if (platformHistory?.has(plugin.name)) {
+            const historyScore = platformHistory.get(plugin.name) ?? 0;
+            score += Math.min(historyScore, 30);
+        }
+
+        // 4. 插件错误率惩罚
+        const pluginErrors = this.pluginErrorCounter.get(plugin.name) ?? 0;
+        score -= pluginErrors * 5;
+
+        // 5. 最近使用过该插件的偏好
+        for (const [, lastPlugin] of this.lastPlayedPlugin) {
+            if (lastPlugin === plugin.name) {
+                score += 10;
+                break;
+            }
+        }
+
+        // 6. 检查是否有 getMediaSource 能力
+        if (plugin.hasMethod("getMediaSource")) {
+            score += 20;
+        }
+
+        return Math.max(0, score);
     }
 
     /**
@@ -97,15 +166,15 @@ class PlayerPluginScheduler {
         musicItem: IMusic.IMusicItem,
         quality: string,
         getSourceFn: (
-            plugin: IPlugin,
+            plugin: Plugin,
             musicItem: IMusic.IMusicItem,
             quality: string,
-        ) => Promise<IMusic.IMediaSourceResult | null>,
+        ) => Promise<IPlugin.IMediaSourceResult | null>,
     ): Promise<IPluginPlayResult> {
         const songId = this.getSongId(musicItem);
-        const availablePlugins = this.getAvailablePlugins();
+        const rankedPlugins = this.getRankedPlugins(musicItem);
 
-        if (availablePlugins.length === 0) {
+        if (rankedPlugins.length === 0) {
             errorLog("[PluginScheduler] 没有可用的播放插件");
             return {
                 success: false,
@@ -117,8 +186,8 @@ class PlayerPluginScheduler {
         const attempts: IPluginPlayAttempt[] = [];
         let consecutiveErrors = 0;
 
-        for (let i = 0; i < availablePlugins.length; i++) {
-            const plugin = availablePlugins[i];
+        for (let i = 0; i < rankedPlugins.length; i++) {
+            const plugin = rankedPlugins[i];
             const attemptStart = Date.now();
             const pluginName = plugin.name;
 
@@ -187,7 +256,7 @@ class PlayerPluginScheduler {
                 };
             }
 
-            if (i < availablePlugins.length - 1) {
+            if (i < rankedPlugins.length - 1) {
                 trace("[PluginScheduler]", `等待 ${this.config.retryDelayMs}ms 后切换到下一插件...`);
                 await delay(this.config.retryDelayMs);
             }
@@ -232,7 +301,7 @@ class PlayerPluginScheduler {
     }
 
     /**
-     * 标记插件失败（内部方法）
+     * 标记插件失败（内部方法），同时降低该插件对该平台的匹配分数
      */
     private onPluginFailedInternal(pluginName: string, songId: string): void {
         const count = this.songErrorCounter.get(songId) ?? 0;
@@ -240,15 +309,34 @@ class PlayerPluginScheduler {
 
         const pCount = this.pluginErrorCounter.get(pluginName) ?? 0;
         this.pluginErrorCounter.set(pluginName, pCount + 1);
+
+        const platform = songId.split(":")[0];
+        if (platform && platform !== "unknown" && platform !== pluginName) {
+            if (this.platformPluginScore.has(platform)) {
+                const scores = this.platformPluginScore.get(platform)!;
+                const current = scores.get(pluginName) ?? 0;
+                scores.set(pluginName, Math.max(current - 2, -20));
+            }
+        }
     }
 
     /**
-     * 插件成功播放，重置该歌曲的错误计数
+     * 插件成功播放，重置该歌曲的错误计数，并记录平台匹配成功
      */
     private onPluginSuccess(pluginName: string, songId: string): void {
         this.songErrorCounter.delete(songId);
         this.pluginErrorCounter.delete(pluginName);
         this.lastPlayedPlugin.set(songId, pluginName);
+
+        const platform = songId.split(":")[0];
+        if (platform && platform !== "unknown" && platform !== pluginName) {
+            if (!this.platformPluginScore.has(platform)) {
+                this.platformPluginScore.set(platform, new Map());
+            }
+            const scores = this.platformPluginScore.get(platform)!;
+            const current = scores.get(pluginName) ?? 0;
+            scores.set(pluginName, Math.min(current + 5, 50));
+        }
     }
 
     /**
@@ -272,6 +360,7 @@ class PlayerPluginScheduler {
         this.songErrorCounter.clear();
         this.pluginErrorCounter.clear();
         this.lastPlayedPlugin.clear();
+        this.platformPluginScore.clear();
     }
 
     /**

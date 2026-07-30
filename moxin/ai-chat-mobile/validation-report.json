@@ -1,0 +1,37 @@
+{
+  "success": true,
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.06.8",
+    "version_source": "skill-version.json",
+    "runtime_skill_dir": "c:\\Users\\29436\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+    "recorded_at": "2026-07-20T18:53:00+08:00",
+    "read_status": "ok"
+  },
+  "operatingMode": "library-bound",
+  "renderBlockingErrorCount": 0,
+  "softWarningCount": 5,
+  "renderBlockingErrors": [],
+  "softWarnings": [
+    "[mobile-bottom-overlay] pages/home-yuanbao.html: bottom fixed/absolute CTA or navigation found. Ensure it has safe-area spacing and does not cover content. Evidence: style=\"position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: var(--color-bg-1); border-top: 1px solid v",
+    "[library-bound-css] chat.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.page-shell, .top-nav, .top-nav__back, .top-nav__title, .top-nav__settings, .chat-area, .msg-row, .msg-row--user). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] home-yuanbao.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.no-scrollbar). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] home.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.no-scrollbar, .home-page, .top-area, .top-header, .app-name, .user-avatar, .greeting-text, .suggestion-section). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] settings.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.page-shell, .top-nav, .nav-back, .nav-title, .content-scroll, .section-label, .section-card, .card-row). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
+  ],
+  "repairPlanHints": [],
+  "errorCount": 0,
+  "warningCount": 5,
+  "errors": [],
+  "warnings": [
+    "[mobile-bottom-overlay] pages/home-yuanbao.html: bottom fixed/absolute CTA or navigation found. Ensure it has safe-area spacing and does not cover content. Evidence: style=\"position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 375px; background: var(--color-bg-1); border-top: 1px solid v",
+    "[library-bound-css] chat.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.page-shell, .top-nav, .top-nav__back, .top-nav__title, .top-nav__settings, .chat-area, .msg-row, .msg-row--user). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] home-yuanbao.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.no-scrollbar). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] home.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.no-scrollbar, .home-page, .top-area, .top-header, .app-name, .user-avatar, .greeting-text, .suggestion-section). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead.",
+    "[library-bound-css] settings.html: Library-bound mode discourages custom CSS class definitions in <style> blocks (.page-shell, .top-nav, .nav-back, .nav-title, .content-scroll, .section-label, .section-card, .card-row). Prefer Tailwind utilities plus Library brand CSS variables/component JSON instead."
+  ],
+  "designDir": "e:\\MusicFree\\moxin\\ai-chat-mobile",
+  "expectedPages": 4,
+  "requireInteractions": null,
+  "checkedAt": "2026-07-21T12:13:33.451Z"
+}

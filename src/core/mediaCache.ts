@@ -29,15 +29,17 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
     if (mediaItem.platform && mediaItem.id) {
         const allKeys = mediaCacheStore.getAllKeys();
         if (allKeys.length >= maxCacheCount) {
-            // TODO: 随机删一半
-            for (let i = 0; i < maxCacheCount / 2; ++i) {
-                const rawCacheMedia = mediaCacheStore.getString(allKeys[i]);
+            const randomIndex = Math.floor(Math.random() * allKeys.length);
+            const deleteCount = Math.floor(maxCacheCount / 2);
+            for (let i = 0; i < deleteCount; ++i) {
+                const index = (randomIndex + i) % allKeys.length;
+                const key = allKeys[index];
+                const rawCacheMedia = mediaCacheStore.getString(key);
                 const cacheData = rawCacheMedia
                     ? safeParse(rawCacheMedia)
                     : null;
                 clearLocalCaches(cacheData);
-
-                mediaCacheStore.delete(allKeys[i]);
+                mediaCacheStore.delete(key);
             }
         }
 
@@ -48,7 +50,8 @@ const setMediaCache = (mediaItem: ICommon.IMediaBase) => {
     return false;
 };
 
-async function clearLocalCaches(cacheData: IMusic.IMusicItemCache) {
+async function clearLocalCaches(cacheData: IMusic.IMusicItemCache | null) {
+    if (!cacheData) return;
     if (cacheData.$localLyric) {
         await checkPathAndRemove(cacheData.$localLyric.rawLrc);
         await checkPathAndRemove(cacheData.$localLyric.translation);
@@ -56,9 +59,7 @@ async function clearLocalCaches(cacheData: IMusic.IMusicItemCache) {
 }
 
 async function checkPathAndRemove(filePath?: string) {
-    if (!filePath) {
-        return;
-    }
+    if (!filePath) return;
     filePath = addFileScheme(filePath);
     if (await exists(filePath)) {
         unlink(filePath);

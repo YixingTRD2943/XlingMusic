@@ -13,10 +13,22 @@ import LinkText from "@/components/base/linkText";
 import useCheckUpdate from "@/hooks/useCheckUpdate.ts";
 import useOrientation from "@/hooks/useOrientation";
 import Divider from "@/components/base/divider";
+import Toast from "@/utils/toast";
+import { useI18N } from "@/core/i18n";
 
 export default function AboutSetting() {
     const checkAndShowResult = useCheckUpdate();
     const orientation = useOrientation();
+    const { t } = useI18N();
+
+    const handleCheckUpdate = async () => {
+        try {
+            await checkAndShowResult(true);
+        } catch (e) {
+            console.error("[设置] 检查更新失败:", e);
+            Toast.warn(t("toast.updateCheckFailed"));
+        }
+    };
 
     return (
         <View
@@ -34,9 +46,7 @@ export default function AboutSetting() {
                     orientation === "horizontal" ? style.horizontalSize : null,
                 ]}>
                 <TouchableOpacity
-                    onPress={() => {
-                        checkAndShowResult(true);
-                    }}>
+                    onPress={handleCheckUpdate}>
                     <Image
                         source={ImgAsset.author}
                         style={style.image}
@@ -135,7 +145,7 @@ export default function AboutSetting() {
 
                 <ThemeText style={style.content}>
                     开发这个软件的最初目的是自用，顺便分享出来给有需要的人。如果这个软件能对你有些帮助，那这就是
-                    MusicFree 存在的意义。
+                    XingLing 存在的意义。
                 </ThemeText>
 
                 <ThemeText style={style.content}>by: 星璃玲</ThemeText>

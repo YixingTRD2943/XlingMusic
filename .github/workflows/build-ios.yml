@@ -52,10 +52,10 @@ EOF
       - name: Build iOS Archive
         run: |
           xcodebuild archive \
-            -workspace ios/MusicFree.xcworkspace \
-            -scheme MusicFree \
+            -workspace ios/XingLing.xcworkspace \
+            -scheme XingLing \
             -configuration Release \
-            -archivePath build/MusicFree.xcarchive \
+            -archivePath build/XingLing.xcarchive \
             -destination 'generic/platform=iOS' \
             -allowProvisioningUpdates \
             SKIP_INSTALL=NO
@@ -63,7 +63,7 @@ EOF
       - name: Export IPA
         run: |
           xcodebuild -exportArchive \
-            -archivePath build/MusicFree.xcarchive \
+            -archivePath build/XingLing.xcarchive \
             -exportPath build/ipa \
             -exportOptionsPlist ios/ExportOptions.plist \
             -allowProvisioningUpdates
@@ -71,6 +71,6 @@ EOF
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: MusicFree-iOS-${{ github.sha }}
+          name: XingLing-iOS-${{ github.sha }}
           path: build/ipa/*.ipa
           retention-days: 7

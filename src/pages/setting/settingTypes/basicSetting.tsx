@@ -538,24 +538,32 @@ export default function BasicSetting() {
                     title: t("basicSettings.developer.viewErrorLog"),
                     right: undefined,
                     async onPress() {
-                        // 获取日志文件夹
-                        const errorLogContent = await getErrorLogContent();
-                        showDialog("SimpleDialog", {
-                            title: t("dialog.errorLogTitle"),
-                            content: (
-                                <ScrollView>
-                                    <Paragraph>
-                                        {errorLogContent || t("dialog.errorLogNoRecord")}
-                                    </Paragraph>
-                                </ScrollView>
-                            ),
-                            cancelText: t("dialog.errorLogKnow"),
-                            okText: t("dialog.errorLogCopy"),
-                            onOk() {
-                                Clipboard.setString(errorLogContent);
-                                Toast.success(t("toast.copiedToClipboard"));
-                            },
-                        });
+                        try {
+                            const errorLogContent = await getErrorLogContent();
+                            showDialog("SimpleDialog", {
+                                title: t("dialog.errorLogTitle"),
+                                content: (
+                                    <ScrollView>
+                                        <Paragraph>
+                                            {errorLogContent || t("dialog.errorLogNoRecord")}
+                                        </Paragraph>
+                                    </ScrollView>
+                                ),
+                                cancelText: t("dialog.errorLogKnow"),
+                                okText: t("dialog.errorLogCopy"),
+                                onOk() {
+                                    try {
+                                        Clipboard.setString(errorLogContent);
+                                        Toast.success(t("toast.copiedToClipboard"));
+                                    } catch (e) {
+                                        Toast.warn(t("toast.copyFailed"));
+                                    }
+                                },
+                            });
+                        } catch (e) {
+                            console.error("[设置] 查看错误日志失败:", e);
+                            Toast.warn(t("toast.operationFailed"));
+                        }
                     },
                 },
                 {
@@ -565,7 +573,10 @@ export default function BasicSetting() {
                         try {
                             await clearLog();
                             Toast.success(t("toast.logCleared"));
-                        } catch { }
+                        } catch (e) {
+                            console.error("[设置] 清除日志失败:", e);
+                            Toast.warn(t("toast.operationFailed"));
+                        }
                     },
                 },
             ],
@@ -704,25 +715,31 @@ function LyricSetting() {
         async newValue => {
             try {
                 if (newValue) {
-                    // 使用 PermissionManager 来确保权限
                     const success = await PermissionManager.withPermission(
                         "floatWindow",
                         async () => {
-                            const statusBarLyricConfig = {
-                                topPercent: Config.getConfig("lyric.topPercent"),
-                                leftPercent: Config.getConfig("lyric.leftPercent"),
-                                align: Config.getConfig("lyric.align"),
-                                color: Config.getConfig("lyric.color"),
-                                backgroundColor: Config.getConfig("lyric.backgroundColor"),
-                                widthPercent: Config.getConfig("lyric.widthPercent"),
-                                fontSize: Config.getConfig("lyric.fontSize"),
-                            };
-                            await LyricUtil.showStatusBarLyric(
-                                "MusicFree",
-                                statusBarLyricConfig ?? {}
-                            );
-                            Config.setConfig("lyric.showStatusBarLyric", true);
-                            return true;
+                            try {
+                                const statusBarLyricConfig = {
+                                    topPercent: Config.getConfig("lyric.topPercent"),
+                                    leftPercent: Config.getConfig("lyric.leftPercent"),
+                                    align: Config.getConfig("lyric.align"),
+                                    color: Config.getConfig("lyric.color"),
+                                    backgroundColor: Config.getConfig("lyric.backgroundColor"),
+                                    widthPercent: Config.getConfig("lyric.widthPercent"),
+                                    fontSize: Config.getConfig("lyric.fontSize"),
+                                };
+                                await LyricUtil.showStatusBarLyric(
+                                    "XingLing",
+                                    statusBarLyricConfig ?? {}
+                                );
+                                Config.setConfig("lyric.showStatusBarLyric", true);
+                                return true;
+                            } catch (e) {
+                                console.error("[设置] 显示状态栏歌词失败:", e);
+                                Toast.warn(t("toast.operationFailed"));
+                                Config.setConfig("lyric.showStatusBarLyric", false);
+                                return false;
+                            }
                         },
                         {
                             rationaleTitle: "需要悬浮窗权限",
@@ -732,14 +749,21 @@ function LyricSetting() {
                     );
                     
                     if (!success) {
-                        // 如果没有权限，重新设置开关状态
                         Config.setConfig("lyric.showStatusBarLyric", false);
                     }
                 } else {
-                    LyricUtil.hideStatusBarLyric();
-                    Config.setConfig("lyric.showStatusBarLyric", false);
+                    try {
+                        LyricUtil.hideStatusBarLyric();
+                        Config.setConfig("lyric.showStatusBarLyric", false);
+                    } catch (e) {
+                        console.error("[设置] 隐藏状态栏歌词失败:", e);
+                        Config.setConfig("lyric.showStatusBarLyric", false);
+                    }
                 }
-            } catch { }
+            } catch (e) {
+                console.error("[设置] 状态栏歌词开关操作失败:", e);
+                Config.setConfig("lyric.showStatusBarLyric", false);
+            }
         },
     );
 

@@ -2,7 +2,7 @@
  * @name 通用歌单导入
  * @description 支持QQ音乐、网易云音乐、酷狗音乐歌单链接导入
  * @version 1.0.0
- * @author MusicFree
+ * @author XingLing
  */
 
 'use strict';

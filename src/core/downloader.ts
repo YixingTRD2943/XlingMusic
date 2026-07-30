@@ -152,11 +152,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
         const regResult = url.match(
             /^https?\:\/\/.+\.([^\?\.]+?$)|(?:([^\.]+?)\?.+$)/,
         );
-        if (regResult) {
-            return regResult[1] ?? regResult[2] ?? "mp3";
-        } else {
-            return "mp3";
-        }
+        return regResult ? regResult[1] ?? regResult[2] ?? "mp3" : "mp3";
     };
 
     /** 获取下载路径 */
@@ -167,7 +163,7 @@ class Downloader extends EventEmitter<IEvents> implements IInjectable {
             return `${dlPath}/${fileName ?? ""}`;
         }
         return fileName ? dlPath + fileName : dlPath;
-    };
+    }
 
     /** 获取缓存的下载路径 */
     private getCacheDownloadPath(fileName: string) {

@@ -44,23 +44,44 @@ interface ILyricUtil extends NativeModule {
     requestSystemAlertPermission: () => Promise<boolean>;
 }
 
-const LyricUtil: ILyricUtil = NativeModules.LyricUtil;
+const nativeModule = NativeModules.LyricUtil;
+const noop = async () => {};
 
-const originalShowStatusBarLyric = LyricUtil.showStatusBarLyric;
-
-const showStatusBarLyric: ILyricUtil["showStatusBarLyric"] = async (
-    initLyric,
-    config,
-) => {
-    try {
-        await originalShowStatusBarLyric(initLyric, config);
-    } catch (e) {
-        errorLog("状态栏歌词开启失败", e);
-        Toast.warn("状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限");
-        Config.setConfig("lyric.showStatusBarLyric", false);
+const LyricUtil: ILyricUtil = nativeModule
+    ? {
+        ...nativeModule,
+        showStatusBarLyric: async (initLyric, config) => {
+            try {
+                await nativeModule.showStatusBarLyric(initLyric, config);
+            } catch (e) {
+                errorLog("状态栏歌词开启失败", e);
+                Toast.warn("状态栏歌词开启失败，请到手机系统设置打开悬浮窗权限");
+                Config.setConfig("lyric.showStatusBarLyric", false);
+            }
+        },
+        hideStatusBarLyric: (...args) => nativeModule.hideStatusBarLyric(...args),
+        setStatusBarLyricText: (...args) => nativeModule.setStatusBarLyricText(...args),
+        setStatusBarLyricTop: (...args) => nativeModule.setStatusBarLyricTop(...args),
+        setStatusBarLyricLeft: (...args) => nativeModule.setStatusBarLyricLeft(...args),
+        setStatusBarLyricWidth: (...args) => nativeModule.setStatusBarLyricWidth(...args),
+        setStatusBarLyricFontSize: (...args) => nativeModule.setStatusBarLyricFontSize(...args),
+        setStatusBarLyricAlign: (...args) => nativeModule.setStatusBarLyricAlign(...args),
+        setStatusBarColors: (...args) => nativeModule.setStatusBarColors(...args),
+        checkSystemAlertPermission: (...args) => nativeModule.checkSystemAlertPermission(...args),
+        requestSystemAlertPermission: (...args) => nativeModule.requestSystemAlertPermission(...args),
     }
-};
-
-LyricUtil.showStatusBarLyric = showStatusBarLyric;
+    : {
+        showStatusBarLyric: noop,
+        hideStatusBarLyric: noop,
+        setStatusBarLyricText: noop,
+        setStatusBarLyricTop: noop,
+        setStatusBarLyricLeft: noop,
+        setStatusBarLyricWidth: noop,
+        setStatusBarLyricFontSize: noop,
+        setStatusBarLyricAlign: noop,
+        setStatusBarColors: noop,
+        checkSystemAlertPermission: async () => false,
+        requestSystemAlertPermission: async () => false,
+    } as unknown as ILyricUtil;
 
 export default LyricUtil;

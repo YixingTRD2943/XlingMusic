@@ -13,6 +13,8 @@ import Icon from "@/components/base/icon.tsx";
 import MusicSheet, { useSheetIsStarred } from "@/core/musicSheet";
 import { MusicRepeatMode } from "@/constants/repeatModeConst";
 import { useI18N } from "@/core/i18n";
+import songSourceMatcher from "@/core/songSourceMatcher";
+import storage from "@/core/musicSheet/storage";
 
 interface IProps {
     musicList: IMusic.IMusicItem[] | null;
@@ -103,6 +105,50 @@ export default function (props: IProps) {
                     });
                 }}
             />
+            {sheetId && sheetId !== "favorite" && sheetId !== "history" && (
+                <IconButton
+                    name="link"
+                    sizeType={"normal"}
+                    style={style.optionButton}
+                    onPress={async () => {
+                        if (!musicList?.length) return;
+                        Toast.warn("正在后台匹配音源...");
+                        const needMatch = musicList.filter(
+                            it => !it.source || Object.keys(it.source).length === 0,
+                        );
+                        if (!needMatch.length) {
+                            Toast.success("所有歌曲已有音源");
+                            return;
+                        }
+                        const result = await songSourceMatcher.batchMatchSongSources(
+                            needMatch,
+                            "standard",
+                            (matched, total) => {
+                                if (matched % 5 === 0) {
+                                    Toast.warn(`音源匹配中 ${matched}/${total}...`);
+                                }
+                            },
+                            true,
+                        );
+                        if (result.success > 0) {
+                            const updatedList = [...musicList];
+                            for (const matchedItem of result.items) {
+                                if (!matchedItem.source || Object.keys(matchedItem.source).length === 0) continue;
+                                const idx = updatedList.findIndex(it =>
+                                    it.id === matchedItem.id && it.platform === matchedItem.platform,
+                                );
+                                if (idx !== -1) {
+                                    updatedList[idx] = { ...matchedItem };
+                                }
+                            }
+                            await storage.setMusicList(sheetId, updatedList);
+                        }
+                        let msg = `匹配完成：成功 ${result.success} 首`;
+                        if (result.failed > 0) msg += `，失败 ${result.failed} 首`;
+                        Toast.success(msg);
+                    }}
+                />
+            )}
         </View>
     );
 }

@@ -1,0 +1,58 @@
+{
+  "project": {
+    "name": "MusicFree 视觉升级",
+    "deviceType": "mobile",
+    "operatingMode": "free-explore",
+    "styleDefinitionBrief": "Music player mobile app UI, Spotify-inspired dark theme with bold green accent, vibrant gradients, rounded cards, youthful and modern feel. Chinese music app context.",
+    "designRead": "app-screen / music-lovers / bold-youthful / moderate / flat-cards-no-glow",
+    "designDials": {
+      "layoutVariance": 2,
+      "motionIntensity": 3,
+      "visualDensity": 3
+    },
+    "styleContinuityAnchors": {
+      "colorSystem": "Dark base #0a0a0a, green brand #1DB954, vibrant gradients on action cards, white text on dark, secondary text #b3b3b3",
+      "shapeSystem": "Rounded cards with 12px radius, pill-shaped buttons and tabs, 8px radius on list items, circular album art",
+      "typographySystem": "Circular Std / PingFang SC, bold display titles 2.5rem, semitone headlines, body 0.875rem, uppercase tracking on captions",
+      "spacingSystem": "16px base padding, 24px section gaps, 12px item gaps, 8px component internal spacing",
+      "componentLanguage": "Gradient action cards, frosted-glass mini player bar, pill tab switcher, round icon buttons, list items with press feedback",
+      "surfaceAndDepth": "Dark layered surfaces #0a0a0a / #141414 / #1a1a1a, subtle borders rgba(255,255,255,0.08), no glow effects, depth via surface layering only",
+      "imageryAndIconography": "Square rounded album covers, filled outline icons, gradient overlays on cards",
+      "interactionTone": "Press scale feedback on list items and buttons, smooth transitions 200ms, spring animations on nav"
+    },
+    "sharedProjectShellContract": {
+      "primaryColor": "#1DB954",
+      "radiusScale": "4/8/12/16/9999px",
+      "typeStack": "Circular Std, PingFang SC, Microsoft YaHei, sans-serif",
+      "surfaceDepthModel": "Three-tier dark surfaces with subtle border separation, no shadows on static elements",
+      "navigationModel": "Bottom tab bar with pill active indicator, mini player bar above tabs",
+      "CTAStyle": "Bold green (#1DB954) pill buttons with white text"
+    },
+    "pages": [
+      {
+        "nodeId": "page-home",
+        "title": "首页",
+        "businessScenario": "Main home screen with quick actions, playlist grid, and mini player"
+      },
+      {
+        "nodeId": "page-playlist",
+        "title": "歌单详情",
+        "businessScenario": "Playlist detail page with header, song list, and play controls"
+      },
+      {
+        "nodeId": "page-player",
+        "title": "播放详情",
+        "businessScenario": "Full-screen player with album art, lyrics, and playback controls"
+      }
+    ],
+    "generationTree": null
+  },
+  "designSource": {
+    "operatingMode": "free-explore",
+    "styleConstraints": {
+      "radiusMax": 16,
+      "staticShadowAlphaMax": 0.05
+    },
+    "libraryIdentity": null
+  }
+}

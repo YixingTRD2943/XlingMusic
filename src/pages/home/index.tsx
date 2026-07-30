@@ -16,8 +16,9 @@ import useOrientation from "@/hooks/useOrientation";
 import BottomNavigation, { TabType } from "@/components/bottomNavigation/BottomNavigation";
 import Profile from "@/pages/profile";
 import rpx from "@/utils/rpx";
+import { useNavigation } from "@react-navigation/native";
 
-const MUSIC_BAR_HEIGHT = rpx(140);
+const MUSIC_BAR_HEIGHT = rpx(132);
 
 function HomeContent() {
     const orientation = useOrientation();
@@ -51,6 +52,8 @@ function HomeWithDrawer() {
     const [activeTab, setActiveTab] = useState<TabType>("home");
     const [musicBarVisible, setMusicBarVisible] = useState(false);
     const [musicBarExpanded, setMusicBarExpanded] = useState(false);
+    const navigation = useNavigation<any>();
+    const stackNavigation = navigation.getParent?.() ?? navigation;
 
     const handleTabChange = (tab: TabType) => {
         setActiveTab(tab);
@@ -63,7 +66,7 @@ function HomeWithDrawer() {
 
     const contentBottomPadding = useCallback(() => {
         let padding = 0;
-        const navBarHeight = rpx(110) + rpx(34);  // 底部导航栏高度 + 安全区域
+        const navBarHeight = rpx(100) + rpx(34);  // 底部导航栏高度 + 安全区域
         padding += navBarHeight;
         if (musicBarVisible) {
             padding += musicBarExpanded ? MUSIC_BAR_HEIGHT * 1.5 : MUSIC_BAR_HEIGHT;
@@ -78,7 +81,7 @@ function HomeWithDrawer() {
                 {activeTab === "home" ? (
                     <HomeContent />
                 ) : (
-                    <Profile />
+                    <Profile navigation={stackNavigation} />
                 )}
             </HorizontalSafeAreaView>
             
@@ -127,7 +130,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: rpx(110) + rpx(34),
+        bottom: rpx(100) + rpx(34),
         zIndex: 1001,
     },
 });

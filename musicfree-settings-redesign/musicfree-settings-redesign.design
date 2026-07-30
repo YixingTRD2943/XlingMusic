@@ -1,0 +1,153 @@
+{
+  "data": [
+    {
+      "id": "page-home",
+      "title": "首页",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1754723412000,
+      "canvasData": {
+        "x": 0,
+        "y": 435,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/home.html",
+        "interactions": [
+          {
+            "domId": "nav-search",
+            "targetPageId": "page-home",
+            "hideEdge": true,
+            "transitionLabel": "搜索"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-profile",
+      "title": "我的",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1754807000000,
+      "canvasData": {
+        "x": 309,
+        "y": 435,
+        "group": 1
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/profile.html",
+        "interactions": []
+      }
+    },
+    {
+      "id": "page-settings-general",
+      "title": "设置 - 常规",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752515880000,
+      "canvasData": {
+        "x": 0,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-general.html",
+        "interactions": [
+          {
+            "domId": "tab-playback",
+            "targetPageId": "page-settings-playback",
+            "hideEdge": true,
+            "transitionLabel": "切换到播放标签"
+          },
+          {
+            "domId": "tab-download",
+            "targetPageId": "page-settings-download",
+            "hideEdge": true,
+            "transitionLabel": "切换到下载标签"
+          },
+          {
+            "domId": "tab-general",
+            "targetPageId": "page-settings-general",
+            "hideEdge": true,
+            "transitionLabel": "当前标签"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-settings-playback",
+      "title": "设置 - 播放",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752515880000,
+      "canvasData": {
+        "x": 309,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-playback.html",
+        "interactions": [
+          {
+            "domId": "tab-general",
+            "targetPageId": "page-settings-general",
+            "hideEdge": true,
+            "transitionLabel": "切换到常规标签"
+          },
+          {
+            "domId": "tab-download",
+            "targetPageId": "page-settings-download",
+            "hideEdge": true,
+            "transitionLabel": "切换到下载标签"
+          },
+          {
+            "domId": "tab-playback",
+            "targetPageId": "page-settings-playback",
+            "hideEdge": true,
+            "transitionLabel": "当前标签"
+          }
+        ]
+      }
+    },
+    {
+      "id": "page-settings-download",
+      "title": "设置 - 下载",
+      "type": "page",
+      "version": 1,
+      "createdAt": 1752515880000,
+      "canvasData": {
+        "x": 618,
+        "y": 0,
+        "group": 0
+      },
+      "devMetadata": {
+        "htmlSrc": "pages/settings-download.html",
+        "interactions": [
+          {
+            "domId": "tab-general",
+            "targetPageId": "page-settings-general",
+            "hideEdge": true,
+            "transitionLabel": "切换到常规标签"
+          },
+          {
+            "domId": "tab-playback",
+            "targetPageId": "page-settings-playback",
+            "hideEdge": true,
+            "transitionLabel": "切换到播放标签"
+          },
+          {
+            "domId": "tab-download",
+            "targetPageId": "page-settings-download",
+            "hideEdge": true,
+            "transitionLabel": "当前标签"
+          }
+        ]
+      }
+    }
+  ],
+  "config": {
+    "autoLayout": true,
+    "deviceType": "mobile",
+    "projectName": "MusicFree UI 重设计"
+  }
+}

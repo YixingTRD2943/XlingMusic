@@ -27,22 +27,15 @@ export default function NavBar() {
                         navigation.openDrawer();
                     }}
                 />
-                <View style={styles.logoSection}>
-                    <Icon 
-                        name="musical-note" 
-                        size={rpx(56)} 
-                        color={colors.primary} 
-                    />
-                    <ThemeText 
-                        fontSize="title" 
-                        fontWeight="bold"
-                        style={styles.appName}
-                    >
-                        星玲音乐
-                    </ThemeText>
-                </View>
+                <ThemeText
+                    fontSize="title"
+                    fontWeight="bold"
+                    style={styles.appName}
+                >
+                    星玲音乐
+                </ThemeText>
                 <IconButton
-                    name="information-circle"
+                    name="alarm-outline"
                     sizeType="normal"
                     color={colors.text}
                     onPress={() => {}}
@@ -57,12 +50,12 @@ export default function NavBar() {
             >
                 <Icon
                     name="magnifying-glass"
-                    size={rpx(36)}
-                    color={Color(colors.text).alpha(0.6).toString()}
+                    size={rpx(32)}
+                    color={Color(colors.text).alpha(0.4).toString()}
                 />
                 <ThemeText
                     fontSize="subTitle"
-                    fontColor="textSecondary"
+                    fontColor="textTertiary"
                     style={styles.searchText}
                 >
                     {t("home.clickToSearch")}
@@ -75,7 +68,7 @@ export default function NavBar() {
 const styles = StyleSheet.create({
     container: {
         width: "100%",
-        paddingHorizontal: rpx(28),
+        paddingHorizontal: rpx(32),
         paddingTop: rpx(16),
         paddingBottom: rpx(24),
     },
@@ -84,24 +77,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "space-between",
         marginBottom: rpx(24),
-    },
-    logoSection: {
-        flexDirection: "row",
-        alignItems: "center",
+        height: rpx(88),
     },
     appName: {
-        marginLeft: rpx(16),
+        fontSize: rpx(32),
+        letterSpacing: rpx(-0.5),
     },
     searchBox: {
         flexDirection: "row",
         alignItems: "center",
         paddingHorizontal: rpx(28),
-        paddingVertical: rpx(20),
-        borderRadius: rpx(32),
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        elevation: 3,
+        paddingVertical: rpx(18),
+        borderRadius: rpx(9999),
     },
     searchText: {
         marginLeft: rpx(16),

@@ -895,11 +895,26 @@ export class Plugin {
             try {
                 const funcCode = await loadFuncCode();
                 this.mountPlugin(funcCode, this.lazyProps.path);
-            } catch {
+            } catch (e) {
                 this.state = PluginState.Error;
                 this.errorReason = this.errorReason ?? PluginErrorReason.CannotParse;
+                console.error("Lazy load plugin error:", e);
             }
         }
+    }
+
+    /**
+     * 检查插件是否可用（未禁用且状态正常）
+     */
+    isAvailable() {
+        return this.state === PluginState.Mounted && (Plugin.pluginManager?.isPluginEnabled?.(this) ?? true);
+    }
+
+    /**
+     * 获取插件是否支持特定方法
+     */
+    hasMethod(methodName: string) {
+        return this.supportedMethods.has(methodName as any);
     }
 
     private mountPlugin(

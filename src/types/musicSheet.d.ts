@@ -1,4 +1,6 @@
 declare namespace IMusic {
+    export type PrivacyType = "public" | "private";
+
     export interface IMusicSheetItemBase {
         /** 封面图 */
         coverImg?: string;
@@ -14,6 +16,10 @@ declare namespace IMusic {
         /** 作品总数 */
         worksNum?: number;
         platform: string;
+        /** 隐私设置 */
+        privacy?: PrivacyType;
+        /** 创建时间 */
+        createAt?: number;
         [k: string]: any;
     }
     /** 歌单项 */

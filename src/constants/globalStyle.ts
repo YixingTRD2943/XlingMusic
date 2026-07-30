@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import rpx from "@/utils/rpx";
+import rpx from "../utils/rpx";
 
 const globalStyle = StyleSheet.create({
     flex1: {

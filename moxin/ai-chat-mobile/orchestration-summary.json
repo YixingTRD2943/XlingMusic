@@ -1,0 +1,216 @@
+{
+  "skillProvenance": {
+    "name": "solo-design",
+    "version": "2026.07.06.8",
+    "version_source": "skill-version.json",
+    "runtime_skill_dir": "c:\\Users\\29436\\.trae-cn\\builtin\\design\\default\\skills\\solo-design",
+    "recorded_at": "2026-07-20T18:53:00+08:00"
+  },
+  "project": {
+    "name": "AI 助手 App",
+    "path": "e:\\MusicFree\\moxin\\ai-chat-mobile",
+    "operation": "create",
+    "deviceType": "mobile",
+    "language": "zh-CN",
+    "dashboardMode": false,
+    "intentProfile": {
+      "caseFamily": "library_bound",
+      "graphicStrategy": null,
+      "sourceType": null,
+      "routingReason": "User has active Design Library reference: 源力"
+    },
+    "replicationMode": null,
+    "sourceUrl": null,
+    "contextReadBudget": {
+      "workflowFileReadLimit": 1,
+      "largeWorkflowFilesCachedInSummary": [],
+      "restoreInputsCached": [],
+      "subAgentReadsFullSummary": false
+    },
+    "readBudgetLedger": [
+      {
+        "file": "workflows/create-project-library-bound.md",
+        "readCount": 1,
+        "limit": 1,
+        "reason": "initial route-locked workflow read",
+        "exceeded": false
+      }
+    ],
+    "dispatchPreflightManifest": [],
+    "cssPreflightEvidence": {
+      "applies": false,
+      "status": "not-needed"
+    },
+    "repairEntryEvidence": [],
+    "finishReadinessEvidence": null,
+    "referenceCaptureEvidence": {
+      "status": "not-applicable",
+      "reason": "library_bound project, not restore_1to1"
+    },
+    "visualSpecExcerpt": null,
+    "restoreVisualCheckpoints": [
+      { "id": 1, "element": "project-type", "priority": "high", "detail": "library_bound, not a restore project" },
+      { "id": 2, "element": "design-library", "priority": "high", "detail": "Yuanli design system applied" },
+      { "id": 3, "element": "mobile-layout", "priority": "high", "detail": "375px mobile viewport" },
+      { "id": 4, "element": "chat-bubble-style", "priority": "high", "detail": "Rounded asymmetric bubbles with shadows" },
+      { "id": 5, "element": "color-tokens", "priority": "high", "detail": "All colors use var() tokens" },
+      { "id": 6, "element": "navigation", "priority": "high", "detail": "Top nav with back/settings icons" },
+      { "id": 7, "element": "input-bar", "priority": "high", "detail": "Rounded input with circular send button" },
+      { "id": 8, "element": "settings-groups", "priority": "high", "detail": "iOS-style grouped card settings" }
+    ],
+    "restorationContractLite": {
+      "status": "not-applicable",
+      "reason": "library_bound project, not restore_1to1"
+    },
+    "restoreEvidenceReview": {
+      "status": "not-applicable",
+      "reason": "library_bound project, not restore_1to1",
+      "allHighPriorityCheckpointsAcceptable": true
+    },
+    "styleDefinitionBrief": null,
+    "designRead": "mobile app / consumer AI assistant / clean and minimal / simple density / visual risk: generic AI chat clone",
+    "designDials": {
+      "layoutVariance": 2,
+      "motionIntensity": 1,
+      "visualDensity": 2
+    },
+    "styleContinuityAnchors": null,
+    "specsConstraints": null,
+    "sharedProjectShellContract": null,
+    "generationTree": null
+  },
+  "designSource": {
+    "operatingMode": "library-bound",
+    "libraryIdentity": {
+      "name": "源力",
+      "id": "dl_builtin_volcengine",
+      "version": null,
+      "scope": "built-in-global",
+      "path": "c:\\Users\\29436\\.trae-cn\\design_libraries\\dl_builtin_volcengine",
+      "versionSource": null
+    },
+    "libraryPath": "c:\\Users\\29436\\.trae-cn\\design_libraries\\dl_builtin_volcengine",
+    "cssFilePath": "c:\\Users\\29436\\.trae-cn\\design_libraries\\dl_builtin_volcengine\\colors_and_type.css",
+    "brandPrefix": "yuanli",
+    "themeMode": "light",
+    "designDecisionSummary": "Mobile AI chat app. Primary: #1664FF (yuanli blue). Tokens: --color-primary, --color-text-1, --color-text-2, --color-text-3, --color-border, --color-bg-1, --color-bg-4, --state-hover, --radius-md, --radius-lg, --shadow-1, --shadow-3. Font: PingFang SC / system stack. Mobile-first, clean rounded UI, high readability, no Tailwind.",
+    "componentContractKind": "legacy-json",
+    "forbiddenInventedComponents": [],
+    "allowedComponents": [],
+    "styleConstraints": null,
+    "productContext": {
+      "kitType": "enterprise-ai-design-system",
+      "productType": "B2B cloud / AI operations platform"
+    },
+    "actualTokenNameReference": [
+      { "semanticPurpose": "Primary brand color", "tokenName": "--color-primary" },
+      { "semanticPurpose": "Primary text", "tokenName": "--color-text-1" },
+      { "semanticPurpose": "Secondary text", "tokenName": "--color-text-2" },
+      { "semanticPurpose": "Tertiary text / placeholder", "tokenName": "--color-text-3" },
+      { "semanticPurpose": "Page background", "tokenName": "--color-bg-1" },
+      { "semanticPurpose": "Secondary background / chat area", "tokenName": "--color-bg-4" },
+      { "semanticPurpose": "Card/surface background", "tokenName": "--color-bg-2" },
+      { "semanticPurpose": "Border / divider", "tokenName": "--color-border" },
+      { "semanticPurpose": "Hover state", "tokenName": "--state-hover" },
+      { "semanticPurpose": "User bubble background", "tokenName": "--primary-yuanliBlue-2" },
+      { "semanticPurpose": "User bubble text", "tokenName": "--primary-yuanliBlue-7" },
+      { "semanticPurpose": "Medium radius", "tokenName": "--radius-md" },
+      { "semanticPurpose": "Large radius", "tokenName": "--radius-lg" },
+      { "semanticPurpose": "Small shadow", "tokenName": "--shadow-1" },
+      { "semanticPurpose": "Dropdown shadow", "tokenName": "--shadow-3" }
+    ]
+  },
+  "pages": [
+    {
+      "nodeId": "page-chat",
+      "slug": "chat",
+      "title": "对话",
+      "htmlSrc": "pages/chat.html",
+      "pageIndex": 1,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "viewportMode": "document-scroll",
+      "businessScenario": "AI chat conversation interface",
+      "visualNorthStar": "Clean, spacious chat interface with rounded message bubbles, soft shadows, and a calm primary-blue accent — feels like a modern messaging app, not a web dashboard",
+      "compositionPattern": "App shell with scrollable content area and bottom input bar",
+      "continuityAnchors": ["primary-blue accent color", "rounded card/bubble language", "PingFang SC font stack", "4px grid spacing rhythm"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [],
+      "restoreEvidence": {
+        "status": "not-applicable",
+        "reason": "library_bound project, not restore_1to1",
+        "visualCheckpointResults": [
+          { "id": 1, "acceptable": true, "detail": "library_bound, not a restore project" }
+        ],
+        "dominantReferenceImageUsedAsBody": false
+      }
+    },
+    {
+      "nodeId": "page-settings",
+      "slug": "settings",
+      "title": "设置",
+      "htmlSrc": "pages/settings.html",
+      "pageIndex": 2,
+      "stateGroupId": null,
+      "stateRole": null,
+      "baseStatePageId": null,
+      "sharedShellContract": [],
+      "mutableRegions": [],
+      "derivedFromHtmlSrc": null,
+      "derivationType": "original",
+      "sourcePageId": null,
+      "sourceHtmlSrc": null,
+      "pageType": "task-driven",
+      "viewportMode": "document-scroll",
+      "businessScenario": "App settings page with grouped list items",
+      "visualNorthStar": "Clean grouped settings list with rounded section cards, consistent spacing, and minimal visual noise — iOS-style settings clarity with Yuanli design tokens",
+      "compositionPattern": "Stacked section groups with list rows, scrollable full page",
+      "continuityAnchors": ["primary-blue accent color", "rounded card language", "PingFang SC font stack", "4px grid spacing rhythm"],
+      "libraryRestraintMode": false,
+      "uiKitPath": null,
+      "componentPlan": [],
+      "imagePlan": [],
+      "chartsRequired": false,
+      "miniProgramStyle": false,
+      "qualityRisks": [],
+      "restoreEvidence": {
+        "status": "not-applicable",
+        "reason": "library_bound project, not restore_1to1",
+        "visualCheckpointResults": [
+          { "id": 1, "acceptable": true, "detail": "library_bound, not a restore project" }
+        ],
+        "dominantReferenceImageUsedAsBody": false
+      }
+    }
+  ],
+  "assets": [],
+  "wiringPlan": [
+    {
+      "sourceNodeId": "page-chat",
+      "domId": "nav-settings",
+      "targetPageId": "page-settings"
+    }
+  ],
+  "hiddenInteractionPlan": [
+    {
+      "sourceNodeId": "page-settings",
+      "domId": "back-chat",
+      "targetPageId": "page-chat",
+      "hideEdge": true,
+      "reason": "return to chat"
+    }
+  ]
+}

@@ -166,7 +166,6 @@ class PluginManager implements IPluginManager, IInjectable {
                 ToastAndroid.LONG,
             );
             errorLog("插件初始化失败", e?.message);
-            throw e;
         }
 
         Plugin.injectDependencies(this);
