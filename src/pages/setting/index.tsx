@@ -35,7 +35,7 @@ export default function Setting() {
         }
     };
 
-    if (type === "plugin" || type === "about") {
+    if (type !== "basic") {
         return (
             <SafeAreaView edges={["bottom", "top"]} style={style.wrapper}>
                 <StatusBar />

@@ -4,7 +4,7 @@ import { SortType } from "@/constants/commonConst.ts";
 import { useI18N } from "@/core/i18n";
 import MusicSheet, { useSheetItem } from "@/core/musicSheet";
 import { ROUTE_PATH, useParams } from "@/core/router";
-import { default as Toast, default as toast } from "@/utils/toast";
+import toast from "@/utils/toast";
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { StyleSheet, View } from "react-native";

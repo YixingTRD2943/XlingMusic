@@ -6,7 +6,6 @@ import LocalMusicSheet from "@/core/localMusicSheet";
 import { ROUTE_PATH } from "@/core/router";
 import { ImgAsset } from "@/constants/assetsConst";
 import Toast from "@/utils/toast";
-import toast from "@/utils/toast";
 import useOrientation from "@/hooks/useOrientation";
 import { showPanel } from "@/components/panels/usePanel";
 import TrackPlayer, { useCurrentMusic, useMusicQuality } from "@/core/trackPlayer";

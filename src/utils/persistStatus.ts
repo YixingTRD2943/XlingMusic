@@ -34,6 +34,10 @@ interface IPersistStatus {
     "app.pluginUpdateTime": number;
     /** 缓存的定时关闭自定义时间（分钟） */
     "app.scheduleCloseTime": number;
+    /** 不再提示链接导入不可用 */
+    "app.skipImportLinkDialog": boolean;
+    /** 首次使用弹窗 */
+    "app.hasShownFirstLaunchDialog": boolean;
     /** 歌词-是否启用翻译 */
     "lyric.showTranslation": boolean;
     /** 歌词-详情页字体大小 */

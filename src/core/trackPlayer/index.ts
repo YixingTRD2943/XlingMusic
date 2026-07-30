@@ -502,25 +502,19 @@ class TrackPlayer extends EventEmitter<{
                 this.configService.getConfig("basic.playQualityOrder") ?? "asc",
             );
 
+            let matchedMusicItem: IMusic.IMusicItem | null = null;
+
             const schedulerResult = await playerPluginScheduler.tryPlayWithPlugins(
                 musicItem,
                 qualityOrder[0] ?? "standard",
                 async (plugin) => {
-                    // 优先尝试直接用原 musicItem 获取音源（适用于 id 匹配的场景）
-                    for (const q of qualityOrder) {
-                        try {
-                            const result = await plugin?.methods?.getMediaSource?.(musicItem, q);
-                            if (result?.url) return result;
-                        } catch { }
-                    }
-                    // 直接匹配失败 → 搜索该插件，寻找匹配原唱的版本
+                    // 始终优先搜索原唱版本：用「歌名 歌手」搜索，从结果中选 artist 完全匹配的项
                     if (plugin?.hasMethod?.("search") && (musicItem.title || musicItem.artist)) {
                         try {
                             const query = `${musicItem.title} ${musicItem.artist}`.trim();
                             if (query) {
                                 const searchResult = await plugin.methods.search(query, 1, "music");
                                 const items = searchResult?.data ?? [];
-                                // 优先选歌手完全匹配的（原唱）
                                 const originals = items.filter(
                                     it => it.artist === musicItem.artist
                                 );
@@ -528,10 +522,20 @@ class TrackPlayer extends EventEmitter<{
                                 if (matched) {
                                     for (const q of qualityOrder) {
                                         const result = await plugin?.methods?.getMediaSource?.(matched, q);
-                                        if (result?.url) return result;
+                                        if (result?.url) {
+                                            matchedMusicItem = matched;
+                                            return result;
+                                        }
                                     }
                                 }
                             }
+                        } catch { }
+                    }
+                    // 搜索无结果或插件不支持搜索时，退而直接用原 musicItem
+                    for (const q of qualityOrder) {
+                        try {
+                            const result = await plugin?.methods?.getMediaSource?.(musicItem, q);
+                            if (result?.url) return result;
                         } catch { }
                     }
                     return null;
@@ -591,22 +595,26 @@ class TrackPlayer extends EventEmitter<{
             // 10. 获取补充信息（先尝试匹配到的插件，再尝试平台插件）
             let info: Partial<IMusic.IMusicItem> | null = null;
             try {
-                const successfulAttempt = schedulerResult.success
-                    ? schedulerResult.attempts.find(a => a.success)
-                    : null;
-                if (successfulAttempt?.pluginName) {
-                    const sourcePlugin = this.pluginManagerService.getByName(successfulAttempt.pluginName);
-                    info = (await sourcePlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
-                    if (
-                        (typeof info?.url === "string" && info.url.trim() === "") ||
-                        (info?.url && typeof info.url !== "string")
-                    ) {
-                        delete info.url;
+                // 用匹配到的搜索结果中的完整音乐信息（含平台、id、artwork）来获取补充信息
+                if (matchedMusicItem) {
+                    const sourcePlugin = this.pluginManagerService.getByName(matchedMusicItem.platform);
+                    if (sourcePlugin) {
+                        info = (await sourcePlugin.methods?.getMusicInfo?.(matchedMusicItem)) ?? null;
+                        if (
+                            (typeof info?.url === "string" && info.url.trim() === "") ||
+                            (info?.url && typeof info.url !== "string")
+                        ) {
+                            delete info.url;
+                        }
+                    }
+                    // 即使 getMusicInfo 没返回 artwork，搜索结果本身可能已有 artwork
+                    if (!info?.artwork && matchedMusicItem.artwork) {
+                        info = { ...(info ?? {}), artwork: matchedMusicItem.artwork };
                     }
                 }
                 if (!info?.artwork) {
                     const infoPlugin = this.pluginManagerService.getByMedia(musicItem);
-                    if (!successfulAttempt?.pluginName || infoPlugin?.name !== successfulAttempt.pluginName) {
+                    if (!matchedMusicItem || infoPlugin?.name !== matchedMusicItem.platform) {
                         const platformInfo = (await infoPlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
                         if (platformInfo) {
                             info = info ? { ...info, ...platformInfo } : platformInfo;

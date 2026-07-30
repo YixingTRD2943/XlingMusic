@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo, useRef } from "react";
+import React, { ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
 import {
     BackHandler,
     NativeEventSubscription,
@@ -24,22 +24,26 @@ import useColors from "@/hooks/useColors";
 import ThemeText from "@/components/base/themeText";
 import Divider from "@/components/base/divider";
 import { fontSizeConst } from "@/constants/uiConst";
+import Icon from "@/components/base/icon";
 import { ScrollView } from "react-native-gesture-handler";
 import useOrientation from "@/hooks/useOrientation.ts";
 
 interface IDialogProps {
     onDismiss?: () => void;
+    hideCloseButton?: boolean;
     children?: ReactNode;
 }
 
 function Dialog(props: IDialogProps) {
-    const { children, onDismiss } = props;
+    const { children, onDismiss, hideCloseButton } = props;
 
     const sharedShowValue = useSharedValue(0);
     const colors = useColors();
     const backHandlerRef = useRef<NativeEventSubscription>();
     const orientation = useOrientation();
     const isDismissingRef = useRef(false);
+    const onDismissRef = useRef(onDismiss);
+    onDismissRef.current = onDismiss;
 
     // 对话框宽度
     const dialogContainerStyle: ViewStyle =
@@ -51,15 +55,12 @@ function Dialog(props: IDialogProps) {
                 width: "80%",
             };
 
-    const handleDismiss = useMemo(() => {
-        return () => {
-            if (isDismissingRef.current) return;
-            isDismissingRef.current = true;
-            sharedShowValue.value = withTiming(0, animationConfig.exit, () => {
-                onDismiss?.();
-            });
-        };
-    }, [onDismiss]);
+    const handleDismiss = useCallback(() => {
+        if (isDismissingRef.current) return;
+        isDismissingRef.current = true;
+        onDismissRef.current?.();
+        sharedShowValue.value = withTiming(0, animationConfig.exit);
+    }, []);
 
     useEffect(() => {
         sharedShowValue.value = withTiming(1, animationConfig.enter);
@@ -136,6 +137,16 @@ function Dialog(props: IDialogProps) {
                         shadowColor: colors.shadow,
                     },
                 ]}>
+                {hideCloseButton ? null : (
+                    <TouchableOpacity
+                        style={styles.closeButton}
+                        onPress={handleDismiss}
+                        activeOpacity={0.6}
+                        hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                    >
+                        <Icon name="x-mark" size={rpx(28)} color={colors.text} />
+                    </TouchableOpacity>
+                )}
                 {children}
             </Animated.View>
         </View>
@@ -329,6 +340,17 @@ const styles = StyleSheet.create({
         lineHeight: fontSizeConst.content * 1.5,
     },
 
+    closeButton: {
+        position: "absolute",
+        top: rpx(12),
+        right: rpx(12),
+        zIndex: 999,
+        width: rpx(32),
+        height: rpx(32),
+        borderRadius: rpx(16),
+        alignItems: "center",
+        justifyContent: "center",
+    },
     /**** title */
     titleContainer: {
         height: rpx(88),

@@ -156,7 +156,6 @@ export default function MusicItemLyricOptions(
                     Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
-                    console.log(e);
                     Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
                         reason: e?.message,
                     }));
@@ -181,7 +180,6 @@ export default function MusicItemLyricOptions(
                     Toast.success(t("toast.settingSuccess"));
                     hidePanel();
                 } catch (e: any) {
-                    console.log(e);
                     Toast.warn(t("panel.musicItemLyricOptions.settingFail", {
                         reason: e?.message,
                     }));
@@ -196,7 +194,6 @@ export default function MusicItemLyricOptions(
                     lyricManager.removeLocalLyric(musicItem);
                     hidePanel();
                 } catch (e: any) {
-                    console.log(e);
                     Toast.warn(t("panel.musicItemLyricOptions.deleteFail", {
                         reason: e?.message,
                     }));

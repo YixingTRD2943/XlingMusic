@@ -50,6 +50,10 @@ async function bootstrapImpl() {
                 await Config.setup().catch(e => errorLog("配置初始化失败", e));
                 Theme.setup();
                 i18n.setup();
+
+                if (!PersistStatus.get("app.hasShownFirstLaunchDialog")) {
+                    showDialog("FirstLaunchDialog");
+                }
                 
                 logger.mark("核心配置完成");
 
@@ -233,7 +237,6 @@ async function extraMakeup() {
                         }
                     })
                     .catch(e => {
-                        console.log(e);
                         Toast.warn(e?.message ?? "无法识别此插件");
                     });
             } else if (supportLocalMediaType.some(it => url.endsWith(it))) {
@@ -241,7 +244,6 @@ async function extraMakeup() {
                 const musicItem = await PluginManager.getByHash(
                     localPluginHash,
                 )?.instance?.importMusicItem?.(url);
-                console.log(musicItem);
                 if (musicItem) {
                     TrackPlayer.play(musicItem);
                 }

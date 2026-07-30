@@ -2,11 +2,11 @@ import ListEmpty from "@/components/base/listEmpty";
 import ListFooter from "@/components/base/listFooter";
 import Loading from "@/components/base/loading";
 import { RequestStateCode } from "@/constants/commonConst";
-import useOrientation from "@/hooks/useOrientation";
 import rpx from "@/utils/rpx";
 import { FlashList } from "@shopify/flash-list";
 import { useAtomValue } from "jotai";
 import React, { memo, useCallback, useEffect, useState } from "react";
+import { useWindowDimensions } from "react-native";
 import useSearch from "../../hooks/useSearch";
 import { ISearchResult, queryAtom } from "../../store/atoms";
 import { renderMap } from "./results";
@@ -26,7 +26,7 @@ function ResultWrapper(props: IResultWrapperProps) {
     const [searchState, setSearchState] = useState<RequestStateCode>(
         searchResult?.state ?? RequestStateCode.IDLE,
     );
-    const orientation = useOrientation();
+    const { width: windowWidth } = useWindowDimensions();
     const query = useAtomValue(queryAtom);
 
     const ResultComponent = renderMap[tab]!;
@@ -77,10 +77,8 @@ function ResultWrapper(props: IResultWrapperProps) {
                     searchState === RequestStateCode.IDLE) &&
                     search(undefined, undefined, tab, pluginHash);
             }}
+            numColumns={tab === "sheet" ? Math.max(2, Math.min(4, Math.floor(windowWidth / rpx(240)))) : 1}
             estimatedItemSize={tab === "sheet" ? rpx(306) : rpx(120)}
-            numColumns={
-                tab === "sheet" ? (orientation === "vertical" ? 3 : 4) : 1
-            }
             renderItem={renderItem}
             keyExtractor={keyExtractor}
         />

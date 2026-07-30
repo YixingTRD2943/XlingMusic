@@ -1,12 +1,8 @@
 import { Dimensions } from "react-native";
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
-const minWindowEdge = Math.min(windowHeight, windowWidth);
-const maxWindowEdge = Math.max(windowHeight, windowWidth);
-
 export default function (rpx: number) {
-    return (rpx / 750) * minWindowEdge;
+    const { width, height } = Dimensions.get("window");
+    return (rpx / 750) * Math.min(width, height);
 }
 
 export function vh(pct: number) {
@@ -18,11 +14,13 @@ export function vw(pct: number) {
 }
 
 export function vmin(pct: number) {
-    return (pct / 100) * minWindowEdge;
+    const { width, height } = Dimensions.get("window");
+    return (pct / 100) * Math.min(width, height);
 }
 
 export function vmax(pct: number) {
-    return (pct / 100) * maxWindowEdge;
+    const { width, height } = Dimensions.get("window");
+    return (pct / 100) * Math.max(width, height);
 }
 
 export function sh(pct: number) {

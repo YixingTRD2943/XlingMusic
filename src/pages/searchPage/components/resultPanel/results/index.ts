@@ -3,13 +3,19 @@ import AlbumResultItem from "./albumResultItem";
 import ArtistResultItem from "./artistResultItem";
 import MusicResultItem from "./musicResultItem";
 import MusicSheetResultItem from "./musicSheetResultItem";
+import AggregateResultItem from "./aggregateResultItem";
 
 const results: Array<{
-    key: ICommon.SupportMediaType;
+    key: string;
     i18nKey?: string;
     title: string;
     component: React.FC<any>;
 }> = [
+    {
+        key: "aggregate",
+        title: "聚合",
+        component: AggregateResultItem,
+    },
     {
         key: "music",
         i18nKey: "common.singleMusic",
@@ -36,7 +42,7 @@ const results: Array<{
     },
 ];
 
-const renderMap: Partial<Record<ICommon.SupportMediaType, React.FC<any>>> = {};
+const renderMap: Record<string, React.FC<any>> = {};
 results.forEach(_ => (renderMap[_.key] = _.component));
 
 export default results;

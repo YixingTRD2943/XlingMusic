@@ -10,12 +10,15 @@ import ThemeCard from "./themeCard";
 import { ROUTE_PATH, useNavigate } from "@/core/router";
 import Theme from "@/core/theme";
 import { useI18N } from "@/core/i18n";
+import useColors from "@/hooks/useColors";
 
 export default function Background() {
     const { t } = useI18N();
+    const colors = useColors();
 
     const themeBackground = useAppConfig("theme.background");
-    const themeSelectedTheme = useAppConfig("theme.selectedTheme");
+    const currentTheme = Theme.useTheme();
+    const themeSelectedTheme = currentTheme?.id ?? "p-dark";
 
     const navigate = useNavigate();
 
@@ -56,90 +59,100 @@ export default function Background() {
 
     return (
         <View>
-            <ThemeText
-                fontSize="subTitle"
-                fontWeight="bold"
-                style={style.header}>
-                {t("themeSettings.setTheme")}
-            </ThemeText>
-            <View style={style.sectionWrapper}>
-                <ThemeCard
-                    preview="#fff"
-                    title={t("themeSettings.lightMode")}
-                    selected={themeSelectedTheme === "p-light"}
-                    onPress={() => {
-                        if (themeSelectedTheme !== "p-light") {
-                            Theme.setTheme("p-light");
-                            Config.setConfig("theme.followSystem", false);
-                        }
-                    }}
-                />
-                <ThemeCard
-                    preview="#131313"
-                    title={t("themeSettings.darkMode")}
-                    selected={themeSelectedTheme === "p-dark"}
-                    onPress={() => {
-                        if (themeSelectedTheme !== "p-dark") {
-                            Theme.setTheme("p-dark");
-                            Config.setConfig("theme.followSystem", false);
-                        }
-                    }}
-                />
-
-                <ThemeCard
-                    title={t("themeSettings.customMode")}
-                    selected={themeSelectedTheme === "custom"}
-                    preview={themeBackground}
-                    onPress={() => {
-                        if (themeSelectedTheme !== "custom") {
-                            Config.setConfig("theme.followSystem", false);
-                            Theme.setTheme("custom", {
-                                colors: Config.getConfig(
-                                    "theme.customColors",
-                                ),
-                            });
-                        }
-                        navigate(ROUTE_PATH.SET_CUSTOM_THEME);
-                    }}
-                />
+            <View style={[styles.section, { backgroundColor: colors.card }]}>
+                <ThemeText
+                    fontSize="subTitle"
+                    fontWeight="bold"
+                    style={styles.header}>
+                    {t("themeSettings.setTheme")}
+                </ThemeText>
+                <View style={styles.cardList}>
+                    <ThemeCard
+                        preview="#fff"
+                        title={t("themeSettings.lightMode")}
+                        selected={themeSelectedTheme === "p-light"}
+                        onPress={() => {
+                            if (themeSelectedTheme !== "p-light") {
+                                Theme.setTheme("p-light");
+                                Config.setConfig("theme.followSystem", false);
+                            }
+                        }}
+                    />
+                    <ThemeCard
+                        preview="#131313"
+                        title={t("themeSettings.darkMode")}
+                        selected={themeSelectedTheme === "p-dark"}
+                        onPress={() => {
+                            if (themeSelectedTheme !== "p-dark") {
+                                Theme.setTheme("p-dark");
+                                Config.setConfig("theme.followSystem", false);
+                            }
+                        }}
+                    />
+                    <ThemeCard
+                        title={t("themeSettings.customMode")}
+                        selected={themeSelectedTheme === "custom"}
+                        preview={themeBackground}
+                        onPress={() => {
+                            if (themeSelectedTheme !== "custom") {
+                                Config.setConfig("theme.followSystem", false);
+                                Theme.setTheme("custom", {
+                                    colors: Config.getConfig(
+                                        "theme.customColors",
+                                    ),
+                                });
+                            }
+                            navigate(ROUTE_PATH.SET_CUSTOM_THEME);
+                        }}
+                    />
+                </View>
             </View>
 
-            <ThemeText
-                fontSize="subTitle"
-                fontWeight="bold"
-                style={style.header}>
-                背景图片
-            </ThemeText>
-            <View style={style.sectionWrapper}>
-                <ThemeCard
-                    preview={themeBackground || "#333"}
-                    title={themeBackground ? "更换图片" : "选择图片"}
-                    selected={!!themeBackground}
-                    onPress={onCustomBgPress}
-                />
-                {themeBackground && (
+            <View style={[styles.section, { backgroundColor: colors.card }]}>
+                <ThemeText
+                    fontSize="subTitle"
+                    fontWeight="bold"
+                    style={styles.header}>
+                    背景图片
+                </ThemeText>
+                <View style={styles.cardList}>
                     <ThemeCard
-                        preview="#666"
-                        title="移除背景"
-                        selected={false}
-                        onPress={removeBackground}
+                        preview={themeBackground || "#333"}
+                        title={themeBackground ? "更换图片" : "选择图片"}
+                        selected={!!themeBackground}
+                        onPress={onCustomBgPress}
                     />
-                )}
+                    {themeBackground && (
+                        <ThemeCard
+                            preview="#666"
+                            title="移除背景"
+                            selected={false}
+                            onPress={removeBackground}
+                        />
+                    )}
+                </View>
             </View>
         </View>
     );
 }
 
-const style = StyleSheet.create({
-    header: {
-        marginTop: rpx(36),
-        paddingLeft: rpx(24),
+const styles = StyleSheet.create({
+    section: {
+        marginHorizontal: rpx(24),
+        marginTop: rpx(24),
+        borderRadius: rpx(16),
+        paddingBottom: rpx(16),
     },
-    sectionWrapper: {
-        marginTop: rpx(28),
+    header: {
+        paddingLeft: rpx(24),
+        paddingTop: rpx(20),
+        marginBottom: rpx(8),
+    },
+    cardList: {
         flexDirection: "row",
         flexWrap: "wrap",
-        paddingHorizontal: rpx(24),
-        gap: rpx(24),
+        paddingHorizontal: rpx(16),
+        marginTop: rpx(12),
+        gap: rpx(12),
     },
 });

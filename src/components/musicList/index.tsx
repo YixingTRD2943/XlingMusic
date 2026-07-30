@@ -96,6 +96,33 @@ export default function MusicList(props: IMusicListProps) {
         }
     }, [highlightIndex]);    
     
+    const renderItem = useCallback(({ index, item: musicItem }: { index: number; item: IMusic.IMusicItem }) => {
+        return (
+            <MusicItem
+                musicItem={musicItem}
+                index={showIndex ? index + 1 : undefined}
+                onItemPress={() => {
+                    if (onItemPress) {
+                        onItemPress(musicItem, musicList);
+                    } else {
+                        TrackPlayer.playWithReplacePlayList(
+                            musicItem,
+                            musicList ?? [musicItem],
+                        );
+                    }
+                }}
+                musicSheet={musicSheet}
+                highlight={isSameMediaItem(musicItem, highlightMusicItem)}
+            />
+        );
+    }, [showIndex, onItemPress, musicList, musicSheet, highlightMusicItem]);
+
+    const handleEndReached = useCallback(() => {
+        if (state === RequestStateCode.IDLE || state === RequestStateCode.PARTLY_DONE) {
+            onLoadMore?.();
+        }
+    }, [state, onLoadMore]);
+
     // 清理定时器
     useEffect(() => {
         return () => {
@@ -120,31 +147,8 @@ export default function MusicList(props: IMusicListProps) {
                 onScrollBeginDrag={handleScrollBegin}
                 onScrollEndDrag={handleScrollEnd}
                 onMomentumScrollEnd={handleScrollEnd}
-                renderItem={({ index, item: musicItem }) => {
-                    return (
-                        <MusicItem
-                            musicItem={musicItem}
-                            index={showIndex ? index + 1 : undefined}
-                            onItemPress={() => {
-                                if (onItemPress) {
-                                    onItemPress(musicItem, musicList);
-                                } else {
-                                    TrackPlayer.playWithReplacePlayList(
-                                        musicItem,
-                                        musicList ?? [musicItem],
-                                    );
-                                }
-                            }}
-                            musicSheet={musicSheet}
-                            highlight={isSameMediaItem(musicItem, highlightMusicItem)}
-                        />
-                    );
-                }}
-                onEndReached={() => {
-                    if (state === RequestStateCode.IDLE || state === RequestStateCode.PARTLY_DONE) {
-                        onLoadMore?.();
-                    }
-                }}
+                renderItem={renderItem}
+                onEndReached={handleEndReached}
                 onEndReachedThreshold={0.1}
             />              
             {showBadge && (

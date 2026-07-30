@@ -1,6 +1,8 @@
 import CheckStorage from "@/components/dialogs/components/checkStorage.tsx";
 import DownloadDialog from "./downloadDialog";
 import EditSheetDetailDialog from "./editSheetDetail";
+import FirstLaunchDialog from "./firstLaunchDialog";
+import ImportLinkUnavailableDialog from "./importLinkUnavailable";
 import LoadingDialog from "./loadingDialog";
 import MarkdownDialog from "./markdownDialog";
 import RadioDialog from "./radioDialog";
@@ -16,6 +18,8 @@ const dialogs = {
     LoadingDialog,
     EditSheetDetailDialog,
     CheckStorage,
+    FirstLaunchDialog,
+    ImportLinkUnavailableDialog,
     MarkdownDialog,
     SetScheduleCloseTimeDialog,
 };

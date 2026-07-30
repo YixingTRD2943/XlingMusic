@@ -10,15 +10,20 @@ import results from "./results";
 import { fontWeightConst } from "@/constants/uiConst";
 import useColors from "@/hooks/useColors";
 import { useI18N } from "@/core/i18n";
+import AggregateResultItem from "./results/aggregateResultItem";
 
 const routes = results;
 
 const getRouterScene = (
-    routes: Array<{ key: ICommon.SupportMediaType; title: string }>,
+    routes: Array<{ key: string; title: string }>,
 ) => {
     const scene: Record<string, () => JSX.Element> = {};
     routes.forEach(r => {
-        scene[r.key] = () => <ResultSubPanel tab={r.key} />;
+        if (r.key === "aggregate") {
+            scene[r.key] = () => <AggregateResultItem />;
+        } else {
+            scene[r.key] = () => <ResultSubPanel tab={r.key as ICommon.SupportMediaType} />;
+        }
     });
     return SceneMap(scene);
 };
@@ -55,7 +60,7 @@ function ResultPanel() {
                         <Text
                             numberOfLines={1}
                             style={{
-                                width: rpx(160),
+                                paddingHorizontal: rpx(16),
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,

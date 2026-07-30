@@ -1,22 +1,16 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import rpx from "@/utils/rpx";
+import { ScrollView } from "react-native-gesture-handler";
 import Mode from "./mode";
 import Background from "./background";
-import { ScrollView } from "react-native-gesture-handler";
 
 export default function ThemeSetting() {
     return (
-        <ScrollView style={style.wrapper}>
+        <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 40 }}
+        >
             <Mode />
             <Background />
         </ScrollView>
     );
 }
-
-const style = StyleSheet.create({
-    wrapper: {
-        width: "100%",
-        marginVertical: rpx(24),
-    },
-});

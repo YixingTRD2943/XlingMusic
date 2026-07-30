@@ -53,9 +53,7 @@ export default function Header(props: IHeaderProps) {
                     <Pressable onPress={toggleShowMore}>
                         <View
                             style={style.albumDesc}
-                            // onLayout={evt => {
-                            //     console.log(evt.nativeEvent.layout);
-                            // }}
+
                         >
                             <ThemeText
                                 fontColor="textSecondary"

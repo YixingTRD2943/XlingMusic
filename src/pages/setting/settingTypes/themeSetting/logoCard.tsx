@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Pressable, StyleSheet, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import rpx from "@/utils/rpx";
 import useColors from "@/hooks/useColors";
 import ThemeText from "@/components/base/themeText";
@@ -16,23 +16,28 @@ export default function LogoCard(props: ILogoCardProps) {
     const colors = useColors();
 
     return (
-        <View>
-            <Pressable
-                onPress={onPress}
+        <TouchableOpacity
+            onPress={onPress}
+            activeOpacity={0.7}
+            style={styles.wrapper}
+        >
+            <View
                 style={[
                     styles.borderContainer,
                     selected
                         ? {
                             borderWidth: 2,
-                            borderStyle: "solid",
                             borderColor: colors.primary,
                         }
-                        : null,
+                        : {
+                            borderWidth: 1,
+                            borderColor: colors.border,
+                        },
                 ]}>
                 <View style={styles.imageContainer}>
                     <Image style={styles.image} source={logo} />
                 </View>
-            </Pressable>
+            </View>
             <ThemeText
                 numberOfLines={1}
                 fontSize="subTitle"
@@ -40,16 +45,19 @@ export default function LogoCard(props: ILogoCardProps) {
                 fontColor={selected ? "primary" : "text"}>
                 {title}
             </ThemeText>
-        </View>
+        </TouchableOpacity>
     );
 }
 
 const styles = StyleSheet.create({
+    wrapper: {
+        alignItems: "center",
+        marginBottom: rpx(8),
+    },
     borderContainer: {
         width: rpx(160),
         height: rpx(160),
         borderRadius: rpx(22),
-        marginRight: rpx(24),
         justifyContent: "center",
         alignItems: "center",
     },
@@ -60,7 +68,7 @@ const styles = StyleSheet.create({
     },
     title: {
         textAlign: "center",
-        marginTop: rpx(12),
+        marginTop: rpx(10),
         width: rpx(160),
     },
     image: {

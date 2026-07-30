@@ -9,6 +9,8 @@ import { TextInput } from "react-native-gesture-handler";
 import PanelBase from "../base/panelBase";
 import PanelHeader from "../base/panelHeader";
 import { hidePanel, showPanel } from "../usePanel";
+import { showDialog } from "@/components/dialogs/useDialog";
+import PersistStatus from "@/utils/persistStatus";
 import { useI18N } from "@/core/i18n";
 import ThemeText from "@/components/base/themeText";
 import Icon from "@/components/base/icon";
@@ -206,10 +208,11 @@ export default function CreateMusicSheet(props: ICreateMusicSheetProps) {
                         <TouchableOpacity
                             style={[styles.importLinkButton, { backgroundColor: colors.listActive }]}
                             onPress={() => {
-                                hidePanel();
-                                setTimeout(() => {
-                                    showPanel("ImportPlaylistLink");
-                                }, 300);
+                                Toast.warn("测试点击");
+                                showDialog("SimpleDialog", {
+                                    title: "链接导入不可用",
+                                    content: "链接导入功能暂不可用，请使用文件导入或其他方式导入歌单。",
+                                });
                             }}>
                             <Icon name="link" size={rpx(36)} color={colors.primary} />
                             <ThemeText fontSize="content" fontColor="primary" style={styles.importLinkText}>

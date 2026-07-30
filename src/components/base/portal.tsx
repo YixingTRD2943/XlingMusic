@@ -20,16 +20,12 @@ export default function Portal(props: IPortalProps) {
 
     useEffect(() => {
         if (!keyRef.current) {
-            // mount
             keyRef.current = Math.random().toString().slice(2);
-            // console.log("MOUNT!", keyRef.current);
             setPortalsAtoms(portals => [
                 ...portals,
                 { key: keyRef.current, children },
             ]);
         } else {
-            // update
-            // console.log("UPDATE!", keyRef.current);
             setPortalsAtoms(portals =>
                 portals.map(it =>
                     it.key === keyRef.current ? { ...it, children } : it,
@@ -41,7 +37,6 @@ export default function Portal(props: IPortalProps) {
     useEffect(() => {
         return () => {
             if (keyRef.current) {
-                // console.log("UNMOUNT!", keyRef.current);
                 setPortalsAtoms(portals =>
                     portals.filter(it => it.key !== keyRef.current),
                 );

@@ -19,7 +19,9 @@ import {
     pageStatusAtom,
     queryAtom,
     searchResultsAtom,
+    searchPluginHashAtom,
 } from "../store/atoms";
+import PluginSelector from "./pluginSelector";
 
 export default function NavBar() {
     const search = useSearch();
@@ -27,6 +29,7 @@ export default function NavBar() {
     const setPageStatus = useSetAtom(pageStatusAtom);
     const colors = useColors();
     const setSearchResultsState = useSetAtom(searchResultsAtom);
+    const [pluginHash] = useAtom(searchPluginHashAtom);
     const { t } = useI18N();
 
     const onSearchSubmit = async () => {
@@ -37,7 +40,7 @@ export default function NavBar() {
         setPageStatus(prev =>
             prev === PageStatus.EDITING ? PageStatus.SEARCHING : prev,
         );
-        await search(query, 1);
+        await search(query, 1, undefined, pluginHash || undefined);
         await addHistory(query);
     };
 
@@ -91,6 +94,7 @@ export default function NavBar() {
                     />
                 ) : null}
             </View>
+            <PluginSelector />
             <Button
                 style={[style.button]}
                 hitSlop={0}
@@ -119,7 +123,6 @@ const style = StyleSheet.create({
         alignItems: "center",
     },
     searchBar: {
-        minWidth: rpx(200),
         flex: 1,
         paddingLeft: rpx(56),
         paddingRight: rpx(64),

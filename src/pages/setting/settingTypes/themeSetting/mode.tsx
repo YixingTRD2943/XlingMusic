@@ -8,21 +8,23 @@ import Config, { useAppConfig } from "@/core/appConfig";
 import Theme from "@/core/theme";
 import { useI18N } from "@/core/i18n";
 import ThemeCard from "./themeCard";
+import useColors from "@/hooks/useColors";
 
 export default function Mode() {
     const { t } = useI18N();
+    const colors = useColors();
     const mode = useAppConfig("theme.followSystem") ?? false;
     const selectedTheme = useAppConfig("theme.selectedTheme") ?? "p-dark";
 
     return (
         <View>
-            <ThemeText
-                fontSize="subTitle"
-                fontWeight="bold"
-                style={styles.header}>
-                {t("themeSettings.displayStyle")}
-            </ThemeText>
-            <View style={styles.sectionWrapper}>
+            <View style={[styles.section, { backgroundColor: colors.card }]}>
+                <ThemeText
+                    fontSize="subTitle"
+                    fontWeight="bold"
+                    style={styles.header}>
+                    {t("themeSettings.displayStyle")}
+                </ThemeText>
                 <ListItem withHorizontalPadding>
                     <ListItem.Content>
                         <View style={styles.itemRow}>
@@ -47,34 +49,40 @@ export default function Mode() {
                 </ListItem>
             </View>
 
-            <ThemeText
-                fontSize="subTitle"
-                fontWeight="bold"
-                style={styles.header}>
-                主题选择
-            </ThemeText>
-            <View style={styles.themeList}>
-                {Theme.allThemes.map((themeInfo: any) => (
-                    <ThemeCard
-                        key={themeInfo.id}
-                        theme={themeInfo.theme}
-                        name={themeInfo.name}
-                        isSelected={selectedTheme === themeInfo.id}
-                        onPress={() => Theme.setTheme(themeInfo.id)}
-                    />
-                ))}
+            <View style={[styles.section, { backgroundColor: colors.card }]}>
+                <ThemeText
+                    fontSize="subTitle"
+                    fontWeight="bold"
+                    style={styles.header}>
+                    主题选择
+                </ThemeText>
+                <View style={styles.themeList}>
+                    {Theme.allThemes.map((themeInfo: any) => (
+                        <ThemeCard
+                            key={themeInfo.id}
+                            theme={themeInfo.theme}
+                            name={themeInfo.name}
+                            isSelected={selectedTheme === themeInfo.id}
+                            onPress={() => Theme.setTheme(themeInfo.id)}
+                        />
+                    ))}
+                </View>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
+    section: {
+        marginHorizontal: rpx(24),
+        marginTop: rpx(24),
+        borderRadius: rpx(16),
+        paddingBottom: rpx(16),
+    },
     header: {
         paddingLeft: rpx(24),
-        marginTop: rpx(36),
-    },
-    sectionWrapper: {
-        marginTop: rpx(24),
+        paddingTop: rpx(20),
+        marginBottom: rpx(8),
     },
     itemRow: {
         flexDirection: "row",
@@ -84,8 +92,8 @@ const styles = StyleSheet.create({
     themeList: {
         flexDirection: "row",
         flexWrap: "wrap",
-        paddingHorizontal: rpx(24),
-        marginTop: rpx(24),
-        gap: rpx(24),
+        paddingHorizontal: rpx(16),
+        marginTop: rpx(12),
+        gap: rpx(12),
     },
 });

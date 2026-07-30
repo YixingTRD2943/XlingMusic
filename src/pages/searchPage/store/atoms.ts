@@ -48,4 +48,7 @@ const pageStatusAtom = atom<PageStatus>(PageStatus.EDITING);
 
 const queryAtom = atom<string>("");
 
-export { pageStatusAtom, searchResultsAtom, queryAtom };
+/** 选中的搜索插件 hash，空字符串表示全部插件 */
+const searchPluginHashAtom = atom<string>("");
+
+export { pageStatusAtom, searchResultsAtom, queryAtom, searchPluginHashAtom };

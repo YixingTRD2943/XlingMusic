@@ -8,7 +8,7 @@ import { useAtomValue } from "jotai";
 import React, { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Text } from "react-native";
 import { SceneMap, TabBar, TabView } from "react-native-tab-view";
-import { searchResultsAtom } from "../../store/atoms";
+import { searchResultsAtom, searchPluginHashAtom } from "../../store/atoms";
 import { renderMap } from "./results";
 import DefaultResults from "./results/defaultResults";
 import ResultWrapper from "./resultWrapper";
@@ -66,16 +66,18 @@ function ResultSubPanel(props: IResultSubPanelProps) {
     const [index, setIndex] = useState(0);
     const colors = useColors();
     const { t } = useI18N();
+    const selectedHash = useAtomValue(searchPluginHashAtom);
 
-    const routes = PluginManager.getSortedSearchablePlugins(props.tab).map(
-        _ => ({
-            key: _.hash,
-            title: _.name,
-        }),
-    );
+    const routes = useMemo(() => {
+        const all = PluginManager.getSortedSearchablePlugins(props.tab);
+        return selectedHash
+            ? all.filter(p => p.hash === selectedHash).map(p => ({ key: p.hash, title: p.name }))
+            : all.map(p => ({ key: p.hash, title: p.name }));
+    }, [props.tab, selectedHash]);
+
     const renderScene = useMemo(
         () => getSubRouterScene(props.tab, routes),
-        [props.tab],
+        [props.tab, routes],
     );
 
     if (!routes.length) {
@@ -109,7 +111,7 @@ function ResultSubPanel(props: IResultSubPanelProps) {
                         <Text
                             numberOfLines={1}
                             style={{
-                                width: rpx(140),
+                                paddingHorizontal: rpx(12),
                                 fontWeight: focused
                                     ? fontWeightConst.bolder
                                     : fontWeightConst.medium,

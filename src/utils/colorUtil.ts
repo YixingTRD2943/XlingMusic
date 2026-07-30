@@ -15,7 +15,6 @@ export function grayRate(color: string | Color) {
 
 export function grayLevelCode(color: string | Color) {
     const gray = grayRate(color);
-    console.log(gray);
     if (gray < 96) {
         return "dark";
     } else if (gray > 160) {
