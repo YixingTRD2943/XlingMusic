@@ -39,6 +39,7 @@ import minDistance from "@/utils/minDistance";
 import { IPluginManager } from "@/types/core/pluginManager";
 import { ImgAsset } from "@/constants/assetsConst";
 import { resolveImportedAssetOrPath } from "@/utils/fileUtils";
+import playerPluginScheduler, { PluginPlayState } from "@/core/playerPluginScheduler";
 
 
 
@@ -67,6 +68,10 @@ class TrackPlayer extends EventEmitter<{
     private serviceInited = false;
     // 播放队列索引map
     private playListIndexMap = createMediaIndexMap([] as IMusic.IMusicItem[]);
+    // 连续播放失败计数（用于防止无限切歌循环）
+    private consecutivePlayFailures = 0;
+    // 最大连续失败次数，超过后停止播放
+    private static maxConsecutiveFailures = 10;
 
 
     private static maxMusicQueueLength = 10000;
@@ -122,7 +127,19 @@ class TrackPlayer extends EventEmitter<{
         this.configService = configService;
         this.musicHistoryService = musicHistoryService;
         this.pluginManagerService = pluginManager;
+
+        // 初始化播放插件调度器
+        this.initPluginScheduler();
     }
+
+    /**
+     * 初始化播放插件调度器，同步当前已加载的插件列表
+     */
+    private initPluginScheduler(): void {
+        const plugins = this.pluginManagerService.getSortedPlugins?.() ?? [];
+        playerPluginScheduler.setPlugins(plugins);
+    }
+
 
 
     async setupTrackPlayer() {
@@ -472,31 +489,33 @@ class TrackPlayer extends EventEmitter<{
             // 5. 获取音源
             let track: IMusic.IMusicItem;
 
-            // 5.1 通过插件获取音源
-            const plugin = this.pluginManagerService.getByName(musicItem.platform);
-            // 5.2 获取音质排序
+            // 5.1 通过插件调度器获取音源（多插件智能轮询）
             const qualityOrder = getQualityOrder(
                 this.configService.getConfig("basic.defaultPlayQuality") ?? "standard",
                 this.configService.getConfig("basic.playQualityOrder") ?? "asc",
             );
-            // 5.3 插件返回音源
-            let source: IPlugin.IMediaSourceResult | null = null;
-            for (let quality of qualityOrder) {
-                if (this.isCurrentMusic(musicItem)) {
-                    source =
-                        (await plugin?.methods?.getMediaSource(
-                            musicItem,
-                            quality,
-                        )) ?? null;
-                    // 5.3.1 获取到真实源
-                    if (source) {
-                        this.setQuality(quality);
-                        break;
+
+            const schedulerResult = await playerPluginScheduler.tryPlayWithPlugins(
+                musicItem,
+                qualityOrder[0] ?? "standard",
+                async (plugin, item, quality) => {
+                    try {
+                        const result = await plugin?.methods?.getMediaSource?.(item, quality);
+                        return result ?? null;
+                    } catch {
+                        return null;
                     }
-                } else {
-                    // 5.3.2 已经切换到其他歌曲了，
-                    return;
-                }
+                },
+            );
+
+            if (schedulerResult.success && schedulerResult.source) {
+                source = schedulerResult.source;
+                this.setQuality(qualityOrder[0] ?? "standard");
+
+                // 插件成功播放，重置歌曲的错误计数
+                playerPluginScheduler.resetSongErrorCount(musicItem);
+            } else {
+                source = null;
             }
 
             if (!this.isCurrentMusic(musicItem)) {
@@ -514,46 +533,19 @@ class TrackPlayer extends EventEmitter<{
                         }
                     }
                 }
-                // 5.4 没有返回源
+                // 5.4 如果插件调度器和source字段都未能提供音源
                 if (!source && !musicItem.url) {
-                    // 插件失效的情况
-                    if (this.configService.getConfig("basic.tryChangeSourceWhenPlayFail")) {
-                        // 重试
-                        const similarMusic = await this.getSimilarMusic(
-                            musicItem,
-                            "music",
-                            () => !this.isCurrentMusic(musicItem),
-                        );
-
-                        if (similarMusic) {
-                            const similarMusicPlugin =
-                                this.pluginManagerService.getByMedia(similarMusic);
-
-                            for (let quality of qualityOrder) {
-                                if (this.isCurrentMusic(musicItem)) {
-                                    source =
-                                        (await similarMusicPlugin?.methods?.getMediaSource(
-                                            similarMusic,
-                                            quality,
-                                        )) ?? null;
-                                    // 5.4.1 获取到真实源
-                                    if (source) {
-                                        this.setQuality(quality);
-                                        break;
-                                    }
-                                } else {
-                                    // 5.4.2 已经切换到其他歌曲了，
-                                    return;
-                                }
-                            }
-                        }
-
-                        if (!source) {
-                            throw new Error(PlayFailReason.INVALID_SOURCE);
-                        }
-                    } else {
-                        throw new Error(PlayFailReason.INVALID_SOURCE);
-                    }
+                    // 无可用URL，判定资源失效
+                    errorLog("[TrackPlayer] 歌曲无可用音源", { songId: musicItem.id, platform: musicItem.platform });
+                    // 标记歌曲资源彻底失效
+                    playerPluginScheduler.resetAllCounters();
+                    throw new Error(PlayFailReason.INVALID_SOURCE);
+                } else if (!source && musicItem.url) {
+                    // 音乐项有原始URL但插件无法提供，使用原始URL兜底
+                    source = {
+                        url: musicItem.url,
+                    };
+                    this.setQuality("standard");
                 } else {
                     source = {
                         url: musicItem.url,
@@ -577,11 +569,14 @@ class TrackPlayer extends EventEmitter<{
             // 9. 设置音源
             await this.setTrackSource(track as Track);
 
+            // 播放成功，重置连续失败计数
+            this.consecutivePlayFailures = 0;
+
             // 10. 获取补充信息
             let info: Partial<IMusic.IMusicItem> | null = null;
             try {
-                info =
-                    (await plugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
+                const infoPlugin = this.pluginManagerService.getByMedia(musicItem);
+                info = (await infoPlugin?.methods?.getMusicInfo?.(musicItem)) ?? null;
                 if (
                     (typeof info?.url === "string" && info.url.trim() === "") ||
                     (info?.url && typeof info.url !== "string")
@@ -617,6 +612,8 @@ class TrackPlayer extends EventEmitter<{
                 }
             } else if (message === PlayFailReason.INVALID_SOURCE) {
                 trace("音源为空，播放失败");
+                this.consecutivePlayFailures++;
+                errorLog("[TrackPlayer] 播放失败，连续失败次数:", this.consecutivePlayFailures);
                 await this.handlePlayFail();
             } else if (message === PlayFailReason.PLAY_LIST_IS_EMPTY) {
                 // 队列是空的，不应该出现这种情况
@@ -648,7 +645,18 @@ class TrackPlayer extends EventEmitter<{
             return;
         }
 
-        await this.play(this.getPlayListMusicAt(this.currentIndex + 1), true);
+        // 防循环保护：连续失败超过阈值时停止播放，避免无限切歌
+        if (this.consecutivePlayFailures >= TrackPlayer.maxConsecutiveFailures) {
+            errorLog("[TrackPlayer] 连续播放失败次数过多，停止播放以保护", {
+                consecutiveFailures: this.consecutivePlayFailures,
+            });
+            await ReactNativeTrackPlayer.reset();
+            this.consecutivePlayFailures = 0;
+            return;
+        }
+
+        const nextMusic = this.getPlayListMusicAt(this.currentIndex + 1);
+        await this.play(nextMusic, true);
     }
 
     async skipToPrevious(): Promise<void> {
@@ -740,6 +748,19 @@ class TrackPlayer extends EventEmitter<{
     setRate = ReactNativeTrackPlayer.setRate;
     reset = ReactNativeTrackPlayer.reset;
 
+    /**
+     * 获取音乐项的唯一标识（用于错误计数和状态追踪）
+     */
+    private getSongId(musicItem: IMusic.IMusicItem): string {
+        return `${musicItem.platform || "unknown"}:${musicItem.id ?? musicItem.title ?? ""}`;
+    }
+
+    /**
+     * 标记某歌曲的特定插件尝试失败（供调度器外部调用）
+     */
+    onPluginFailed(pluginName: string, songId: string): void {
+        playerPluginScheduler.onPluginFailed(pluginName, songId);
+    }
 
     /**************** 辅助函数 -- 设置内部状态 ****************/
 
@@ -904,9 +925,20 @@ class TrackPlayer extends EventEmitter<{
 
 
     private async handlePlayFail() {
-        // 如果自动跳转下一曲, 500s后自动跳转
+        // 如果自动跳转下一曲, 500ms后自动跳转
         if (!this.configService.getConfig("basic.autoStopWhenError")) {
             await delay(500);
+            const currentMusic = this.currentMusic;
+            if (currentMusic) {
+                const isExhausted = playerPluginScheduler.isSongExhausted(currentMusic);
+                if (isExhausted) {
+                    // 歌曲资源彻底失效，直接切下一首（不重新尝试当前歌曲）
+                    trace("[TrackPlayer] 歌曲资源已失效，切到下一首", { songId: currentMusic.id });
+                } else {
+                    // 仅是插件尝试失败，尝试恢复播放（使用备用插件）
+                    trace("[TrackPlayer] 插件尝试失败，让播放队列自动恢复");
+                }
+            }
             await this.skipToNext();
         }
     }
